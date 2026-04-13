@@ -1,64 +1,76 @@
 # Istio / mTLS
 
-Istio 서비스 메시를 활용해 서비스 간 내부 통신 전체에 Zero Trust 보안 관계를 구현합니다. 외부에서 인증된 요청이라도 내부 서비스 간에는 서로를 암호화된 채널과 인증서로 다시 검증합니다.
+Istio는 외부 요청과 내부 서비스 통신 사이에서 공통 보안 기능을 처리합니다. 외부 요청은 Ingress Gateway에서 먼저 확인하고, 내부 서비스 통신은 mTLS를 기준으로 보호합니다.
 
 ---
 
-## Zero Trust 내부 통신 구조
-
-Istio Sidecar Proxy(Envoy)가 각 Pod에 주입되어 애플리케이션 코드가 보안 로직을 직접 다루지 않아도 됩니다. Istiod(Control Plane)가 실시간으로 인증서를 갱신·배포하고, 각 프록시가 이를 적용합니다.
+## 서비스 메시 구조
 
 ```mermaid
 flowchart TB
-    subgraph CP["Istio 컨트롤 플레인"]
-        ISTIOD[Istiod<br/>인증서 발급 및 정책 배포]
+    subgraph CP["Istio Control Plane"]
+        ISTIOD[Istiod]
     end
 
-    subgraph DP["데이터 플레인 (EKS 워커 노드)"]
-        subgraph PodA["파드 A"]
-            PA_PROXY[Envoy Sidecar<br/>인증서 X.509 보유]
-            PA_APP[앱 컨테이너]
+    subgraph DP["Data Plane"]
+        subgraph PodA["서비스 A"]
+            A_PROXY[Envoy Sidecar]
+            A_APP[App]
         end
-        subgraph PodB["파드 B"]
-            PB_PROXY[Envoy Sidecar<br/>인증서 X.509 보유]
-            PB_APP[앱 컨테이너]
+        subgraph PodB["서비스 B"]
+            B_PROXY[Envoy Sidecar]
+            B_APP[App]
         end
     end
 
-    ISTIOD -->|인증서 주입 / 정책 배포| PA_PROXY
-    ISTIOD -->|인증서 주입 / 정책 배포| PB_PROXY
-    PA_PROXY <-->|mTLS 암호화 터널| PB_PROXY
+    ISTIOD -->|인증서 및 정책 배포| A_PROXY
+    ISTIOD -->|인증서 및 정책 배포| B_PROXY
+    A_PROXY <-->|mTLS| B_PROXY
 ```
 
 ---
 
-## mTLS 동작 원리
+## mTLS 운영 방식
 
-| 단계 | 동작 |
+| 항목 | 운영 기준 |
 |---|---|
-| **1. 인증서 발급** | Istiod가 각 Pod의 Sidecar에 X.509 인증서를 실시간으로 주입 |
-| **2. 상호 인증** | 두 서비스가 서로의 인증서를 교차 검증해 신뢰 확인 |
-| **3. 암호화 통신** | 검증 완료 후 TLS 암호화 채널로 데이터 전송 |
-| **4. 자동 갱신** | Istiod가 인증서 만료 전 자동 교체, 운영자 개입 불필요 |
+| **기본 모드** | 서비스 간 통신은 `STRICT` 기준으로 운영 |
+| **인증서 관리** | Istiod가 Sidecar에 인증서를 배포하고 자동 갱신 |
+| **기본 효과** | 서비스 간 상호 인증과 내부 통신 암호화 |
+| **예외 처리** | 모니터링 스크랩, non-mesh 서비스, 일부 AI 서비스 메트릭 포트는 예외 허용 |
+
+운영 환경에서는 모든 트래픽을 무조건 암호화하는 것이 아니라, `메시 내부 통신`과 `예외가 필요한 포트`를 구분해 관리합니다. 예를 들어 Prometheus 스크랩 포트나 sidecar가 없는 서비스는 별도 예외 구성이 필요합니다.
 
 ---
 
-## Rate Limiting 정책
+## Ingress Gateway 보안 기능
 
-과도한 세션 점유나 비정상 호출을 Ingress Gateway 단계에서 제어합니다.
+### EnvoyFilter + Lua 보안 필터
 
-| API 유형 | 허용 정책 | 이유 |
-|---|---|---|
-| **좌석 조회** (`/seat/**`) | 높은 허용치 | 사용자 경험(UX)과 직결, 가용성 우선 |
-| **결제/예매** (`/payments`, `/orders`) | 보수적 제한 | DB Lock 유발 가능, 429로 즉시 거부 |
-| **대기열** (`/queue/**`) | 중간 허용치 | 폴링 간격이 있어 부하 자연 분산 |
+- SQL Injection, XSS, Path Traversal, Command Injection 등 주요 패턴을 검사합니다.
+- detect와 block 모드를 구분해 운영할 수 있습니다.
+- 보안 이벤트는 Istio 프록시 로그와 보안 대시보드에서 확인합니다.
+
+### ext_authz 연동
+
+- Istio는 `authz-adapter`와 gRPC로 연동합니다.
+- 민감 API에 대해 AI Defense 판단을 추가로 반영합니다.
+- AI 계층 장애 시에는 운영 영향 최소화를 위해 fail-open 기준을 적용합니다.
+
+### Rate Limit
+
+- 과도한 요청은 Gateway에서 먼저 제한합니다.
+- 인증, 회원가입, 결제, 좌석 선점처럼 영향이 큰 경로는 별도 제한을 둡니다.
+- 429 응답은 서비스 내부까지 요청을 넘기지 않고 Gateway에서 종료합니다.
 
 ---
 
-## Coraza WAF
+## 운영자가 주로 확인하는 항목
 
-Istio Ingress Gateway에 Coraza WAF를 통합하여 웹 공격을 자체 구현으로 차단합니다.
-
-- **차단 항목**: SQL Injection, XSS, CSRF, 경로 순회(Path Traversal) 등 OWASP 주요 공격
-- **비용**: AWS WAF 대비 비용 $0 (자체 구현)
-- **성능**: Envoy 필터로 동작해 별도 홉 없이 처리
+| 항목 | 확인 내용 |
+|---|---|
+| **mTLS 상태** | STRICT 정책과 예외 포트 구성이 의도대로 적용되었는지 |
+| **보안 필터 로그** | 403 차단, 필터 매칭 패턴, 비정상 요청 급증 여부 |
+| **Rate Limit 상태** | 429 증가, 경로별 제한 동작 여부 |
+| **ext_authz 상태** | authz-adapter 연결, AI 판단 지연, fail-open 발생 여부 |
+| **메트릭 수집 예외** | Prometheus 스크랩 포트가 정상 노출되는지 |
