@@ -25,6 +25,8 @@ export const docsConfig = {
             title: "클라우드 인프라",
             items: [
                 { title: "환경 구성", href: "/docs/infrastructure/environment" },
+                { title: "인프라 아키텍처", href: "/docs/infrastructure/architecture" },
+                { title: "배포/GitOps", href: "/docs/infrastructure/gitops" },
                 { title: "트래픽 대응", href: "/docs/infrastructure/traffic" },
                 { title: "장애 대응", href: "/docs/infrastructure/failover" },
                 { title: "모니터링", href: "/docs/infrastructure/monitoring" },

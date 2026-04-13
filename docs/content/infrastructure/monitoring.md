@@ -1,6 +1,6 @@
 # 모니터링
 
-현재 모니터링 정책은 운영 승인본 기준으로 고정되어 있습니다. EKS 내부는 Prometheus, Loki, Tempo로 메트릭, 로그, 트레이싱을 수집하고, Grafana로 통합 시각화합니다. AWS 리소스와 보안 이벤트는 AWS 네이티브 경로를 사용하며, 최종 알림 채널은 Discord로 통합합니다.
+EKS 내부는 Prometheus, Loki, Tempo로 메트릭, 로그, 트레이싱을 수집하고, Grafana로 통합 시각화합니다. AWS 리소스와 보안 이벤트는 AWS 네이티브 경로를 사용하며, 최종 알림 채널은 Discord로 통합합니다.
 
 ---
 

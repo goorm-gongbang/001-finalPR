@@ -46,3 +46,168 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.mermaid-shell {
+  margin: 2.5rem 0;
+}
+
+.mermaid-preview {
+  position: relative;
+  display: block;
+  width: 100%;
+  cursor: zoom-in;
+  border-radius: 28px;
+  border: 1px solid #dbe7e3;
+  background:
+    radial-gradient(circle at top left, rgba(0, 194, 146, 0.12), transparent 28%),
+    linear-gradient(145deg, #f7fffc 0%, #f6fbff 52%, #f8fafc 100%);
+  padding: 1rem;
+  text-align: left;
+  box-shadow: 0 22px 44px rgba(15, 23, 42, 0.08);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.mermaid-preview:hover {
+  transform: translateY(-2px);
+  border-color: #8bd9c6;
+  box-shadow: 0 28px 50px rgba(15, 23, 42, 0.12);
+}
+
+.mermaid-preview__icon {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  z-index: 1;
+}
+
+.mermaid-preview__icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid #c7ede3;
+  background: rgba(255, 255, 255, 0.94);
+  padding: 0.55rem;
+  color: #0f172a;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.mermaid-preview__canvas,
+.mermaid-dialog__canvas {
+  border-radius: 22px;
+  border: 1px solid #e2e8f0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.98)),
+    linear-gradient(90deg, rgba(15, 118, 110, 0.04) 1px, transparent 1px),
+    linear-gradient(rgba(15, 118, 110, 0.04) 1px, transparent 1px);
+  background-size: auto, 28px 28px, 28px 28px;
+  padding: 1rem;
+}
+
+.mermaid-preview__canvas {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.mermaid-dialog {
+  background: linear-gradient(180deg, #f8fffd 0%, #ffffff 100%);
+}
+
+.mermaid-dialog__canvas {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 88vh;
+  min-height: 60vh;
+  border-width: 0;
+  border-radius: 28px;
+  padding: 2rem 2rem 2.5rem;
+}
+
+.mermaid-diagram {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+}
+
+.mermaid-diagram--preview svg {
+  display: block;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100%;
+  max-height: 420px;
+  height: auto !important;
+  margin: 0 auto;
+}
+
+.mermaid-dialog__canvas .mermaid-diagram--fullscreen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(60vh - 4rem);
+  min-width: 100%;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.mermaid-diagram--fullscreen svg {
+  display: block;
+  width: min(100%, 1440px) !important;
+  min-width: 0;
+  max-width: 100%;
+  height: auto !important;
+  margin: 0 auto;
+}
+
+.mermaid-diagram .edgeLabel,
+.mermaid-diagram .label {
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+@media (max-width: 1024px) {
+  .mermaid-preview {
+    padding: 0.85rem;
+  }
+
+  .mermaid-preview__canvas {
+    min-height: 0;
+  }
+
+  .mermaid-diagram--fullscreen svg {
+    width: 100% !important;
+  }
+
+  .mermaid-dialog__canvas {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .mermaid-preview__canvas,
+  .mermaid-dialog__canvas {
+    padding: 0.75rem;
+  }
+
+  .mermaid-diagram--preview svg {
+    max-height: 320px;
+  }
+
+  .mermaid-preview__icon {
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+
+  .mermaid-diagram--fullscreen svg {
+    width: 100% !important;
+  }
+
+  .mermaid-dialog__canvas .mermaid-diagram--fullscreen {
+    min-height: calc(60vh - 3rem);
+    padding: 0.5rem;
+  }
+}

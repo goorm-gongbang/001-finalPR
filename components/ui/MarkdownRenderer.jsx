@@ -4,16 +4,46 @@ import React, { useEffect, useState, useId } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import mermaid from "mermaid";
+import { Maximize2Icon } from "lucide-react";
+
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 
 mermaid.initialize({
     startOnLoad: false,
-    theme: "default",
+    theme: "base",
     securityLevel: "loose",
-    fontFamily: "var(--font-geist-sans), Arial, sans-serif"
+    fontFamily: "var(--font-geist-sans), Arial, sans-serif",
+    themeVariables: {
+        background: "#ffffff",
+        primaryColor: "#ffffff",
+        primaryTextColor: "#0f172a",
+        primaryBorderColor: "#6dd3bf",
+        lineColor: "#0f766e",
+        secondaryColor: "#f8fafc",
+        tertiaryColor: "#f0fdfa",
+        clusterBkg: "#f8fffd",
+        clusterBorder: "#9bdcca",
+        nodeBkg: "#ffffff",
+        mainBkg: "#ffffff",
+        edgeLabelBackground: "#ecfdf5",
+        fontSize: "18px",
+    },
+    flowchart: {
+        useMaxWidth: false,
+        htmlLabels: true,
+        curve: "basis",
+    },
 });
 
 function MermaidChart({ chart }) {
     const [svg, setSvg] = useState("");
+    const [isOpen, setIsOpen] = useState(false);
     const reactId = useId();
     // mermaid ID must not start with a number
     const id = `mermaid-${reactId.replace(/:/g, '')}`;
@@ -41,10 +71,49 @@ function MermaidChart({ chart }) {
     if (!svg) return <div className="text-gray-400 my-8 py-10 text-center animate-pulse bg-slate-50 border rounded-xl">다이어그램 렌더링 중...</div>;
 
     return (
-        <div
-            className="flex justify-center my-8 p-6 bg-white border border-slate-200 rounded-xl overflow-x-auto shadow-sm"
-            dangerouslySetInnerHTML={{ __html: svg }}
-        />
+        <>
+            <div className="mermaid-shell">
+                <button
+                    type="button"
+                    className="mermaid-preview"
+                    onClick={() => setIsOpen(true)}
+                    aria-label="다이어그램 확대 보기"
+                >
+                    <span className="mermaid-preview__icon" aria-hidden="true">
+                        <span className="sr-only">확대</span>
+                        <span className="mermaid-preview__icon-badge">
+                            <Maximize2Icon className="size-4" />
+                        </span>
+                    </span>
+                    <div className="mermaid-preview__canvas">
+                        <div
+                            className="mermaid-diagram mermaid-diagram--preview"
+                            dangerouslySetInnerHTML={{ __html: svg }}
+                        />
+                    </div>
+                </button>
+            </div>
+
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                <DialogHeader className="sr-only">
+                    <DialogTitle>다이어그램 확대 보기</DialogTitle>
+                    <DialogDescription>머메이드 차트를 큰 화면으로 확인합니다.</DialogDescription>
+                </DialogHeader>
+                <DialogContent
+                    className="w-[min(96vw,1440px)] max-w-[min(96vw,1440px)] overflow-hidden rounded-[28px] border border-slate-200 bg-white p-0 sm:max-w-[min(96vw,1440px)]"
+                    showCloseButton
+                >
+                    <div className="mermaid-dialog">
+                        <div className="mermaid-dialog__canvas">
+                            <div
+                                className="mermaid-diagram mermaid-diagram--fullscreen"
+                                dangerouslySetInnerHTML={{ __html: svg }}
+                            />
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 }
 
