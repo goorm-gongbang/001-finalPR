@@ -18,6 +18,14 @@ const categoryMap = {
     appendix: "APPENDIX"
 };
 
+const categoryOverviewMap = {
+    planning: "/planning/overview",
+    development: "/development/overview",
+    infrastructure: "/infrastructure/overview",
+    security: "/security/overview",
+    ai: "/ai/overview",
+};
+
 export default async function DocPage({ params }) {
     const { slug } = await params;
     const content = await getDocContent(slug);
@@ -35,7 +43,11 @@ export default async function DocPage({ params }) {
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
-                            <BreadcrumbLink href={`/${slug[0]}/overview`}>{category}</BreadcrumbLink>
+                            {categoryOverviewMap[slug[0]] ? (
+                                <BreadcrumbLink href={categoryOverviewMap[slug[0]]}>{category}</BreadcrumbLink>
+                            ) : (
+                                <BreadcrumbPage className="text-gray-500">{category}</BreadcrumbPage>
+                            )}
                         </BreadcrumbItem>
                         {subPathTitle && (
                             <>

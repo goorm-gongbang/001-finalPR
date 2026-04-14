@@ -1,6 +1,6 @@
-# IAM 접근 제어
+# SSO 접근 제어
 
-운영 접근은 `AWS IAM Identity Center`, `IAM Role`, `IRSA`, `Kubernetes RBAC`를 함께 사용합니다. 사람 계정 접근, 워크로드 권한, 감사 이벤트 수집을 같은 경로로 섞지 않고 분리합니다.
+운영 접근은 `AWS IAM Identity Center SSO`, `IAM Role`, `IRSA`, `Kubernetes RBAC`를 함께 사용합니다. 사람 계정의 AWS Console/CLI 접근은 SSO 로그인과 Role 전환을 기준으로 처리합니다.
 
 ---
 
@@ -38,7 +38,7 @@ flowchart TD
 
 ## 사람 계정 접근
 
-- 사람 계정은 `common/sso`, `common/iam` 구성 기준으로 `AWS IAM Identity Center` 기반으로 접근합니다.
+- 사람 계정은 `common/sso`, `common/iam` 구성 기준으로 `AWS IAM Identity Center SSO` 기반으로 접근합니다.
 - 관리자성 작업은 별도 Role 전환을 통해 수행합니다.
 - 운영 접근에는 `MFA`를 기본 요구사항으로 둡니다.
 - 접근 기록은 CloudTrail과 `pis-access/` 경로에 남깁니다.

@@ -38,20 +38,45 @@ export function AppSidebar({ items }) {
                                     <div className="flex flex-col space-y-[2px]">
                                         {section.items.map((item, itemIndex) => {
                                             const isActive = mounted && pathname === item.href;
+                                            const hasChildren = item.children?.length > 0;
+                                            const isChildActive = mounted && item.children?.some((child) => pathname === child.href);
                                             return (
-                                                <Link
-                                                    key={itemIndex}
-                                                    href={item.href}
-                                                    className={cn(
-                                                        buttonVariants({ variant: "ghost" }),
-                                                        "w-full justify-start h-9 px-3 text-[14.5px] font-medium transition-colors cursor-pointer",
-                                                        isActive
-                                                            ? "text-primary font-bold bg-primary/10 hover:bg-primary/10 hover:text-primary"
-                                                            : "text-gray-600 hover:text-primary hover:bg-transparent"
-                                                    )}
-                                                >
-                                                    {item.title}
-                                                </Link>
+                                                <div key={itemIndex} className="flex flex-col">
+                                                    <Link
+                                                        href={item.href}
+                                                        className={cn(
+                                                            buttonVariants({ variant: "ghost" }),
+                                                            "w-full justify-start h-9 px-3 text-[14.5px] font-medium transition-colors cursor-pointer",
+                                                            isActive || isChildActive
+                                                                ? "text-primary font-bold bg-primary/10 hover:bg-primary/10 hover:text-primary"
+                                                                : "text-gray-600 hover:text-primary hover:bg-transparent"
+                                                        )}
+                                                    >
+                                                        {item.title}
+                                                    </Link>
+                                                    {hasChildren ? (
+                                                        <div className="ml-4 mt-1 flex flex-col space-y-[2px] border-l border-gray-200 pl-2">
+                                                            {item.children.map((child, childIndex) => {
+                                                                const isChildLinkActive = mounted && pathname === child.href;
+                                                                return (
+                                                                    <Link
+                                                                        key={childIndex}
+                                                                        href={child.href}
+                                                                        className={cn(
+                                                                            buttonVariants({ variant: "ghost" }),
+                                                                            "w-full justify-start h-8 px-3 text-[13.5px] font-medium transition-colors cursor-pointer",
+                                                                            isChildLinkActive
+                                                                                ? "text-primary font-bold bg-primary/10 hover:bg-primary/10 hover:text-primary"
+                                                                                : "text-gray-500 hover:text-primary hover:bg-transparent"
+                                                                        )}
+                                                                    >
+                                                                        {child.title}
+                                                                    </Link>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    ) : null}
+                                                </div>
                                             );
                                         })}
                                     </div>

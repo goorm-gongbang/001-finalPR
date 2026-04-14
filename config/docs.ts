@@ -24,21 +24,30 @@ export const docsConfig = {
         {
             title: "클라우드 인프라",
             items: [
+                { title: "개요", href: "/infrastructure/overview" },
                 { title: "환경 구성", href: "/infrastructure/environment" },
                 { title: "인프라 아키텍처", href: "/infrastructure/architecture" },
                 { title: "배포/GitOps", href: "/infrastructure/gitops" },
                 { title: "트래픽 대응", href: "/infrastructure/traffic" },
-                { title: "장애 대응", href: "/infrastructure/failover" },
+                {
+                    title: "장애 대응",
+                    href: "/infrastructure/failover",
+                    children: [
+                        { title: "GitOps 롤백", href: "/infrastructure/gitops-rollback" },
+                    ],
+                },
                 { title: "모니터링", href: "/infrastructure/monitoring" },
             ],
         },
         {
             title: "보안",
             items: [
+                { title: "개요", href: "/security/overview" },
                 { title: "보안 흐름", href: "/security/flow" },
                 { title: "Istio/mTLS", href: "/security/istio-mtls" },
                 { title: "클라이언트 보안", href: "/security/client" },
-                { title: "IAM 접근 제어", href: "/security/iam" },
+                { title: "접근 제어", href: "/security/iam" },
+                { title: "클러스터 정책", href: "/security/kyverno" },
                 { title: "봇 대응 체계", href: "/security/bot-defense" },
             ],
         },
