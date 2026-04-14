@@ -228,16 +228,16 @@ body {
   align-items: center;
   justify-content: center;
   overflow: auto;
-  max-height: 88vh;
-  min-height: 60vh;
+  max-height: 84vh;
+  min-height: 52vh;
   padding: 2rem;
 }
 
 .doc-image-dialog__img {
   display: block;
+  width: min(100%, 1200px);
   max-width: 100%;
-  max-height: calc(88vh - 4rem);
-  width: auto;
+  max-height: calc(84vh - 4rem);
   height: auto;
   margin: 0 auto;
   border-radius: 18px;
@@ -301,6 +301,7 @@ body {
   }
 
   .doc-image-dialog__img {
-    max-height: calc(88vh - 2rem);
+    width: 100%;
+    max-height: calc(84vh - 2rem);
   }
 }
