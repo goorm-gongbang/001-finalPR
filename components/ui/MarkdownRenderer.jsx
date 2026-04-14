@@ -117,6 +117,49 @@ function MermaidChart({ chart }) {
     );
 }
 
+function ZoomableImage({ src, alt = "" }) {
+    const [isOpen, setIsOpen] = useState(false);
+
+    if (!src) return null;
+
+    return (
+        <>
+            <div className="doc-image-shell">
+                <button
+                    type="button"
+                    className="doc-image-preview"
+                    onClick={() => setIsOpen(true)}
+                    aria-label={alt ? `${alt} 이미지 확대 보기` : "이미지 확대 보기"}
+                >
+                    <span className="doc-image-preview__icon" aria-hidden="true">
+                        <span className="doc-image-preview__icon-badge">
+                            <Maximize2Icon className="size-4" />
+                        </span>
+                    </span>
+                    <img src={src} alt={alt} className="doc-image-preview__img" />
+                </button>
+            </div>
+
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                <DialogHeader className="sr-only">
+                    <DialogTitle>{alt || "이미지 확대 보기"}</DialogTitle>
+                    <DialogDescription>문서 이미지를 큰 화면으로 확인합니다.</DialogDescription>
+                </DialogHeader>
+                <DialogContent
+                    className="w-[min(96vw,1440px)] max-w-[min(96vw,1440px)] overflow-hidden rounded-[28px] border border-slate-200 bg-white p-0 sm:max-w-[min(96vw,1440px)]"
+                    showCloseButton
+                >
+                    <div className="doc-image-dialog">
+                        <div className="doc-image-dialog__canvas">
+                            <img src={src} alt={alt} className="doc-image-dialog__img" />
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
+        </>
+    );
+}
+
 export function MarkdownRenderer({ content }) {
     return (
         <ReactMarkdown
@@ -136,7 +179,11 @@ export function MarkdownRenderer({ content }) {
                             {children}
                         </code>
                     );
-                }
+                },
+                img(props) {
+                    const { src, alt } = props;
+                    return <ZoomableImage src={src} alt={alt} />;
+                },
             }}
         >
             {content}

@@ -169,6 +169,81 @@ body {
   font-family: Arial, Helvetica, sans-serif !important;
 }
 
+.doc-image-shell {
+  margin: 2rem 0;
+}
+
+.doc-image-preview {
+  position: relative;
+  display: block;
+  width: 100%;
+  cursor: zoom-in;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid #dbe7e3;
+  background: linear-gradient(180deg, #f8fffd 0%, #ffffff 100%);
+  padding: 0;
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.08);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.doc-image-preview:hover {
+  transform: translateY(-2px);
+  border-color: #8bd9c6;
+  box-shadow: 0 24px 42px rgba(15, 23, 42, 0.12);
+}
+
+.doc-image-preview__icon {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  z-index: 1;
+}
+
+.doc-image-preview__icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid #c7ede3;
+  background: rgba(255, 255, 255, 0.94);
+  padding: 0.55rem;
+  color: #0f172a;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.doc-image-preview__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+}
+
+.doc-image-dialog {
+  background: linear-gradient(180deg, #f8fffd 0%, #ffffff 100%);
+}
+
+.doc-image-dialog__canvas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  max-height: 88vh;
+  min-height: 60vh;
+  padding: 2rem;
+}
+
+.doc-image-dialog__img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(88vh - 4rem);
+  width: auto;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 18px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+}
+
 @media (max-width: 1024px) {
   .mermaid-preview {
     padding: 0.85rem;
@@ -183,6 +258,10 @@ body {
   }
 
   .mermaid-dialog__canvas {
+    padding: 1.5rem;
+  }
+
+  .doc-image-dialog__canvas {
     padding: 1.5rem;
   }
 }
@@ -209,5 +288,19 @@ body {
   .mermaid-dialog__canvas .mermaid-diagram--fullscreen {
     min-height: calc(60vh - 3rem);
     padding: 0.5rem;
+  }
+
+  .doc-image-preview__icon {
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+
+  .doc-image-dialog__canvas {
+    min-height: 50vh;
+    padding: 1rem;
+  }
+
+  .doc-image-dialog__img {
+    max-height: calc(88vh - 2rem);
   }
 }
