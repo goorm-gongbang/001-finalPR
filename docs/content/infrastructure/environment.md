@@ -1,6 +1,6 @@
 # 환경 구성
 
-인프라팀은 Dev, Staging, Prod 세 가지 환경을 목적에 따라 분리하여 운영합니다. Dev에서 기능을 개발하고, Staging에서 운영 환경과 동일한 구성으로 검증한 뒤, Prod에 반영합니다.
+Playball은 Dev, Staging, Prod 세 가지 환경을 목적에 따라 분리하여 운영합니다. Dev에서 기능을 개발하고, Staging에서 운영 환경과 동일한 구성으로 검증한 뒤, Prod에 반영합니다.
 
 ---
 

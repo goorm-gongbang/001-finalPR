@@ -4,6 +4,18 @@ Playball 인프라는 `Dev`, `Staging`, `Prod` 환경을 분리해 운영하며,
 
 ---
 
+## 인프라 구성 목적
+
+| 항목 | 내용 |
+|---|---|
+| **환경 분리** | Dev, Staging, Prod를 목적에 따라 분리해 변경 영향과 검증 범위를 나눔 |
+| **선언형 운영** | Terraform, Helm, ArgoCD 기준으로 인프라와 배포 구성을 코드로 관리 |
+| **트래픽 대응** | 티켓 오픈 시점의 급격한 요청 증가를 KEDA, HPA, Karpenter로 대응 |
+| **복구 기준 분리** | 애플리케이션 복구는 GitOps, 데이터 복구는 RDS PITR과 `pg_dump -> S3` 기준으로 분리 |
+| **관측 일원화** | 메트릭, 로그, 트레이스를 Grafana 기반으로 통합 확인 |
+
+---
+
 ## 구성 범위
 
 | 구분 | 내용 |
@@ -13,7 +25,7 @@ Playball 인프라는 `Dev`, `Staging`, `Prod` 환경을 분리해 운영하며,
 | **클러스터 부트스트랩** | ESO, ArgoCD, Karpenter, DB 초기화 |
 | **배포 방식** | Helm + ArgoCD 기반 GitOps |
 | **트래픽 대응** | KEDA, HPA, Karpenter |
-| **장애 대응** | Multi-AZ, GitOps 롤백, RDS PITR, `pg_dump -> S3` |
+| **장애 대응** | Multi-AZ, 배포 복구 검증, RDS PITR, `pg_dump -> S3` |
 | **관측 체계** | Prometheus, Loki, Tempo, Grafana, Alertmanager |
 
 ---
@@ -31,14 +43,13 @@ flowchart LR
 
 ---
 
-## 인프라 문서 구성
+## 사용 기술
 
-| 문서 | 내용 |
+| 영역 | 기술 |
 |---|---|
-| **환경 구성** | 환경별 차이와 운영 목적 |
-| **인프라 아키텍처** | 저장소 역할 분리와 전체 구조 |
-| **CI/CD** | 선언형 배포 흐름과 반영 기준 |
-| **트래픽 대응** | 피크 트래픽 대응 방식 |
-| **장애 대응** | 고가용성, 백업, 복구 기준 |
-| **GitOps 롤백** | 설정 오류 복구 테스트 결과 |
-| **모니터링** | 메트릭, 로그, 트레이스, 알람 체계 |
+| **클라우드** | AWS EKS, RDS PostgreSQL, ElastiCache Redis, ALB, Route53, ACM |
+| **프로비저닝** | Terraform |
+| **배포** | Helm, ArgoCD, TeamCity, ECR |
+| **오토스케일링** | KEDA, HPA, Karpenter |
+| **시크릿/권한** | External Secrets Operator, IRSA, AWS IAM Identity Center SSO |
+| **관측성** | Prometheus, Alertmanager, Loki, Tempo, Thanos, Grafana |

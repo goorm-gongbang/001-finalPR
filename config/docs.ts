@@ -31,7 +31,7 @@ export const docsConfig = {
                     title: "CI/CD",
                     href: "/infrastructure/gitops",
                     children: [
-                        { title: "GitOps 롤백", href: "/infrastructure/gitops-rollback" },
+                        { title: "배포 복구 검증", href: "/infrastructure/gitops-rollback" },
                     ],
                 },
                 { title: "트래픽 대응", href: "/infrastructure/traffic" },
