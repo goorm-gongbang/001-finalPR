@@ -31,7 +31,7 @@ export default async function DocPage({ params }) {
                 <Breadcrumb>
                     <BreadcrumbList>
                         <BreadcrumbItem>
-                            <BreadcrumbLink href="/docs">프로젝트 소개</BreadcrumbLink>
+                            <BreadcrumbLink href="/planning/overview">프로젝트 소개</BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>

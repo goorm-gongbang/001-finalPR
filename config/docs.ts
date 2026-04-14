@@ -1,6 +1,6 @@
 export const docsConfig = {
     mainNav: [
-        { title: "프로젝트 소개", href: "/docs" },
+        { title: "프로젝트 소개", href: "/planning/overview" },
         { title: "Sandbox", href: "/sandbox" },
     ],
     sidebarNav: [
