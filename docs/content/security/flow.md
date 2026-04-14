@@ -14,12 +14,12 @@ flowchart LR
     ISTIO --> APP[Application<br/>JWT 검증 + Admission Token 검증]
 ```
 
-| 계층 | 구성 | 역할 | 상태 |
-|---|---|---|---|
-| **Edge** | CloudFront + AWS Shield Standard | 대규모 트래픽 흡수, 정적 캐시, 외부 진입점 통합 | ✅ 운영 |
-| **Ingress** | ALB + Security Group | 외부 트래픽 수신, Ingress Gateway 전달 | ✅ 운영 |
-| **Service Mesh** | Istio Ingress Gateway | EnvoyFilter + Lua 검사, Rate Limit, ext_authz 연동, 내부 통신 암호화 | ✅ 운영 |
-| **Application** | API Gateway, Auth-Guard, Queue, Seat, Order | JWT 검증, Refresh Token 처리, Admission Token 검증 | ✅ 운영 |
+| 계층 | 구성 | 역할 |
+|---|---|---|
+| **Edge** | CloudFront + AWS Shield Standard | 대규모 트래픽 흡수, 정적 캐시, 외부 진입점 통합 |
+| **Ingress** | ALB + Security Group | 외부 트래픽 수신, Ingress Gateway 전달 |
+| **Service Mesh** | Istio Ingress Gateway | EnvoyFilter + Lua 검사, Rate Limit, ext_authz 연동, 내부 통신 암호화 |
+| **Application** | API Gateway, Auth-Guard, Queue, Seat, Order | JWT 검증, Refresh Token 처리, Admission Token 검증 |
 
 ---
 
