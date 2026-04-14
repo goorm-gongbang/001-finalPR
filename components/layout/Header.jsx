@@ -56,8 +56,8 @@ export function Header() {
         <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-200">
             <div className="flex h-16 items-center px-8 w-full justify-between gap-6">
                 <div className="flex items-center h-full sm:w-[300px] shrink-0">
-                    <Link href="/" className="flex items-center mr-8">
-                        <img src="/playball_logo.svg" alt="Playball Logo" className="h-[22px] w-auto object-contain" />
+                    <Link href="/docs/planning/overview" className="flex items-center mr-8">
+                        <img src="/playball_logo.svg" alt="Playball Logo" className="h-[32px] w-auto object-contain" />
                     </Link>
                     <nav className="flex items-center text-[15px] font-semibold text-gray-500">
                         <ToggleGroup
