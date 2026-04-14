@@ -3,6 +3,16 @@ import { DocPageLayout } from "@/components/docs/DocPageLayout";
 export default function Page() {
     return (
         <DocPageLayout category="development" title="개요">
+            <h1>프론트엔드 개요</h1>
+            <p>
+                프론트엔드팀은 경기 상세 조회 부터 좌석 추천, 좌석 선택, 주문서 작성, 결제까지 이어지는 티켓 예매 플로우를 구현했습니다.
+                <strong>Next.js</strong> 기반의 <strong>동적 라우팅</strong>을 사용하여 경기별 상세 페이지와 예매 페이지를 구성했으며,
+                <strong> React</strong>와 <strong>TypeScript</strong>를 활용해 예매 옵션, 추천 상태, 좌석 선택, 결제 정보 등 복잡한 UI 상태를 <strong>타입 안정성</strong> 있게 관리했습니다.
+                또한 API 응답 상태에 따른 에러 처리, 인증 상태 기반 접근 제어, 반응형 레이아웃 대응, 툴팁과 모달 등 <strong>인터랙션 UI 개선</strong>을 통해 예매 과정에서 발생할 수 있는 <strong>예외 상황</strong>과 <strong>사용성 문제</strong>를 줄이는 데 중점을 두었습니다.
+            </p>
+
+            <hr />
+
             <h1>백엔드 개요</h1>
             <p>
                 백엔드팀은 두 가지 목표를 중심으로 시스템을 구축했습니다.
