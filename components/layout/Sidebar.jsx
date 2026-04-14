@@ -25,7 +25,7 @@ export function AppSidebar({ items }) {
     const defaultExpanded = React.useMemo(() => items.map((_, index) => String(index)), [items]);
 
     return (
-        <Sidebar className="mt-16 w-[260px] border-r-gray-200">
+        <Sidebar className="mt-16 h-[calc(100svh-4rem)] w-[260px] border-r-gray-200">
             <SidebarContent className="p-4 bg-white">
                 <Accordion multiple defaultValue={defaultExpanded} className="w-full">
                     {items.map((section, index) => (
