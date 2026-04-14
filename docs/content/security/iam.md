@@ -1,6 +1,6 @@
 # IAM 접근 제어
 
-운영 접근은 `SSO`, `IAM Role`, `IRSA`, `Kubernetes RBAC`를 함께 사용해 나눕니다. 사람, CI/CD, 워크로드가 같은 권한을 공유하지 않도록 분리하는 것이 기준입니다.
+운영 접근은 `AWS IAM Identity Center`, `IAM Role`, `IRSA`, `Kubernetes RBAC`를 함께 사용합니다. 사람 계정 접근, 워크로드 권한, 감사 이벤트 수집을 같은 경로로 섞지 않고 분리합니다.
 
 ---
 
@@ -16,6 +16,11 @@ flowchart TD
 
     POD[서비스 계정] --> IRSA[IRSA]
     IRSA --> SECRET[Secrets Manager / AWS API]
+
+    AWS --> TRAIL[CloudTrail]
+    TRAIL --> EVENT[EventBridge]
+    EVENT --> LAMBDA[Lambda]
+    TRAIL --> ATHENA[Athena]
 ```
 
 ---
@@ -33,17 +38,17 @@ flowchart TD
 
 ## 사람 계정 접근
 
-- 사람 계정은 `AWS IAM Identity Center` 기반으로 접근합니다.
-- 관리자성 작업은 별도 Role을 통해 수행합니다.
+- 사람 계정은 `common/sso`, `common/iam` 구성 기준으로 `AWS IAM Identity Center` 기반으로 접근합니다.
+- 관리자성 작업은 별도 Role 전환을 통해 수행합니다.
 - 운영 접근에는 `MFA`를 기본 요구사항으로 둡니다.
-- 접근 기록은 CloudTrail과 접속 기록 저장소에 남깁니다.
+- 접근 기록은 CloudTrail과 `pis-access/` 경로에 남깁니다.
 
 ---
 
 ## 워크로드 접근
 
 - 클러스터 내부 워크로드는 `IRSA`를 기준으로 AWS 권한을 부여합니다.
-- `External Secrets Operator`, `External DNS`, `AWS Load Balancer Controller`, `Karpenter`, `RDS Backup` 등은 각각 필요한 Role만 사용합니다.
+- `External Secrets Operator`, `External DNS`, `AWS Load Balancer Controller`, `Karpenter`, `Grafana CloudWatch`, `RDS Backup`, `AI Defense` 등은 각각 필요한 Role만 사용합니다.
 - 시크릿은 장기 Access Key 대신 Secrets Manager와 IRSA 조합으로 주입합니다.
 
 ---
@@ -69,3 +74,14 @@ Kubernetes 내부 권한은 RBAC로 분리합니다.
 | **일반 감사로그 보관** | 총 400일 |
 | **개인정보처리시스템 접속기록** | 총 2년 |
 | **감사 저장소 보호** | Versioning, 무결성 검증, 필요 시 Object Lock |
+
+---
+
+## 추적 대상 예시
+
+| 항목 | 확인 방식 |
+|---|---|
+| **권한 변경** | IAM 정책, Role, Access Key 관련 CloudTrail 이벤트 확인 |
+| **Route53 변경** | `ChangeResourceRecordSets` 이벤트와 호출 주체 확인 |
+| **보안그룹/리소스 설정 변경** | EventBridge 보안 이벤트와 CloudTrail 원본 대조 |
+| **사후 조사** | Athena에서 CloudTrail S3 로그 조회 |

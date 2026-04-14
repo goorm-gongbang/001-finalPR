@@ -1,6 +1,6 @@
 # 클라이언트 보안
 
-클라이언트 보안은 브라우저에서 바로 노출되는 영역을 줄이고, 토큰과 응답 헤더를 보수적으로 다루는 데 초점을 맞춥니다. 이 영역은 프론트엔드 단독으로 끝나지 않고, 백엔드의 쿠키와 토큰 처리 방식까지 함께 봐야 합니다.
+클라이언트 보안은 브라우저 노출 범위를 줄이고, 응답 헤더와 쿠키 속성을 보수적으로 유지하는 방식으로 구성합니다.
 
 ---
 
@@ -12,7 +12,7 @@
 | **JavaScript 난독화** | 프로덕션 빌드 후 정적 청크 난독화 |
 | **응답 헤더 최소화** | `poweredByHeader` 비활성화 |
 
-운영 빌드에서는 소스맵을 브라우저에 노출하지 않고, 정적 청크에 난독화를 적용해 프론트엔드 내부 구조가 바로 읽히지 않도록 합니다.
+운영 빌드는 `build:prod` 스크립트에서 `next build` 이후 `javascript-obfuscator`를 적용합니다.
 
 ---
 
@@ -25,10 +25,11 @@ Next.js 응답 헤더에 기본 보안 정책을 적용합니다.
 | **Content-Security-Policy-Report-Only** | 허용된 출처만 단계적으로 검증 |
 | **X-Content-Type-Options: nosniff** | MIME 타입 추측 방지 |
 | **X-Frame-Options: DENY** | 클릭재킹 방지 |
+| **X-XSS-Protection** | 브라우저 XSS 보호 모드 유지 |
 | **Referrer-Policy** | 외부 전송 Referrer 최소화 |
 | **Permissions-Policy** | 카메라, 마이크, 위치 권한 기본 차단 |
 
-현재 CSP는 `Report-Only`로 검증 중이며, 운영 중 필요한 외부 출처를 확인하면서 적용 범위를 관리합니다.
+`connect-src`에는 API 도메인과 Faro 수집 경로가 포함되고, `img-src`에는 정적 자산과 S3 자산 경로가 포함됩니다.
 
 ---
 
@@ -36,12 +37,12 @@ Next.js 응답 헤더에 기본 보안 정책을 적용합니다.
 
 | 항목 | 운영 방식 |
 |---|---|
-| **Refresh Token** | `HttpOnly` 쿠키로 저장 |
+| **Refresh Token** | `HttpOnly`, `Secure`, `SameSite=Lax` 쿠키로 저장 |
 | **Admission Token** | `HttpOnly`, `Secure`, `SameSite=None` 쿠키 사용 |
 | **JWT 검증** | 클라이언트가 아니라 API Gateway와 백엔드에서 검증 |
 | **토큰 발급** | Auth-Guard가 RSA 기반 JWT 발급 담당 |
 
-클라이언트는 장기 인증 상태를 직접 검증하지 않고, 서버가 발급한 쿠키와 JWT를 기준으로 동작합니다. 검증 책임을 브라우저가 아니라 서버 쪽에 두는 구조입니다.
+Refresh Token 쿠키 속성은 `JwtProperties`에서 관리하고, Admission Token은 Queue 서비스에서 별도 쿠키로 발급합니다.
 
 ---
 

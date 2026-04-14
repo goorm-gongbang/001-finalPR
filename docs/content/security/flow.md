@@ -1,6 +1,6 @@
 # 보안 흐름
 
-외부 요청은 Edge, Ingress, 서비스 메시, 애플리케이션 계층을 순서대로 통과합니다. 각 계층은 같은 역할을 반복하지 않고, 서로 다른 지점에서 요청을 확인하고 제한합니다.
+외부 요청은 Edge, ALB, Istio Ingress Gateway, 애플리케이션 계층을 순서대로 통과합니다. 차단과 제한은 Gateway에서 먼저 처리하고, 인증과 토큰 검증은 애플리케이션 계층에서 이어집니다.
 
 ---
 
@@ -10,16 +10,16 @@
 flowchart LR
     USER[사용자] --> EDGE[CloudFront + AWS Shield]
     EDGE --> ALB[ALB + Security Group]
-    ALB --> ISTIO[Istio Ingress Gateway<br/>EnvoyFilter + Lua 필터<br/>Rate Limit + ext_authz]
-    ISTIO --> APP[Application<br/>JWT 검증 + AI Defense 연동]
+    ALB --> ISTIO[Istio Ingress Gateway<br/>EnvoyFilter + Lua<br/>Rate Limit + ext_authz]
+    ISTIO --> APP[Application<br/>JWT 검증 + Admission Token 검증]
 ```
 
 | 계층 | 구성 | 역할 | 상태 |
 |---|---|---|---|
 | **Edge** | CloudFront + AWS Shield Standard | 대규모 트래픽 흡수, 정적 캐시, 외부 진입점 통합 | ✅ 운영 |
 | **Ingress** | ALB + Security Group | 외부 트래픽 수신, Ingress Gateway 전달 | ✅ 운영 |
-| **Service Mesh** | Istio Ingress Gateway | L7 필터링, Rate Limit, ext_authz 연동, 내부 통신 암호화 | ✅ 운영 |
-| **Application** | API Gateway, Auth-Guard, AI Defense | JWT 검증, 인증 흐름, 행동 기반 판단 | ✅ 운영 |
+| **Service Mesh** | Istio Ingress Gateway | EnvoyFilter + Lua 검사, Rate Limit, ext_authz 연동, 내부 통신 암호화 | ✅ 운영 |
+| **Application** | API Gateway, Auth-Guard, Queue, Seat, Order | JWT 검증, Refresh Token 처리, Admission Token 검증 | ✅ 운영 |
 
 ---
 
@@ -39,20 +39,33 @@ flowchart LR
 
 ### Istio 계층
 
-- `EnvoyFilter + Lua` 보안 필터가 웹 공격 패턴과 비정상 요청을 확인합니다.
-- `Rate Limit`이 과도한 요청을 429로 제한합니다.
-- `ext_authz`가 AI Defense 어댑터와 연동되어 일부 민감 API에 추가 판단을 적용합니다.
+- `EnvoyFilter + Lua`가 SQL Injection, XSS, Path Traversal, Command Injection, SSRF, Log4Shell, Bot Scanner 패턴을 검사합니다.
+- 차단 모드는 `block`으로 운영하고, 차단 응답은 `403`을 반환합니다.
+- 외부 접근이 필요 없는 health, metrics, actuator, swagger 계열 경로는 접두사 기준으로 별도 차단합니다.
+- `Local Rate Limit`과 `Global Rate Limit`이 과도한 요청을 `429`로 제한합니다.
+- `ext_authz`는 `authz-adapter`와 gRPC로 연결되며, 대기열 진입, 추천 블록 조회, 좌석 자동 배정, 구역 조회, Hold 생성 경로를 대상으로 적용합니다.
 - 서비스 간 내부 통신은 `mTLS`를 기본으로 사용합니다.
 
 ### 애플리케이션 계층
 
 - `Auth-Guard`가 JWT를 발급하고 갱신합니다.
-- `API Gateway`와 각 서비스는 JWT와 내부 토큰을 기준으로 요청을 검증합니다.
-- `AI Defense`는 행동 기반 판단 결과를 제공하고, 차단 또는 지연 정책과 연동됩니다.
+- `API Gateway`와 각 서비스는 JWT를 기준으로 요청을 검증합니다.
+- `Queue`, `Seat` 흐름은 `Admission Token` 쿠키를 사용해 대기열 우회 여부를 다시 확인합니다.
+- `authz-adapter`는 AI Defense 평가 결과를 받아 Gateway 판단에 반영합니다.
 
 ---
 
-## 운영 관점에서 보는 기준
+## 보안 이벤트 전파
+
+| 구분 | 전파 경로 | 채널 |
+|---|---|
+| **EKS 내부 보안 이벤트** | Prometheus/Loki → Alertmanager → Discord | `#alerts-security-warning`, `#alerts-security-critical` |
+| **AWS 감사/보안 이벤트** | CloudTrail/EventBridge → Lambda → Discord | `#alerts-security-warning`, `#alerts-security-critical` |
+| **사후 추적** | CloudTrail S3 적재 → Athena 조회 | 수동 조사 |
+
+---
+
+## 점검 항목
 
 | 구분 | 확인 기준 |
 |---|---|
@@ -60,4 +73,4 @@ flowchart LR
 | **차단/제한** | 403, 429, 인증 실패율, WAF 차단 이벤트가 증가하는지 |
 | **내부 통신** | mTLS 정책과 예외 구성이 운영 상태와 일치하는지 |
 | **인증 흐름** | JWT 발급, 검증, 쿠키 처리 흐름이 정상인지 |
-| **봇 대응** | Rate Limit과 AI Defense 판단 결과가 서비스 영향 없이 동작하는지 |
+| **감사 추적** | CloudTrail 이벤트와 EventBridge 보안 이벤트가 수집되는지 |
