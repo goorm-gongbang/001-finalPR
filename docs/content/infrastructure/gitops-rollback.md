@@ -81,7 +81,6 @@ ORDER_CORE_URL: http://order-core.staging-webs.svc.cluster.local:8083
 ### 5.2 Grafana 관측 결과
 
 - Grafana 화면에서는 `5xx` 흔적과 `order-core` 관련 에러 경로를 확인하였습니다.
-- 보관 데이터와 캡처 시점 차이로 인해 모든 화면이 장애 시각과 완전히 일치하지는 않지만, 테스트 구간의 오류 흔적은 확인할 수 있었습니다.
 
 ![Grafana 5xx 발생 흔적](/images/infrastructure/recovery-test/01_grafana_5xx발생.png)
 
