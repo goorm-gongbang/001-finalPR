@@ -35,7 +35,7 @@ export default async function DocPage({ params }) {
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
-                            <BreadcrumbLink href={`/docs/${slug[0]}/overview`}>{category}</BreadcrumbLink>
+                            <BreadcrumbLink href={`/${slug[0]}/overview`}>{category}</BreadcrumbLink>
                         </BreadcrumbItem>
                         {subPathTitle && (
                             <>

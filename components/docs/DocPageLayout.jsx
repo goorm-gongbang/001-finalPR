@@ -31,7 +31,7 @@ export function DocPageLayout({ category, title, children }) {
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
-                            <BreadcrumbLink href={`/docs/${category}/overview`}>{categoryLabel}</BreadcrumbLink>
+                            <BreadcrumbLink href={`/${category}/overview`}>{categoryLabel}</BreadcrumbLink>
                         </BreadcrumbItem>
                         {title && (
                             <>

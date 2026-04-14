@@ -56,7 +56,7 @@ export function Header() {
         <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-200">
             <div className="flex h-16 items-center px-8 w-full justify-between gap-6">
                 <div className="flex items-center h-full sm:w-[300px] shrink-0">
-                    <Link href="/docs/planning/overview" className="flex items-center mr-8">
+                    <Link href="/planning/overview" className="flex items-center mr-8">
                         <img src="/playball_logo.svg" alt="Playball Logo" className="h-[32px] w-auto object-contain" />
                     </Link>
                     <nav className="flex items-center text-[15px] font-semibold text-gray-500">
@@ -99,12 +99,14 @@ export function Header() {
                 </div>
 
                 <div className="flex items-center justify-end sm:w-[300px] shrink-0">
-                    <Link
-                        href="#"
+                    <a
+                        href="https://playball.one"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="inline-flex whitespace-nowrap h-10 items-center justify-center rounded-lg bg-primary px-5 py-2 text-[14px] font-semibold text-white shadow hover:bg-primary/90 transition-colors"
                     >
                         서비스 바로가기
-                    </Link>
+                    </a>
                 </div>
             </div>
             <CommandDialog open={open} onOpenChange={setOpen}>
