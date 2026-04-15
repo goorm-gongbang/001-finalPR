@@ -36,6 +36,7 @@ export const docsConfig = {
                 },
                 { title: "트래픽 대응", href: "/infrastructure/traffic" },
                 { title: "장애 대응", href: "/infrastructure/failover" },
+                { title: "로그/백업 정책", href: "/infrastructure/log-backup-policy" },
                 { title: "모니터링", href: "/infrastructure/monitoring" },
             ],
         },

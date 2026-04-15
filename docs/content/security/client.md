@@ -25,7 +25,6 @@ Next.js 응답 헤더에 기본 보안 정책을 적용합니다.
 | **Content-Security-Policy-Report-Only** | 허용된 출처만 단계적으로 검증 |
 | **X-Content-Type-Options: nosniff** | MIME 타입 추측 방지 |
 | **X-Frame-Options: DENY** | 클릭재킹 방지 |
-| **X-XSS-Protection** | 브라우저 XSS 보호 모드 유지 |
 | **Referrer-Policy** | 외부 전송 Referrer 최소화 |
 | **Permissions-Policy** | 카메라, 마이크, 위치 권한 기본 차단 |
 

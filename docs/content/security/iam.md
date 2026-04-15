@@ -38,10 +38,10 @@ flowchart TD
 
 ## 사람 계정 접근
 
-- 사람 계정은 `common/sso`, `common/iam` 구성 기준으로 `AWS IAM Identity Center SSO` 기반으로 접근합니다.
+- 사람 계정은 `AWS IAM Identity Center SSO` 기반으로 접근합니다.
 - 관리자성 작업은 별도 Role 전환을 통해 수행합니다.
 - 운영 접근에는 `MFA`를 기본 요구사항으로 둡니다.
-- 접근 기록은 CloudTrail과 `pis-access/` 경로에 남깁니다.
+- 접근 기록은 CloudTrail과 별도 감사 로그 경로에 남깁니다.
 
 ---
 
@@ -73,7 +73,7 @@ Kubernetes 내부 권한은 RBAC로 분리합니다.
 | **실시간 이벤트 전파** | EventBridge → Lambda → Discord |
 | **일반 감사로그 보관** | 총 400일 |
 | **개인정보처리시스템 접속기록** | 총 2년 |
-| **감사 저장소 보호** | Versioning, 무결성 검증, 필요 시 Object Lock |
+| **감사 저장소 보호** | Versioning, HTTPS 강제, 무결성 검증 |
 
 ---
 

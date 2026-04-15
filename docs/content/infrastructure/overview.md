@@ -1,6 +1,6 @@
 # 인프라 개요
 
-Playball 인프라는 `Dev`, `Staging`, `Prod` 환경을 분리해 운영하며, AWS 기반 운영 환경에서는 `EKS`, `RDS`, `ElastiCache`, `ArgoCD`, `Karpenter`, `Prometheus`, `Loki`, `Tempo`를 중심으로 구성했습니다.
+Playball 인프라는 `Dev`, `Staging`, `Prod` 환경을 분리해 운영하며, AWS 기반 Prod 환경에서는 `CloudFront`, `EKS`, `RDS`, `ElastiCache`, `ArgoCD`, `Karpenter`, `Prometheus`, `Loki`, `Tempo`를 중심으로 구성했습니다.
 
 ---
 
@@ -26,7 +26,8 @@ Playball 인프라는 `Dev`, `Staging`, `Prod` 환경을 분리해 운영하며,
 | **배포 방식** | Helm + ArgoCD 기반 GitOps |
 | **트래픽 대응** | KEDA, HPA, Karpenter |
 | **장애 대응** | Multi-AZ, 배포 복구 검증, RDS PITR, `pg_dump -> S3` |
-| **관측 체계** | Prometheus, Loki, Tempo, Grafana, Alertmanager |
+| **로그/백업 정책** | 운영 로그, 감사 로그, 장기보관 증적 데이터 분리 보관 |
+| **관측 체계** | Prometheus, Loki, Tempo, Thanos, Grafana, Alertmanager |
 
 ---
 
@@ -47,7 +48,7 @@ flowchart LR
 
 | 영역 | 기술 |
 |---|---|
-| **클라우드** | AWS EKS, RDS PostgreSQL, ElastiCache Redis, ALB, Route53, ACM |
+| **클라우드** | AWS EKS, RDS PostgreSQL, ElastiCache Redis, CloudFront, ALB, Route53, ACM |
 | **프로비저닝** | Terraform |
 | **배포** | Helm, ArgoCD, TeamCity, ECR |
 | **오토스케일링** | KEDA, HPA, Karpenter |

@@ -42,7 +42,7 @@ flowchart LR
 ### 2. AI Defense 연동
 
 - `authz-adapter`가 AI Defense 평가 결과를 받아 Gateway 판단에 반영합니다.
-- ext_authz 대상 경로는 대기열 진입, 추천 블록 조회, 좌석 자동 배정, 구역 조회, Hold 생성입니다.
+- ext_authz는 대기열 진입과 좌석 선점 계열 민감 경로에 적용합니다.
 - ext_authz 장애 시에는 `failOpen: true`로 동작합니다.
 
 ### 3. 대기열 우회 방지
@@ -56,17 +56,6 @@ flowchart LR
 - `EnvoyFilter + Lua`는 SQL Injection, XSS, Path Traversal, Command Injection, LDAP Injection, XXE, SSRF, Log4Shell, Header Injection, Bot Scanner 패턴을 검사합니다.
 - 차단 모드는 `block`으로 운영합니다.
 - staging 구성에는 반복 탐지 기반 자동 블랙리스트 등록 경로가 포함됩니다.
-
----
-
-## 보안 알람 기준
-
-| 지표 | staging | prod Warning | prod Critical |
-|---|---|
-| **매크로/봇 탐지 수** | `>0건 / 5분` | `>50건 / 5분` | `>200건 / 5분` |
-| **차단 IP 수** | `>0건 / 5분` | `>100건 / 5분` | `>500건 / 5분` |
-| **인증 실패율** | `>0 / 5분` | `>30% / 5분` | `>50% / 5분` |
-| **WAF 차단 이벤트(403/429)** | `>0건 / 15분` | `>200건 / 15분` | `>1000건 / 15분` |
 
 ---
 

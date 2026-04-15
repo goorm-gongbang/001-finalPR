@@ -43,7 +43,7 @@ flowchart LR
 - 차단 모드는 `block`으로 운영하고, 차단 응답은 `403`을 반환합니다.
 - 외부 접근이 필요 없는 health, metrics, actuator, swagger 계열 경로는 접두사 기준으로 별도 차단합니다.
 - `Local Rate Limit`과 `Global Rate Limit`이 과도한 요청을 `429`로 제한합니다.
-- `ext_authz`는 `authz-adapter`와 gRPC로 연결되며, 대기열 진입, 추천 블록 조회, 좌석 자동 배정, 구역 조회, Hold 생성 경로를 대상으로 적용합니다.
+- `ext_authz`는 `authz-adapter`와 gRPC로 연결되며, 대기열 진입과 좌석 선점 계열 민감 경로를 대상으로 적용합니다.
 - 서비스 간 내부 통신은 `mTLS`를 기본으로 사용합니다.
 
 ### 애플리케이션 계층
