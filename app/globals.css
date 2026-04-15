@@ -47,6 +47,27 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.doc-columns {
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(320px, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+  margin: 1.75rem 0 2.5rem;
+}
+
+.doc-columns__item > :first-child {
+  margin-top: 0;
+}
+
+.doc-columns__item .mermaid-shell,
+.doc-columns__item .doc-image-shell {
+  margin: 0;
+}
+
+.doc-columns__item table {
+  margin: 0;
+}
+
 .mermaid-shell {
   margin: 2.5rem 0;
 }
@@ -245,6 +266,10 @@ body {
 }
 
 @media (max-width: 1024px) {
+  .doc-columns {
+    grid-template-columns: 1fr;
+  }
+
   .mermaid-preview {
     padding: 0.85rem;
   }

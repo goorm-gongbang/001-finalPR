@@ -49,6 +49,7 @@ export const docsConfig = {
                 { title: "접근 제어", href: "/security/iam" },
                 { title: "클러스터 정책", href: "/security/kyverno" },
                 { title: "봇 대응 체계", href: "/security/bot-defense" },
+                { title: "침투 테스트 조치 결과", href: "/security/pentest-remediation" },
             ],
         },
         {

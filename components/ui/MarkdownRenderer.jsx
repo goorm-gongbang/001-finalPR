@@ -161,32 +161,89 @@ function ZoomableImage({ src, alt = "" }) {
 }
 
 export function MarkdownRenderer({ content }) {
-    return (
+    const markdownComponents = {
+        code(props) {
+            const { children, className, node, ...rest } = props;
+            const match = /language-(\w+)/.exec(className || "");
+            const isMermaid = match && match[1] === "mermaid";
+
+            if (isMermaid) {
+                return <MermaidChart chart={String(children).replace(/\n$/, "")} />;
+            }
+
+            return (
+                <code {...rest} className={className}>
+                    {children}
+                </code>
+            );
+        },
+        img(props) {
+            const { src, alt } = props;
+            return <ZoomableImage src={src} alt={alt} />;
+        },
+    };
+
+    const renderMarkdownChunk = (chunk, key) => (
         <ReactMarkdown
+            key={key}
             remarkPlugins={[remarkGfm]}
-            components={{
-                code(props) {
-                    const { children, className, node, ...rest } = props;
-                    const match = /language-(\w+)/.exec(className || "");
-                    const isMermaid = match && match[1] === "mermaid";
-
-                    if (isMermaid) {
-                        return <MermaidChart chart={String(children).replace(/\n$/, "")} />;
-                    }
-
-                    return (
-                        <code {...rest} className={className}>
-                            {children}
-                        </code>
-                    );
-                },
-                img(props) {
-                    const { src, alt } = props;
-                    return <ZoomableImage src={src} alt={alt} />;
-                },
-            }}
+            components={markdownComponents}
         >
-            {content}
+            {chunk}
         </ReactMarkdown>
+    );
+
+    const columnPattern = /:::columns\s*\n([\s\S]*?)\n:::/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = columnPattern.exec(content)) !== null) {
+        if (match.index > lastIndex) {
+            parts.push({
+                type: "markdown",
+                content: content.slice(lastIndex, match.index),
+            });
+        }
+
+        parts.push({
+            type: "columns",
+            content: match[1],
+        });
+
+        lastIndex = match.index + match[0].length;
+    }
+
+    if (lastIndex < content.length) {
+        parts.push({
+            type: "markdown",
+            content: content.slice(lastIndex),
+        });
+    }
+
+    return (
+        <>
+            {parts.length === 0 && renderMarkdownChunk(content, "full")}
+            {parts.map((part, index) => {
+                if (part.type === "markdown") {
+                    return renderMarkdownChunk(part.content, `markdown-${index}`);
+                }
+
+                const columns = part.content
+                    .split(/\n---column---\n/g)
+                    .map((column) => column.trim())
+                    .filter(Boolean);
+
+                return (
+                    <div key={`columns-${index}`} className="doc-columns">
+                        {columns.map((column, columnIndex) => (
+                            <div key={`column-${index}-${columnIndex}`} className="doc-columns__item">
+                                {renderMarkdownChunk(column, `column-markdown-${index}-${columnIndex}`)}
+                            </div>
+                        ))}
+                    </div>
+                );
+            })}
+        </>
     );
 }
