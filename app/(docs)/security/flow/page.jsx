@@ -18,7 +18,7 @@ export default function Page() {
                 <tbody>
                     <tr><td><strong>CDN / Edge</strong></td><td>CloudFront + AWS Shield</td><td>DDoS 방어, Origin IP 숨김, 정적 자원 캐시</td><td>✅ 완료</td></tr>
                     <tr><td><strong>NLB / ALB</strong></td><td>AWS ALB + Security Group</td><td>CDN IP만 허용, 외부 직접 접근 차단</td><td>✅ 완료</td></tr>
-                    <tr><td><strong>Istio Gateway</strong></td><td>Coraza WAF + mTLS + Rate Limit</td><td>WAF, 서비스 간 암호화, 과도한 요청 제한</td><td>✅ 완료</td></tr>
+                    <tr><td><strong>Istio Gateway</strong></td><td>Lua WAF + mTLS + Rate Limit</td><td>WAF, 서비스 간 암호화, 과도한 요청 제한</td><td>✅ 완료</td></tr>
                     <tr><td><strong>애플리케이션</strong></td><td>JWT + AI Defense</td><td>인증/인가, 행동 기반 봇 탐지</td><td>🔧 개발 중</td></tr>
                 </tbody>
             </table>
@@ -43,7 +43,7 @@ export default function Page() {
 
             <h3>Istio Ingress Gateway (3차 방어선)</h3>
             <ul>
-                <li><strong>Coraza WAF</strong>: SQL Injection, XSS 등 웹 공격 차단 (자체 구현, 비용 $0)</li>
+                <li><strong>Lua WAF</strong>: SQL Injection, XSS 등 웹 공격 차단 (자체 구현, 비용 $0)</li>
                 <li><strong>Rate Limiting</strong>: 좌석 조회는 높은 허용치, 결제/예매는 429 즉시 반환</li>
                 <li><strong>mTLS</strong>: 서비스 간 내부 통신 전체를 상호 인증 + 암호화</li>
             </ul>

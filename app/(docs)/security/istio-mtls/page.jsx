@@ -36,8 +36,8 @@ export default function Page() {
 
             <hr />
 
-            <h2>Coraza WAF</h2>
-            <p>Istio Ingress Gateway에 Coraza WAF를 통합하여 웹 공격을 자체 구현으로 차단합니다.</p>
+            <h2>Lua WAF</h2>
+            <p>Istio Ingress Gateway에 Lua 기반 WAF를 통합하여 웹 공격을 자체 구현으로 차단합니다.</p>
             <ul>
                 <li><strong>차단 항목</strong>: SQL Injection, XSS, CSRF, 경로 순회(Path Traversal) 등 OWASP 주요 공격</li>
                 <li><strong>비용</strong>: AWS WAF 대비 비용 $0 (자체 구현)</li>

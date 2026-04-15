@@ -77,7 +77,7 @@ export default function Page() {
                     <tr>
                         <td><strong>보안</strong></td>
                         <td>외부망부터 애플리케이션까지 4계층 심층 방어(CDN, ALB, Istio WAF, mTLS)</td>
-                        <td>Istio, AWS Shield, Coraza</td>
+                        <td>Istio, AWS Shield, Lua</td>
                     </tr>
                     <tr>
                         <td><strong>AI</strong></td>
