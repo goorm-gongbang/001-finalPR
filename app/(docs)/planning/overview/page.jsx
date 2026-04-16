@@ -79,7 +79,7 @@ export default function Page() {
                     </tr>
                     <tr>
                         <td><strong>보안</strong></td>
-                        <td>외부망부터 애플리케이션까지 4계층 심층 방어(CDN, ALB, Istio WAF, mTLS), 앱 보안(JWT 인증, 보안 헤더, 난독화)</td>
+                        <td>외부망부터 애플리케이션까지 5계층 심층 방어: 엣지(CDN) · LB(ALB) · 메쉬(Istio WAF) · 내부통신(mTLS) · 앱(JWT·보안 헤더·난독화)</td>
                         <td>Istio, AWS Shield, Lua, JWT</td>
                     </tr>
                     <tr>
