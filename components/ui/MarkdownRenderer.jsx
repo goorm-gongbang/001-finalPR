@@ -122,6 +122,10 @@ function ZoomableImage({ src, alt = "" }) {
 
     if (!src) return null;
 
+    const disableZoom =
+        typeof src === "string" &&
+        src.includes("/images/infrastructure/grafana-dashboards/");
+
     let customWidth = null;
     let cleanSrc = src;
 
@@ -134,6 +138,19 @@ function ZoomableImage({ src, alt = "" }) {
         }
     } catch (e) {
         // parsing 에러 무시
+    }
+
+    if (disableZoom) {
+        return (
+            <div
+                className="doc-image-shell"
+                style={customWidth ? { maxWidth: /^\d+$/.test(customWidth) ? `${customWidth}px` : customWidth, margin: "0 auto" } : undefined}
+            >
+                <div className="doc-image-static">
+                    <img src={cleanSrc} alt={alt} className="doc-image-preview__img" />
+                </div>
+            </div>
+        );
     }
 
     return (

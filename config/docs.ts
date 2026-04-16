@@ -56,7 +56,12 @@ export const docsConfig = {
                     title: "모니터링",
                     href: "/infrastructure/monitoring",
                     children: [
-                        { title: "그라파나 대시보드", href: "/infrastructure/grafana-dashboards" },
+                        { title: "Grafana 운영 체계", href: "/infrastructure/grafana-dashboards" },
+                        { title: "인프라 관측", href: "/infrastructure/infrastructure-observability" },
+                        { title: "서비스 관측", href: "/infrastructure/service-observability" },
+                        { title: "보안 관측", href: "/infrastructure/security-observability" },
+                        { title: "비즈니스 관측", href: "/infrastructure/business-observability" },
+                        { title: "부하 테스트 관측", href: "/infrastructure/load-test-observability" },
                     ],
                 },
                 { title: "장애 대응", href: "/infrastructure/incident-response" },
