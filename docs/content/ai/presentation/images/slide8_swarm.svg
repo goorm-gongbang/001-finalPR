@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" font-family="'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs>
+    <marker id="arrGray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#616161"/>
+    </marker>
+    <marker id="arrBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1976d2"/>
+    </marker>
+    <marker id="arrOrange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#e65100"/>
+    </marker>
+    <marker id="arrGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2e7d32"/>
+    </marker>
+  </defs>
+
+  <rect width="1000" height="600" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="500" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="#212121">Attack — 스웜 구조</text>
+  <text x="500" y="60" text-anchor="middle" font-size="12" fill="#757575">한 PC 안에 에이전트 5~10개 + LLM 코디네이터 · PC 간은 독립 실행 (통신 없음)</text>
+
+  <!-- ══════════════ LEFT: Swarm (1 PC) ══════════════ -->
+  <rect x="30" y="85" width="680" height="490" rx="12" fill="#fbfbff" stroke="#b0bec5" stroke-width="1.2"/>
+  <text x="50" y="108" font-size="13" font-weight="700" fill="#37474f">한 PC 내부 — 스웜 (Swarm)</text>
+
+  <!-- Operator / CLI (centered, aligned with Agent 2 column) -->
+  <rect x="285" y="130" width="180" height="42" rx="8" fill="#eceff1" stroke="#607d8b" stroke-width="1.2"/>
+  <text x="375" y="156" text-anchor="middle" font-size="13" font-weight="600" fill="#263238">Operator / CLI</text>
+
+  <!-- Operator → agents: T-branch at y=200 -->
+  <line x1="375" y1="172" x2="375" y2="200" stroke="#616161" stroke-width="1.4"/>
+  <line x1="175" y1="200" x2="575" y2="200" stroke="#616161" stroke-width="1.4"/>
+  <line x1="175" y1="200" x2="175" y2="223" stroke="#616161" stroke-width="1.4" marker-end="url(#arrGray)"/>
+  <line x1="375" y1="200" x2="375" y2="223" stroke="#616161" stroke-width="1.4" marker-end="url(#arrGray)"/>
+  <line x1="575" y1="200" x2="575" y2="223" stroke="#616161" stroke-width="1.4" marker-end="url(#arrGray)"/>
+  <text x="385" y="193" font-size="10" fill="#616161">launch</text>
+
+  <!-- Agent row label -->
+  <text x="85" y="218" font-size="11" font-weight="600" fill="#0d47a1">에이전트 (결정론 · 최대 10)</text>
+
+  <!-- Agent boxes — grid: 3 columns at x=85 / 285 / 485, width=180 -->
+  <rect x="85" y="225" width="180" height="64" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.4"/>
+  <text x="175" y="250" text-anchor="middle" font-size="13" font-weight="700" fill="#0d47a1">Agent 1</text>
+  <text x="175" y="270" text-anchor="middle" font-size="10" fill="#546e7a">상태머신 워크플로우</text>
+
+  <rect x="285" y="225" width="180" height="64" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.4"/>
+  <text x="375" y="250" text-anchor="middle" font-size="13" font-weight="700" fill="#0d47a1">Agent 2</text>
+  <text x="375" y="270" text-anchor="middle" font-size="10" fill="#546e7a">상태머신 워크플로우</text>
+
+  <rect x="485" y="225" width="180" height="64" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.4"/>
+  <text x="575" y="250" text-anchor="middle" font-size="13" font-weight="700" fill="#0d47a1">Agent 3</text>
+  <text x="575" y="270" text-anchor="middle" font-size="10" fill="#546e7a">상태머신 워크플로우</text>
+
+  <!-- Agents → Event Bus -->
+  <line x1="175" y1="289" x2="175" y2="313" stroke="#1976d2" stroke-width="1.4" marker-end="url(#arrBlue)"/>
+  <line x1="375" y1="289" x2="375" y2="313" stroke="#1976d2" stroke-width="1.4" marker-end="url(#arrBlue)"/>
+  <line x1="575" y1="289" x2="575" y2="313" stroke="#1976d2" stroke-width="1.4" marker-end="url(#arrBlue)"/>
+  <text x="193" y="306" font-size="10" fill="#1976d2">이벤트 발행</text>
+
+  <!-- Event Bus — spans all 3 agent columns -->
+  <rect x="85" y="315" width="580" height="44" rx="8" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="1.4"/>
+  <text x="375" y="342" text-anchor="middle" font-size="13" font-weight="700" fill="#4a148c">Event Bus (비동기 · 논블로킹)</text>
+
+  <!-- Event Bus → LLM Coordinator (below Agent 1 column) -->
+  <line x1="175" y1="359" x2="175" y2="418" stroke="#6a1b9a" stroke-width="1.4" marker-end="url(#arrOrange)"/>
+  <text x="195" y="395" font-size="10" fill="#4a148c">이벤트 구독</text>
+
+  <!-- LLM Coordinator — aligned with Agent 1 column -->
+  <rect x="85" y="420" width="180" height="64" rx="8" fill="#fff3e0" stroke="#e65100" stroke-width="1.4"/>
+  <text x="175" y="445" text-anchor="middle" font-size="13" font-weight="700" fill="#bf360c">LLM Coordinator</text>
+  <text x="175" y="465" text-anchor="middle" font-size="10" fill="#bf360c">전략 조정 (구역 전환 등)</text>
+
+  <!-- LLM Coordinator → Strategy Store (horizontal, middle column gap) -->
+  <line x1="266" y1="452" x2="483" y2="452" stroke="#e65100" stroke-width="1.4" marker-end="url(#arrOrange)"/>
+  <text x="360" y="444" text-anchor="middle" font-size="10" fill="#e65100">write</text>
+
+  <!-- Strategy Store — aligned with Agent 3 column -->
+  <rect x="485" y="420" width="180" height="64" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="1.4"/>
+  <text x="575" y="445" text-anchor="middle" font-size="13" font-weight="700" fill="#1b5e20">Strategy Store</text>
+  <text x="575" y="465" text-anchor="middle" font-size="10" fill="#1b5e20">공유 전략 상태</text>
+
+  <!-- Strategy Store → Agents (right bypass around Event Bus) -->
+  <path d="M 665 452 L 692 452 L 692 257 L 667 257"
+        fill="none" stroke="#2e7d32" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arrGreen)"/>
+  <text x="632" y="305" text-anchor="middle" font-size="11" font-weight="700" fill="#2e7d32">전략 반영</text>
+
+  <!-- Bottom note -->
+  <rect x="85" y="510" width="580" height="52" rx="8" fill="#f5f5f5" stroke="#bdbdbd" stroke-dasharray="3 3"/>
+  <text x="375" y="531" text-anchor="middle" font-size="11" font-weight="600" fill="#424242">
+    에이전트는 LLM 응답을 기다리지 않는다 — 이벤트만 던지고 계속 진행
+  </text>
+  <text x="375" y="549" text-anchor="middle" font-size="10" fill="#616161">
+    LLM 지연이 실제 공격 흐름을 막지 않는 비동기 분리
+  </text>
+
+  <!-- ══════════════ RIGHT: Simulation Layer ══════════════ -->
+  <rect x="730" y="85" width="240" height="490" rx="12" fill="#fafafa" stroke="#b0bec5" stroke-width="1.2" stroke-dasharray="5 4"/>
+  <text x="750" y="108" font-size="13" font-weight="700" fill="#37474f">Simulation Layer</text>
+  <text x="750" y="124" font-size="10" fill="#607d8b">여러 사람이 각자 PC에서 실행</text>
+
+  <!-- PC cards — aligned center, consistent width -->
+  <rect x="770" y="150" width="160" height="54" rx="8" fill="#ffffff" stroke="#90a4ae"/>
+  <text x="850" y="174" text-anchor="middle" font-size="12" font-weight="700" fill="#263238">PC 1</text>
+  <text x="850" y="191" text-anchor="middle" font-size="10" fill="#546e7a">스웜 1개</text>
+
+  <rect x="770" y="214" width="160" height="54" rx="8" fill="#ffffff" stroke="#90a4ae"/>
+  <text x="850" y="238" text-anchor="middle" font-size="12" font-weight="700" fill="#263238">PC 2</text>
+  <text x="850" y="255" text-anchor="middle" font-size="10" fill="#546e7a">스웜 1개</text>
+
+  <rect x="770" y="278" width="160" height="54" rx="8" fill="#ffffff" stroke="#90a4ae"/>
+  <text x="850" y="302" text-anchor="middle" font-size="12" font-weight="700" fill="#263238">PC 3</text>
+  <text x="850" y="319" text-anchor="middle" font-size="10" fill="#546e7a">스웜 1개</text>
+
+  <text x="850" y="358" text-anchor="middle" font-size="18" font-weight="700" fill="#90a4ae">···</text>
+
+  <rect x="770" y="372" width="160" height="54" rx="8" fill="#ffffff" stroke="#90a4ae"/>
+  <text x="850" y="396" text-anchor="middle" font-size="12" font-weight="700" fill="#263238">PC N</text>
+  <text x="850" y="413" text-anchor="middle" font-size="10" fill="#546e7a">스웜 1개</text>
+
+  <!-- Simulation note -->
+  <rect x="760" y="460" width="180" height="90" rx="8" fill="#fff8e1" stroke="#ffb300" stroke-dasharray="3 3"/>
+  <text x="850" y="483" text-anchor="middle" font-size="11" font-weight="700" fill="#bf360c">PC 간 통신 없음</text>
+  <text x="850" y="505" text-anchor="middle" font-size="10" fill="#6d4c41">실제 공격도 중앙집중</text>
+  <text x="850" y="521" text-anchor="middle" font-size="10" fill="#6d4c41">봇넷보다 독립 분산이</text>
+  <text x="850" y="537" text-anchor="middle" font-size="10" fill="#6d4c41">많아 이 방식으로 설계</text>
+</svg>

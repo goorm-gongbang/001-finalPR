@@ -18,18 +18,10 @@
 
 ## 전이 흐름
 
-```
-S0 ── 초기화 ──→ S1 ── 예매 진입 ──→ S2 ── 대기열 ─┬─→ S4  → S5  → SX (DONE)
-                                                     │        ↓ (직접 좌석 선택 모드)
-                                                     │       SX (BLOCKED)
-                                                     │
-                                                     └─→ S4R → S5R → SX (DONE)
-                                                              ↓ (좌석 추천 모드)
-                                                             SX (BLOCKED)
+![LangGraph FlowState state machine](/images/ai/attack/flowstate.png)
 
-[모든 상태] ── 보안 챌린지 감지 ──→ S3 ── 풀이 성공 ──→ 이전 상태로 복귀
-[모든 상태] ── 치명적 실패 ──→ SX (BLOCKED / ABORT)
-```
+> 실선 = 정상 전이, 점선 = 실패 / 인터럽트.
+> S3는 어떤 활성 상태에서도 발생 가능하고, 풀이 성공 시 `last_non_security_state`로 복귀 (공격 에이전트는 방어를 블랙박스로 가정).
 
 ## 상태별 반환 규칙
 

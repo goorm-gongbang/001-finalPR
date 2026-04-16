@@ -20,30 +20,14 @@ AI Defense는 **Online Plane**(실시간 판단)과 **Offline Plane**(정책 분
 
 > **이 분리가 AI팀 설계 철학의 출발점**입니다. 거의 모든 후속 결정이 이 원칙에서 파생됩니다.
 
-## 요청 흐름
+## 아키텍처 다이어그램
 
-```
-[사용자 브라우저]  마우스 행동 데이터 포함
-      ↓
-[서비스 메시 게이트웨이 (Envoy + Istio)]  중요 API만 선별
-      ↓
-[인증·방어 어댑터]  판단 요청 변환
-      ↓
-[AI Defense 런타임 (4단 파이프라인)]
-      ↓ ↕
-[인메모리 저장소 (Redis)]  세션 상태
-      ↓
-[백엔드 API]  비즈니스 로직
+![AI Defense architecture](/images/ai/defense/architecture.png)
 
-         ─── Offline Plane ───
-
-[런타임 감사 로그] → [S3 아카이브] → [ETL] → [ClickHouse 분석 저장소]
-                                                ├→ [정책 자동 최적화기]
-                                                │      → [PostgreSQL 정책 권위]
-                                                │      → 런타임 캐시 재동기화
-                                                └→ [사후 검토 도우미]
-                                                       → 의심 세션만 백엔드 제재
-```
+> **Online Plane** (초록 빗금): Browser → Istio Ingress Gateway → authz-adapter → Runtime 4단 파이프라인 ↔ Redis. allow 판정 시 Envoy가 Backend로 포워딩.
+> **Offline Plane** (회색 빗금): Runtime audit → S3 → ETL → ClickHouse → { Policy Optimizer · Post-Review Copilot } → PostgreSQL (정책 권위) → Projection resync → Redis 재동기화.
+>
+> 선 색 범례: **파랑** = 요청 경로, **금색** = Runtime ↔ Redis, **보라** = offline 분석 파이프라인, **주황** = 정책 제어 평면, **초록** = 정책 권위 → 서빙 동기화.
 
 ## 주요 컴포넌트
 

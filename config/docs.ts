@@ -155,14 +155,94 @@ export const docsConfig = {
       ],
     },
     {
-      title: "AI",
+      title: "AI — 공격 에이전트",
       items: [
-        { title: "AI 방어 개요", href: "/ai/overview" },
-        { title: "공격 에이전트", href: "/ai/attack-agent" },
-        { title: "하이브리드 아키텍처", href: "/ai/hybrid-architecture" },
-        { title: "텔레메트리", href: "/ai/telemetry" },
-        { title: "런타임 탐지", href: "/ai/runtime-detection" },
-        { title: "Control Plane", href: "/ai/control-plane" },
+        { title: "개요", href: "/ai/reference/attack/00-overview" },
+        { title: "아키텍처", href: "/ai/reference/attack/01-architecture" },
+        {
+          title: "FlowState 상태머신",
+          href: "/ai/reference/attack/02-workflow-states",
+        },
+        {
+          title: "오픈 시각 동기화",
+          href: "/ai/reference/attack/03-open-at-sync",
+        },
+        {
+          title: "마우스 궤적 합성",
+          href: "/ai/reference/attack/04-mouse-trajectory",
+        },
+        { title: "VQA 자동 풀이", href: "/ai/reference/attack/05-vqa-solver" },
+        {
+          title: "스웜 인프라",
+          href: "/ai/reference/attack/06-swarm-infrastructure",
+        },
+        {
+          title: "LLM 코디네이터",
+          href: "/ai/reference/attack/07-llm-coordinator",
+        },
+        {
+          title: "감사 · 증거 수집",
+          href: "/ai/reference/attack/08-audit-evidence",
+        },
+        {
+          title: "KPI 자동 집계",
+          href: "/ai/reference/attack/09-kpi-evaluation",
+        },
+        { title: "설정 및 실행", href: "/ai/reference/attack/10-configuration" },
+        {
+          title: "이벤트 카탈로그",
+          href: "/ai/reference/attack/11-events-reference",
+        },
+        { title: "트러블슈팅", href: "/ai/reference/attack/12-troubleshooting" },
+      ],
+    },
+    {
+      title: "AI — 방어 시스템",
+      items: [
+        { title: "개요", href: "/ai/reference/defense/00-overview" },
+        { title: "아키텍처", href: "/ai/reference/defense/01-architecture" },
+        { title: "Ext-Authz 연동", href: "/ai/reference/defense/02-ext-authz" },
+        {
+          title: "Runtime 판단 파이프라인",
+          href: "/ai/reference/defense/03-runtime-pipeline",
+        },
+        {
+          title: "위험 점수 계산 (Guard)",
+          href: "/ai/reference/defense/04-risk-scoring",
+        },
+        {
+          title: "Tier · Action · 히스테리시스",
+          href: "/ai/reference/defense/05-tier-action",
+        },
+        {
+          title: "Analyzer 신호",
+          href: "/ai/reference/defense/06-analyzer-signals",
+        },
+        { title: "VQA 2중 게이트", href: "/ai/reference/defense/07-vqa-gate" },
+        {
+          title: "정책 권위 · 런타임 캐시",
+          href: "/ai/reference/defense/08-policy-authority",
+        },
+        {
+          title: "오프라인 최적화기",
+          href: "/ai/reference/defense/09-offline-optimizer",
+        },
+        {
+          title: "Post-Review Copilot",
+          href: "/ai/reference/defense/10-post-review",
+        },
+        {
+          title: "Observability · ETL",
+          href: "/ai/reference/defense/11-observability",
+        },
+        {
+          title: "Storage · Deployment",
+          href: "/ai/reference/defense/12-storage-deployment",
+        },
+        {
+          title: "실패 모델 · 복구",
+          href: "/ai/reference/defense/13-failure-recovery",
+        },
       ],
     },
     {

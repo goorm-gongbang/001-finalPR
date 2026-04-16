@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 830" font-family="'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1976d2"/>
+    </marker>
+    <marker id="arrowPurple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#6a1b9a"/>
+    </marker>
+    <marker id="arrowGray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#616161"/>
+    </marker>
+  </defs>
+
+  <rect width="1100" height="830" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="550" y="40" text-anchor="middle" font-size="22" font-weight="700" fill="#212121">
+    AI Defense — 런타임 방어 + 사후 판단
+  </text>
+  <text x="550" y="64" text-anchor="middle" font-size="13" fill="#757575">
+    실시간에서 걸러내고, 끝난 후에 LLM이 두 갈래로 다시 확인한다
+  </text>
+
+  <!-- ═══════════════ RUNTIME BAND ═══════════════ -->
+  <rect x="40" y="90" width="1020" height="280" rx="14" fill="#f5f9ff" stroke="#90caf9" stroke-width="1.5"/>
+
+  <rect x="60" y="104" width="310" height="30" rx="6" fill="#1976d2"/>
+  <text x="215" y="124" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">
+    ① 실시간 런타임 · 결정론 (LLM 없음)
+  </text>
+  <text x="385" y="123" font-size="11" fill="#546e7a">요청 경로에서 즉시 판단 · 빠르고 예측 가능</text>
+
+  <!-- Pipeline boxes -->
+  <rect x="70" y="170" width="90" height="64" rx="8" fill="#ffffff" stroke="#1976d2" stroke-width="1.5"/>
+  <text x="115" y="197" text-anchor="middle" font-size="13" font-weight="600" fill="#0d47a1">요청</text>
+  <text x="115" y="216" text-anchor="middle" font-size="10" fill="#546e7a">브라우저</text>
+
+  <rect x="195" y="170" width="210" height="64" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+  <text x="300" y="195" text-anchor="middle" font-size="13" font-weight="700" fill="#0d47a1">3축 분석</text>
+  <text x="300" y="215" text-anchor="middle" font-size="11" fill="#546e7a">행동 · 패턴 · 상태</text>
+
+  <rect x="440" y="170" width="210" height="64" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+  <text x="545" y="195" text-anchor="middle" font-size="13" font-weight="700" fill="#0d47a1">등급 산정</text>
+  <text x="545" y="215" text-anchor="middle" font-size="11" fill="#546e7a">T0 · T1 · T2 · T3</text>
+
+  <rect x="685" y="170" width="210" height="64" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+  <text x="790" y="195" text-anchor="middle" font-size="13" font-weight="700" fill="#0d47a1">대응</text>
+  <text x="790" y="215" text-anchor="middle" font-size="11" fill="#546e7a">통과 / 지연 / 차단</text>
+
+  <rect x="930" y="170" width="90" height="64" rx="8" fill="#ffffff" stroke="#1976d2" stroke-width="1.5"/>
+  <text x="975" y="197" text-anchor="middle" font-size="13" font-weight="600" fill="#0d47a1">응답</text>
+  <text x="975" y="216" text-anchor="middle" font-size="10" fill="#546e7a">사용자</text>
+
+  <!-- Arrows between pipeline boxes -->
+  <line x1="161" y1="202" x2="193" y2="202" stroke="#1976d2" stroke-width="1.8" marker-end="url(#arrowBlue)"/>
+  <line x1="406" y1="202" x2="438" y2="202" stroke="#1976d2" stroke-width="1.8" marker-end="url(#arrowBlue)"/>
+  <line x1="651" y1="202" x2="683" y2="202" stroke="#1976d2" stroke-width="1.8" marker-end="url(#arrowBlue)"/>
+  <line x1="896" y1="202" x2="928" y2="202" stroke="#1976d2" stroke-width="1.8" marker-end="url(#arrowBlue)"/>
+
+  <!-- Gate callout -->
+  <line x1="545" y1="234" x2="545" y2="272" stroke="#fb8c00" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <rect x="180" y="272" width="740" height="70" rx="10" fill="#fff3e0" stroke="#fb8c00" stroke-width="1.5"/>
+  <text x="550" y="296" text-anchor="middle" font-size="13" font-weight="700" fill="#e65100">
+    + 좌석 선택 단계(S4·S5) 진입 시엔 등급과 무관하게 "보안 퀴즈" 게이트 강제
+  </text>
+  <text x="550" y="318" text-anchor="middle" font-size="11" fill="#bf360c">
+    정답 + 사람처럼 푸는 과정까지 검증 (2중 게이트)
+  </text>
+
+  <!-- ═════ Connector ═════ -->
+  <text x="550" y="396" text-anchor="middle" font-size="12" font-weight="600" fill="#616161">
+    모든 판단을 구조화 로그로 적재 (S3 → ClickHouse / PostgreSQL)
+  </text>
+  <line x1="550" y1="405" x2="550" y2="440" stroke="#616161" stroke-width="2" marker-end="url(#arrowGray)" stroke-dasharray="4 4"/>
+
+  <!-- ═══════════════ POST-REVIEW BAND ═══════════════ -->
+  <rect x="40" y="450" width="1020" height="340" rx="14" fill="#f8f3ff" stroke="#b39ddb" stroke-width="1.5"/>
+
+  <rect x="60" y="464" width="340" height="30" rx="6" fill="#6a1b9a"/>
+  <text x="230" y="484" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">
+    ② 사후 판단 · 오프라인 (LLM · 두 갈래 병렬)
+  </text>
+  <text x="415" y="483" font-size="11" fill="#6a1b9a">세션 종료 후 · 세션 단위 재검토 + 정책 파라미터 튜닝</text>
+
+  <!-- Shared input: 세션 종료 로그 -->
+  <rect x="60" y="610" width="160" height="70" rx="8" fill="#ffffff" stroke="#6a1b9a" stroke-width="1.5"/>
+  <text x="140" y="638" text-anchor="middle" font-size="13" font-weight="600" fill="#4a148c">세션 종료 로그</text>
+  <text x="140" y="657" text-anchor="middle" font-size="10" fill="#6a1b9a">S3 → ClickHouse</text>
+  <text x="140" y="672" text-anchor="middle" font-size="10" fill="#6a1b9a">→ PostgreSQL</text>
+
+  <!-- ===== Track A: backoffice_copilot ===== -->
+  <text x="260" y="544" font-size="12" font-weight="700" fill="#4a148c">A. 세션 단위 재검토 · <tspan fill="#6a1b9a" font-weight="600">backoffice_copilot</tspan></text>
+
+  <rect x="260" y="555" width="220" height="60" rx="8" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="1.5"/>
+  <text x="370" y="578" text-anchor="middle" font-size="12" font-weight="700" fill="#4a148c">회색지대 필터</text>
+  <text x="370" y="596" text-anchor="middle" font-size="10" fill="#6a1b9a">T1·T2 관찰 + 미차단 세션만</text>
+
+  <rect x="510" y="555" width="230" height="60" rx="8" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="1.5"/>
+  <text x="625" y="578" text-anchor="middle" font-size="12" font-weight="700" fill="#4a148c">LLM 판정</text>
+  <text x="625" y="596" text-anchor="middle" font-size="10" fill="#6a1b9a">NORMAL / SUSPICIOUS</text>
+
+  <rect x="770" y="555" width="260" height="60" rx="8" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="1.5"/>
+  <text x="900" y="578" text-anchor="middle" font-size="12" font-weight="700" fill="#4a148c">PostgreSQL + 백엔드 전달</text>
+  <text x="900" y="596" text-anchor="middle" font-size="10" fill="#6a1b9a">post_review_session_results</text>
+
+  <!-- Track A arrows -->
+  <line x1="481" y1="585" x2="508" y2="585" stroke="#6a1b9a" stroke-width="1.8" marker-end="url(#arrowPurple)"/>
+  <line x1="741" y1="585" x2="768" y2="585" stroke="#6a1b9a" stroke-width="1.8" marker-end="url(#arrowPurple)"/>
+
+  <!-- ===== Track B: OfflineOptimizer ===== -->
+  <text x="260" y="664" font-size="12" font-weight="700" fill="#4a148c">B. 정책 파라미터 튜닝 · <tspan fill="#6a1b9a" font-weight="600">OfflineOptimizer</tspan></text>
+
+  <rect x="260" y="675" width="220" height="60" rx="8" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="1.5"/>
+  <text x="370" y="698" text-anchor="middle" font-size="12" font-weight="700" fill="#4a148c">집계 지표</text>
+  <text x="370" y="716" text-anchor="middle" font-size="10" fill="#6a1b9a">블록률·지연·챌린지 통계 등</text>
+
+  <rect x="510" y="675" width="230" height="60" rx="8" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="1.5"/>
+  <text x="625" y="698" text-anchor="middle" font-size="12" font-weight="700" fill="#4a148c">LLM 파라미터 제안</text>
+  <text x="625" y="716" text-anchor="middle" font-size="10" fill="#6a1b9a">허용 파라미터만 수정</text>
+
+  <rect x="770" y="675" width="260" height="60" rx="8" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="1.5"/>
+  <text x="900" y="698" text-anchor="middle" font-size="12" font-weight="700" fill="#4a148c">단계적 배포 + 자동 롤백</text>
+  <text x="900" y="716" text-anchor="middle" font-size="10" fill="#6a1b9a">5% → 20% → 50% → 100%</text>
+
+  <!-- Track B arrows -->
+  <line x1="481" y1="705" x2="508" y2="705" stroke="#6a1b9a" stroke-width="1.8" marker-end="url(#arrowPurple)"/>
+  <line x1="741" y1="705" x2="768" y2="705" stroke="#6a1b9a" stroke-width="1.8" marker-end="url(#arrowPurple)"/>
+
+  <!-- Fork arrows from shared log to both tracks -->
+  <path d="M 220 630 C 240 630, 240 585, 258 585" fill="none" stroke="#6a1b9a" stroke-width="1.8" marker-end="url(#arrowPurple)"/>
+  <path d="M 220 660 C 240 660, 240 705, 258 705" fill="none" stroke="#6a1b9a" stroke-width="1.8" marker-end="url(#arrowPurple)"/>
+
+  <!-- Fallback note -->
+  <rect x="60" y="748" width="980" height="32" rx="8" fill="#faf5ff" stroke="#d1c4e9" stroke-dasharray="3 3"/>
+  <text x="550" y="769" text-anchor="middle" font-size="11" font-weight="600" fill="#4a148c">
+    두 트랙 모두 LLM 장애 시 규칙 기반 폴백으로 계속 동작 · 모든 결과는 audit log로 재현 가능
+  </text>
+
+  <!-- Bottom caption -->
+  <text x="550" y="812" text-anchor="middle" font-size="13" font-weight="600" fill="#424242">
+    실시간 = 빠르고 예측 가능 (결정론)  │  사후 = 세션 재검토 + 정책 학습 (LLM · 병렬)
+  </text>
+</svg>

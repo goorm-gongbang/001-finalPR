@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" font-family="'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <rect width="900" height="520" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="450" y="40" text-anchor="middle" font-size="20" font-weight="700" fill="#212121">AI Defense는 3가지 축을 동시에 본다</text>
+  <text x="450" y="62" text-anchor="middle" font-size="13" fill="#757575">한 축을 위장해도, 다른 축에서 흔적이 남는다</text>
+
+  <!-- Triangle (3 axes) -->
+  <polygon points="450,120 260,400 640,400"
+           fill="#f5f9ff" stroke="#90caf9" stroke-width="2"/>
+
+  <!-- Inner decoration -->
+  <polygon points="450,200 340,360 560,360"
+           fill="none" stroke="#bbdefb" stroke-dasharray="4 4"/>
+
+  <!-- Center label -->
+  <circle cx="450" cy="307" r="32" fill="#1976d2"/>
+  <text x="450" y="304" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">AI</text>
+  <text x="450" y="320" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Defense</text>
+
+  <!-- ===== Axis 1: 행동 (top) ===== -->
+  <circle cx="450" cy="120" r="14" fill="#1976d2"/>
+  <text x="450" y="125" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">1</text>
+  <text x="450" y="98" text-anchor="middle" font-size="17" font-weight="700" fill="#0d47a1">행동</text>
+  <text x="450" y="82" text-anchor="middle" font-size="12" fill="#546e7a">마우스 움직임·속도·떨림</text>
+
+  <!-- Example box for 행동 -->
+  <rect x="340" y="440" width="220" height="50" rx="8" fill="#e3f2fd" stroke="#90caf9"/>
+  <text x="450" y="461" text-anchor="middle" font-size="12" font-weight="700" fill="#0d47a1">예시</text>
+  <text x="450" y="480" text-anchor="middle" font-size="12" fill="#424242">너무 직선적 · 손떨림 거의 없음</text>
+  <line x1="450" y1="345" x2="450" y2="440" stroke="#bbdefb" stroke-dasharray="3 3"/>
+
+  <!-- ===== Axis 2: 패턴 (bottom-left) ===== -->
+  <circle cx="260" cy="400" r="14" fill="#1976d2"/>
+  <text x="260" y="405" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">2</text>
+  <text x="195" y="405" text-anchor="middle" font-size="17" font-weight="700" fill="#0d47a1">패턴</text>
+  <text x="195" y="425" text-anchor="middle" font-size="12" fill="#546e7a">짧은 시간 안의</text>
+  <text x="195" y="440" text-anchor="middle" font-size="12" fill="#546e7a">반복 행동</text>
+
+  <rect x="30" y="460" width="240" height="50" rx="8" fill="#e3f2fd" stroke="#90caf9"/>
+  <text x="150" y="481" text-anchor="middle" font-size="12" font-weight="700" fill="#0d47a1">예시</text>
+  <text x="150" y="500" text-anchor="middle" font-size="12" fill="#424242">1.5초 안에 좌석 3번 연속 클릭</text>
+
+  <!-- ===== Axis 3: 상태 (bottom-right) ===== -->
+  <circle cx="640" cy="400" r="14" fill="#1976d2"/>
+  <text x="640" y="405" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">3</text>
+  <text x="710" y="405" text-anchor="middle" font-size="17" font-weight="700" fill="#0d47a1">상태</text>
+  <text x="710" y="425" text-anchor="middle" font-size="12" fill="#546e7a">세션 누적</text>
+  <text x="710" y="440" text-anchor="middle" font-size="12" fill="#546e7a">맥락</text>
+
+  <rect x="630" y="460" width="240" height="50" rx="8" fill="#e3f2fd" stroke="#90caf9"/>
+  <text x="750" y="481" text-anchor="middle" font-size="12" font-weight="700" fill="#0d47a1">예시</text>
+  <text x="750" y="500" text-anchor="middle" font-size="12" fill="#424242">접속 내내 의심 행동이 쌓여 있음</text>
+</svg>

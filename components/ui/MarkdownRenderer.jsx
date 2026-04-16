@@ -215,6 +215,19 @@ export function MarkdownRenderer({ content }) {
             const { src, alt } = props;
             return <ZoomableImage src={src} alt={alt} />;
         },
+        a({ node, href, children, ...rest }) {
+            // Strip .md extension so relative doc links like
+            // [Foo](12-storage-deployment.md) route to /.../12-storage-deployment
+            const cleanHref =
+                typeof href === "string" && href.endsWith(".md")
+                    ? href.slice(0, -3)
+                    : href;
+            return (
+                <a href={cleanHref} {...rest}>
+                    {children}
+                </a>
+            );
+        },
         p({ node, children }) {
             const onlyChild =
                 node?.children?.length === 1 && node.children[0].tagName === "img";
