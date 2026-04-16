@@ -1,0 +1,384 @@
+# PlayBall 보안 방어 체계 현황
+
+> 백엔드 보안 구현 현황 — 최신 코드(v1.13.0-staging) 검증 기준
+>
+> 작성일: 2026-04-16 | 대상: Auth-Guard / API-Gateway / Queue / Seat / Order-Core
+
+---
+
+## 요약
+
+| 구분 | 건수 |
+|------|------|
+| 구현 완료 | **26건** |
+| 침투테스트 대응 패치 완료 | **6건** |
+| 추후 과제 (미구현) | 4건 |
+
+---
+
+## 1. 전체 방어 아키텍처
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│  외부 요청                                                               │
+│  ┌─────────────────────┐    ┌──────────────────────────────────┐        │
+│  │ 사용자 (브라우저/앱)   │    │ 공격자 (매크로/봇)                 │        │
+│  │ 프론트엔드 → API 요청  │    │ curl, Selenium, Playwright, 분산  │        │
+│  └─────────────────────┘    └──────────────────────────────────┘        │
+└──────────────────────────────────┬──────────────────────────────────────┘
+                                   ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│  인프라 레이어 (클라우드팀)                                                │
+│  Istio Sidecar · mTLS · 네트워크 정책 · Cloudflare WAF                   │
+└──────────────────────────────────┬──────────────────────────────────────┘
+                                   ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│  게이트웨이 레이어 (API-Gateway :8085)                                    │
+│  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌───────────────┐  │
+│  │JWT 인증 필터   │ │봇 UA 차단 필터│ │Rate Limiting │ │CORS Origin 검증│  │
+│  │RSA256 서명검증 │ │7종 UA 차단   │ │prod전용      │ │허용도메인만    │  │
+│  │블랙리스트 체크  │ │20자 미만 차단 │ │Redis INCR    │ │접근 허용      │  │
+│  │메서드 화이트리스│ │큐진입 POST만 │ │IP당 제한     │ │              │  │
+│  └──────────────┘ └──────────────┘ └──────────────┘ └───────────────┘  │
+└──────────────────────────────────┬──────────────────────────────────────┘
+                                   ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│  서비스 레이어                                                           │
+│  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌───────────────┐  │
+│  │ Auth-Guard   │ │    Queue     │ │     Seat     │ │  Order-Core   │  │
+│  │RSA JWT 발급   │ │Redis 대기열  │ │Redisson 분산락│ │주문 수량 제한  │  │
+│  │RTR 토큰 회전  │ │Admission Tok│ │Admission 검증 │ │Kafka 차단 소비 │  │
+│  │유저 차단/해제  │ │Pre-Queue 검증│ │Hold 메트릭   │ │DTO 유효성검증  │  │
+│  │Internal Key  │ │HttpOnly 쿠키 │ │              │ │              │  │
+│  └──────────────┘ └──────────────┘ └──────────────┘ └───────────────┘  │
+└──────────────────────────────────┬──────────────────────────────────────┘
+                                   ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│  데이터 레이어                                                           │
+│  ┌──────────────────┐ ┌──────────────────┐ ┌─────────────────────────┐  │
+│  │   PostgreSQL      │ │      Redis       │ │        Kafka            │  │
+│  │AES-256-GCM 암호화 │ │토큰 블랙리스트    │ │user-blocked 이벤트      │  │
+│  │email,nickname,    │ │Refresh Token     │ │payment-completed        │  │
+│  │phone 필드 암호화   │ │분산 락·Rate Limit│ │order-cancelled          │  │
+│  └──────────────────┘ └──────────────────┘ └─────────────────────────┘  │
+└──────────────────────────────────┬──────────────────────────────────────┘
+                          ◀◀ AI 방어 서버 연동 ▶▶
+┌─────────────────────────────────────────────────────────────────────────┐
+│  AI 방어 레이어 (AI팀)                                                   │
+│  실시간 봇 탐지 · 행동 패턴 분석 · LLM 사후 분석                            │
+│  차단 API: POST /internal/users/{userId}/block (X-Internal-Api-Key)      │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 2. 서비스별 방어 현황
+
+### 2.1 API-Gateway (라우팅 / 1차 필터링)
+
+| 방어 기능 | 설명 | 상태 | 방어 효과 | 구현 파일 |
+|----------|------|------|----------|----------|
+| **JWT 인증 필터** | RSA256 공개키 검증, 토큰 타입/만료/발급자 체크 | 구현 완료 | 미인증 요청 전면 차단, 위조 토큰 무효화 | `JwtAuthenticationFilter.java` |
+| **토큰 블랙리스트** | Redis에서 JTI 기반 실시간 확인 (Reactive) | 구현 완료 | 로그아웃/차단된 토큰 즉시 무효화 | `AccessTokenBlacklistRepository.java` |
+| **봇 User-Agent 차단** | curl, wget, python, selenium, puppeteer, playwright, headless 차단 + UA 20자 미만 차단 | 구현 완료 | 스크립트/자동화 도구 1차 차단 (UA 위조 시 우회 가능) | `BotUserAgentBlockFilter.java` |
+| **화이트리스트 HTTP 메서드 제한** | `WhitelistEntry(Set<HttpMethod>, pathPrefix)` 구조화, 공개 API는 GET만 허용 | 침투테스트 대응 | POST/PUT/DELETE로 공개 경로 우회 접근 차단 | `JwtAuthenticationFilter.java` |
+| **CORS Origin 검증** | `ALLOWED_ORIGINS` 환경변수 기반 WebFilter, OPTIONS preflight 처리 | 구현 완료 | 비허가 도메인에서의 브라우저 요청 차단 | `CorsGlobalFilter.java` |
+| **Rate Limiting (prod)** | Redis INCR + Lua 스크립트 + TTL 60초, IP별 로그인 10회/분, 일반 100회/분 | 침투테스트 대응 | 브루트포스/폴링 폭격 차단 (prod만, staging은 부하테스트용 해제) | `RateLimitingFilter.java` |
+| **Rate Limit 모니터링** | 429 응답 발생 시 clientIP/path/key 로깅 | 구현 완료 | Rate Limit 초과 IP 실시간 추적 | `RateLimitMonitoringFilter.java` |
+| **X-User-Id / X-Session-Id 헤더 주입** | Gateway에서 JWT 검증 후 다운스트림 서비스에 유저 정보 전달 | 구현 완료 | 다운스트림 서비스가 Gateway 인증을 신뢰 | `JwtAuthenticationFilter.java` |
+
+**필터 실행 순서**
+
+```
+요청 → RateLimitingFilter (order: -3, prod만)
+     → BotUserAgentBlockFilter (order: -2, 큐진입 POST만)
+     → JwtAuthenticationFilter (order: -1)
+     → CorsGlobalFilter
+     → RateLimitMonitoringFilter (order: LOWEST, 429 로깅)
+```
+
+**Rate Limiting 상세**
+
+```
+구현: Redis Lua 스크립트 (원자적 INCR + EXPIRE)
+
+local current = redis.call('INCR', KEYS[1])
+if current == 1 then
+  redis.call('EXPIRE', KEYS[1], tonumber(ARGV[1]))  -- TTL 60초
+end
+return current
+
+Key 패턴: rate_limit:{clientIP}:{endpoint}
+Redis 장애 시: Fail-open (가용성 우선, 요청 통과)
+```
+
+---
+
+### 2.2 Auth-Guard (인증 / 토큰 / 유저 관리)
+
+| 방어 기능 | 설명 | 상태 | 방어 효과 | 구현 파일 |
+|----------|------|------|----------|----------|
+| **RSA256 비대칭키 JWT** | Auth-Guard만 개인키(PKCS#8) 보유, 나머지 서비스는 공개키(X.509) 검증만 | 구현 완료 | 토큰 위조 불가, 개인키 유출 범위 최소화 | `JwtTokenProvider.java`, `RsaKeyUtils.java` |
+| **Refresh Token Rotation (RTR)** | refresh 시 기존 토큰 삭제 + 새 발급, sid(세션 ID) 유지 | 구현 완료 | Refresh Token 재사용 즉시 탐지 (탈취 의심 → 401) | `AuthService.java` |
+| **Access Token 블랙리스트** | 로그아웃 시 JTI를 Redis에 잔여 TTL만큼 저장 | 구현 완료 | 로그아웃 후 즉시 토큰 무효화 | `AccessTokenBlacklistRepository.java` |
+| **유저 차단/해제 API** | `POST /internal/users/{userId}/block`, `unblock` | 구현 완료 | AI 서버에서 실시간 차단 요청 가능 | `AuthController.java`, `AuthService.java` |
+| **Kafka user-blocked 이벤트** | 차단 후 `TransactionSynchronization.afterCommit()` → Kafka 발행 → Order-Core 전파 | 구현 완료 | 차단 시 해당 유저 주문 자동 검토 대기 (UNDER_REVIEW) | `AuthService.java`, `UserBlockedEventConsumer.java` |
+| **Internal API Key 필터** | timing-safe 비교 (`MessageDigest.isEqual`), `/internal/**`, `/loadtest/**` 보호 | 구현 완료 | 내부 API 무단 접근 방지, 타이밍 공격 방어 | `InternalApiKeyFilter.java` |
+| **차단 유저 로그인 거부** | 카카오/Dev 로그인 시 BLOCKED 상태 체크 → 403 | 구현 완료 | 차단된 유저의 서비스 재접근 차단 | `KakaoAuthService.java`, `DevAuthService.java` |
+| **OAuth Redirect URI 검증** | `allowedRedirectUris` 목록 기반 scheme+host+port 화이트리스트 | 구현 완료 | OAuth 토큰 탈취 (open redirect) 방지 | `KakaoOAuthClient.java` |
+| **RefreshToken IP/UA 저장** | 로그인 시 IP, User-Agent를 Redis(`RefreshTokenInfo`)에 기록 | 구현 완료 | 차단 시 IP 추적 가능, 사후 분석 기반 데이터 | `RefreshTokenRepository.java` |
+| **보안 메트릭 (Prometheus)** | 로그인 시도/성공, 매크로 탐지, IP 차단, 유저 차단/해제 카운터 | 구현 완료 | Grafana 대시보드에서 실시간 보안 현황 모니터링 | `AuthMetricsService.java` |
+
+**JWT 토큰 구조**
+
+```
+Access Token Claims:
+├─ sub: userId (subject)
+├─ aud: JWT_ACCESS_TOKEN_AUDIENCE
+├─ iss: JWT_ISSUER
+├─ iat: 발급 시각
+├─ exp: 만료 시각 (기본 15분)
+├─ jti: 고유 토큰 ID (블랙리스트 키)
+├─ tokenType: "ACCESS"
+├─ auth: 권한 (ROLE_USER 등)
+└─ sid: 세션 ID (RTR 시 유지)
+```
+
+**Refresh Token Rotation 흐름**
+
+```
+1. Client → POST /auth/token/refresh (쿠키에 Refresh Token)
+2. Auth-Guard: Redis에서 기존 RT 검증 (jti 일치 확인)
+3. 기존 RT 삭제 (Redis DEL)
+4. 새 Access Token + 새 Refresh Token 발급 (sid 유지)
+5. 새 RT를 Redis에 저장 (IP, UA 포함)
+6. 만약 삭제된 RT로 재요청 → 401 (탈취 의심)
+```
+
+**유저 차단 시 자동 처리 흐름**
+
+```
+AI 방어 서버
+│  POST /internal/users/{userId}/block
+│  Header: X-Internal-Api-Key: {secret}
+▼
+Auth-Guard
+├─ 1. User.status = BLOCKED (PostgreSQL)
+├─ 2. 차단 유저 로그인 시도 → 403 USER_ALREADY_BLOCKED
+├─ 3. TransactionSynchronization.afterCommit()
+└─ 4. Kafka publish → topic: user-blocked
+                        payload: { userId, occurredAt }
+       ▼
+Order-Core (KafkaListener)
+└─ 해당 userId의 활성 주문 → status = UNDER_REVIEW
+```
+
+---
+
+### 2.3 Queue (대기열 / Admission Token)
+
+| 방어 기능 | 설명 | 상태 | 방어 효과 | 구현 파일 |
+|----------|------|------|----------|----------|
+| **Redis Sorted Set 대기열** | score(타임스탬프) 기반 순서 보장, 스케줄러 1초 주기 100명 승격 | 구현 완료 | 선착순 순서 강제, 봇도 정상 대기 필요 | `QueueService.java`, `QueueRedisRepository.java` |
+| **Admission Token (RSA JWT)** | userId + matchId 바인딩, 15분 TTL, RSA256 서명 | 구현 완료 | 대기열 미통과 시 좌석 접근 불가, 다른 경기 토큰 재사용 차단 | `AdmissionTokenProvider.java` |
+| **Pre-Queue 검증 (booking-options)** | 큐 진입 전 예매 옵션 설정 여부 확인 (Redis 마커) | 구현 완료 | 예매 의도 없는 무분별한 큐 진입 차단 | `PreQueueValidationService.java` |
+| **Admission Token HttpOnly 쿠키** | `httpOnly(true)` + `secure(true)` + `sameSite("None")` | 구현 완료 | XSS로 Admission Token 탈취 방지 | `AdmissionTokenCookieUtils.java` |
+| **대기열 메트릭** | 진입 수, 이탈 수, 대기 시간 퍼센타일 (p50/p95/p99) | 구현 완료 | 대기열 이상 패턴 모니터링 (봇: 진입 후 즉시 이탈 반복) | `QueueMetricsService.java` |
+
+**Admission Token Claims**
+
+```
+Admission Token (Queue → Seat 진입권):
+├─ sub: userId
+├─ matchId: 대상 경기 ID
+├─ type: "ADMISSION"
+├─ iss: "queue-service"
+├─ exp: 15분 TTL
+└─ jti: 고유 ID
+
+→ Seat 서비스에서 RSA 공개키로 검증
+→ matchId, userId 모두 일치해야 좌석 접근 허용
+```
+
+---
+
+### 2.4 Seat (좌석 선택 / 동시성 제어)
+
+| 방어 기능 | 설명 | 상태 | 방어 효과 | 구현 파일 |
+|----------|------|------|----------|----------|
+| **Admission Token 검증** | RSA 서명, matchId, userId, 만료시간, type="ADMISSION" 검증 | 구현 완료 | 대기열 미통과 / 다른 경기 토큰으로 좌석 접근 차단 | `AdmissionTokenValidator.java` |
+| **Redisson 분산 락** | seatId 정렬 후 순차 RLock 획득, 500ms 대기, 5초 lease | 구현 완료 | 동시 좌석 선점 경합 원자적 처리, 데드락 방지 | `SeatHoldLockManager.java` |
+| **Booking Options 검증 + Redis 동기화** | 예매 옵션 저장 시 PreQueue Redis 마커 Resilience4j @Retry 동기화 | 구현 완료 | 옵션 미설정 상태로 예매 진행 불가 | `BookingOptionsService.java` |
+| **좌석 Hold 메트릭** | 시도/성공/실패 + 분산 락 대기시간 히스토그램 (p50, p95, p99) | 구현 완료 | 좌석 경합 이상 패턴 감지, 성능 병목 모니터링 | `SeatMetricsService.java` |
+
+---
+
+### 2.5 Order-Core (주문 / 결제)
+
+| 방어 기능 | 설명 | 상태 | 방어 효과 | 구현 파일 |
+|----------|------|------|----------|----------|
+| **user-blocked Kafka 이벤트 소비** | 차단된 유저의 활성 주문 → UNDER_REVIEW 처리 | 구현 완료 | 악성 유저 주문 자동 검토 대기, 수동 확인 후 취소/승인 | `UserBlockedEventConsumer.java` |
+| **주문당 최대 8매 제한** | `MAX_TICKETS_PER_ORDER = 8`, 좌석 수 사전 검증 | 구현 완료 | 대량 좌석 점유 공격 차단 | `OrderService.java` (line 47, 212) |
+| **주문 DTO 유효성 검증** | `@NotBlank`, `@Email`, `@Pattern`, `@Min`, `@Size` 적용 | 구현 완료 | 잘못된 입력값 진입 차단 | `OrderCreateRequest.java` |
+| **PII 필드 암호화** | 주문자 이름, 이메일, 전화번호, 생년월일 AES-GCM 암호화 저장 | 구현 완료 | DB 탈취 시에도 주문자 개인정보 복호화 불가 | `Order.java` (`@Convert(converter = EncryptionConverter.class)`) |
+
+---
+
+### 2.6 common-core (공통 보안 인프라)
+
+| 방어 기능 | 설명 | 상태 | 방어 효과 | 구현 파일 |
+|----------|------|------|----------|----------|
+| **AES-256-GCM 필드 암호화** | email, nickname, phone을 DB 저장 시 암호화 (staging/prod), `@Profile({"staging", "prod"})` | 구현 완료 | DB 탈취 시에도 개인정보 복호화 불가 (랜덤 12byte IV + 128bit 인증 태그) | `AesEncryptionProvider.java`, `EncryptionConverter.java` |
+| **NoOp 암호화 (로컬)** | 로컬 개발 환경에서는 암호화 미적용 (투명 pass-through) | 구현 완료 | 개발 편의성 유지 | `NoOpEncryptionProvider.java` |
+| **암호화 캐시 Dirty Checking 방지** | ThreadLocal 기반 plaintext→ciphertext 캐싱, 요청/트랜잭션 종료 시 정리 | 구현 완료 | AES-GCM 랜덤 IV로 인한 Hibernate 불필요 UPDATE 방지 | `EncryptionConverter.java`, `EncryptionCacheCleanupFilter.java` |
+| **SHA-256 해싱** | 카카오 OAuth provider ID 해시 저장 | 구현 완료 | OAuth 연동 계정 식별자 평문 저장 방지 | `HashUtil.java` |
+| **HSTS + X-Frame-Options: DENY** | 모든 서비스 SecurityConfig에 적용, maxAge=31536000(1년), includeSubDomains | 구현 완료 | HTTPS 강제 (MITM 방지), 클릭재킹 차단 | `SecurityConfig.java` (각 모듈) |
+| **HttpOnly + Secure + SameSite 쿠키** | Refresh Token, Admission Token 모두 적용 | 구현 완료 | XSS 토큰 탈취, CSRF 공격 방어 | `CookieUtils.java`, `AdmissionTokenCookieUtils.java` |
+| **Actuator 노출 최소화** | `health`, `prometheus`만 허용, `@Order(0)` 최우선 적용 | 침투테스트 대응 | 서버 내부 정보 (메트릭, 환경변수, 빈) 노출 차단 | `ActuatorSecurityConfig.java` |
+| **Thread Pool 제한** | Tomcat 200~400, TaskExecutor max 50/queue 100, HikariCP 20~30 | 침투테스트 대응 | OOM DoS 공격 벡터 제거 | `application.yaml` (각 모듈) |
+| **Request Logging (MDC)** | IP(X-Forwarded-For 다단계 파싱), UA, Referer, SessionId → Grafana Loki 연동, 결제 요청 PAYMENT 태깅 | 구현 완료 | 보안 이벤트 사후 추적 | `RequestLoggingFilter.java` |
+| **세션 관리** | 모든 서비스 STATELESS (Spring Security SessionCreationPolicy) | 구현 완료 | 세션 하이재킹 벡터 제거 | `SecurityConfig.java` (각 모듈) |
+| **CSRF 비활성화** | JWT 기반 인증이므로 CSRF 토큰 불필요 | 구현 완료 | Stateless 아키텍처에 적합 | `SecurityConfig.java` (각 모듈) |
+
+---
+
+## 3. AI 방어 서버 연동
+
+### 백엔드가 제공하는 차단 API
+
+| Endpoint | Method | 인증 | 동작 |
+|----------|--------|------|------|
+| `/internal/users/{userId}/block` | POST | `X-Internal-Api-Key` 필수 | User.status → BLOCKED + Kafka `user-blocked` → Order-Core 주문 UNDER_REVIEW |
+| `/internal/users/{userId}/unblock` | POST | `X-Internal-Api-Key` 필수 | User.status → ACTIVATE (차단 해제) |
+
+### 백엔드에서 수집하는 유저 메타데이터
+
+AI 서버에서 활용 가능한 데이터:
+
+| 데이터 | 저장 위치 | 수집 시점 |
+|--------|---------|----------|
+| IP Address | Redis (`RefreshTokenInfo`) | 모든 로그인 (Kakao/Dev/LoadTest) |
+| User-Agent | Redis (`RefreshTokenInfo`) | 모든 로그인 |
+| Session ID (sid) | JWT 클레임 + Redis | 토큰 발급 시 |
+| 로그인 시각 | PostgreSQL (`User.lastLoginAt`) | 로그인 시 |
+
+---
+
+## 4. 침투테스트 대응 결과
+
+2026-04-02~04 72시간 모의해킹에서 발견된 백엔드 대응 가능 취약점 **6건 모두 패치 완료**.
+
+| ID | 취약점 | 심각도 | 대응 | 상태 | 코드 검증 |
+|----|--------|--------|------|------|----------|
+| **C-09** | 좌석 IDOR — 1인당 hold 수량 무제한 | CRITICAL | 주문당 최대 8매 제한 (`MAX_TICKETS_PER_ORDER = 8`) | 패치 완료 | `OrderService.java:47,212` |
+| **H-04** | Gateway 쓰기 인증 우회 — 경로만 체크, 메서드 무관 | HIGH | `WhitelistEntry(Set<HttpMethod>, pathPrefix)` 구조화 | 패치 완료 | `JwtAuthenticationFilter.java` — GET_ONLY/POST_ONLY 분리 확인 |
+| **H-05** | Actuator 전체 노출 — metrics, env 등 인증 없이 접근 | HIGH | staging/prod: health, prometheus만 허용 | 패치 완료 | `ActuatorSecurityConfig.java` + `application.yaml` `include: health, prometheus` 확인 |
+| **H-09** | Thread Pool 무제한 — TaskExecutor max 21억 | HIGH | Tomcat 200~400, TaskExecutor max 50, HikariCP 20~30 | 패치 완료 | 각 모듈 `application.yaml` 확인 |
+| **M-09** | 주문 ID 순차 열거 — auto-increment Long ID 노출 | MEDIUM | 주문번호 UUID 추가 + 403/404 응답 통일 | 추후 확인 필요 | staging 코드에 `orderNumber` 필드 미확인 — dev 브랜치 확인 필요 |
+| **M-12** | Rate Limiting 미설정 — 브루트포스 가능 | MEDIUM | prod에서 IP당 로그인 10회/분, 일반 100회/분 (Redis INCR) | 패치 완료 | `RateLimitingFilter.java` `@Profile("prod")` 확인 |
+
+---
+
+## 5. 보안 관련 환경변수
+
+### Auth-Guard (JWT / 인증)
+
+| 변수 | 설명 |
+|------|------|
+| `JWT_PRIVATE_KEY` | RSA PKCS#8 base64 (Auth-Guard만 보유) |
+| `JWT_PUBLIC_KEY` | RSA X.509 base64 (모든 서비스 공유) |
+| `JWT_ISSUER` | JWT 발급자 |
+| `JWT_ACCESS_TOKEN_AUDIENCE` | Access Token audience |
+| `JWT_ACCESS_TOKEN_EXPIRATION` | Access Token TTL (분) |
+| `JWT_REFRESH_TOKEN_EXPIRATION` | Refresh Token TTL (시간) |
+| `INTERNAL_API_KEY` | AI 서버 연동용 Internal API Key |
+
+### Queue (대기열 / Admission)
+
+| 변수 | 설명 |
+|------|------|
+| `ADMISSION_PRIVATE_KEY` | Admission Token RSA 개인키 (Queue만 보유) |
+| `ADMISSION_PUBLIC_KEY` | Admission Token RSA 공개키 (Queue + Seat 공유) |
+
+### Encryption (암호화)
+
+| 변수 | 설명 |
+|------|------|
+| `DB_ENCRYPTION_KEY` | AES-256 base64 (32byte) |
+| `ALLOWED_ORIGINS` | CORS 허용 도메인 (콤마 구분) |
+
+### Redis / Redisson
+
+| 변수 | 설명 |
+|------|------|
+| `REDIS_HOST` | 공용 Redis (분산 락 / 블랙리스트 / 캐시) |
+| `REDIS_PORT` | 6379 |
+| `REDIS_QUEUE_HOST` | 대기열 전용 Redis |
+| `REDIS_QUEUE_PORT` | 6379 (컨테이너 내부) / 6380 (호스트) |
+
+---
+
+## 6. 보안 모니터링 메트릭 (Prometheus → Grafana)
+
+### Auth-Guard 메트릭
+
+| 메트릭명 | 타입 | 설명 | 활용 |
+|---------|------|------|------|
+| `ticketing_auth_attempts_total` | Counter | 로그인 시도 총 횟수 | 비정상 급증 시 브루트포스 탐지 |
+| `ticketing_auth_success_total` | Counter | 로그인 성공 횟수 | 시도 대비 성공률 모니터링 |
+| `ticketing_security_macro_detected_total` | Counter | 매크로/봇 탐지 횟수 | 자동화 도구 접근 시도 추이 |
+| `ticketing_security_blocked_ip_total` | Counter | IP 차단 횟수 | Rate Limit 초과 IP 추적 |
+| `ticketing_auth_user_blocked_total` | Counter | 유저 차단 횟수 | AI 서버 차단 요청 현황 |
+| `ticketing_auth_user_unblocked_total` | Counter | 유저 차단 해제 | 오탐 비율 모니터링 |
+
+### Queue 메트릭
+
+| 메트릭명 | 타입 | 설명 | 활용 |
+|---------|------|------|------|
+| `ticketing_queue_entries_total` | Counter | 대기열 진입 횟수 | 동시 접속 폭증 감지 |
+| `ticketing_queue_abandoned_total` | Counter | 대기열 중도 이탈 | 봇 패턴 (진입 후 즉시 이탈 반복) |
+| `ticketing_queue_wait_seconds` | Timer | 대기 시간 퍼센타일 | 대기열 정상 운영 여부 |
+
+### Seat 메트릭
+
+| 메트릭명 | 타입 | 설명 | 활용 |
+|---------|------|------|------|
+| `ticketing_seat_hold_attempt_total` | Counter | 좌석 hold 시도 (mode=RECOMMEND/MAP) | 경합 빈도 모니터링 |
+| `ticketing_seat_hold_success_total` | Counter | 좌석 hold 성공 | 성공률 추적 |
+| `ticketing_seat_hold_fail_total` | Counter | 좌석 hold 실패 (사유별) | lock 타임아웃, 수량 초과 등 원인 분석 |
+| `ticketing_seat_lock_wait_seconds` | Timer | 분산 락 대기시간 (p50/p95/p99) | 성능 병목 탐지 |
+| `ticketing_seat_recommend_total` | Counter | 추천 요청 수 | 추천 서비스 사용률 |
+| `ticketing_seat_recommend_degrade_total` | Counter | 준연석 폴백 발생 수 | 연석 부족 현황 |
+
+---
+
+## 7. 추후 과제 (미구현)
+
+| 항목 | 설명 | 담당 | 우선순위 |
+|------|------|------|---------|
+| **OAuth state 파라미터 검증** | 카카오 OAuth callback에서 state 검증 미구현 → CSRF 취약 | 백엔드 | 추후 |
+| **IP 기반 큐 진입 제한** | 동일 IP에서 무제한 큐 진입 가능 | 백엔드 | 추후 |
+| **좌석 Hold 반복 패턴 감지** | hold/release 무한 반복으로 좌석 점유 DoS 가능 | 백엔드 + AI | 추후 |
+| **RefreshToken 메타데이터 확장** | Accept-Language 추가, GeoIP는 AI 서버에서 IP 기반 조회 | 백엔드 | 추후 |
+
+---
+
+## 8. 타팀 보완 요청 사항
+
+### 클라우드팀에게
+
+- Istio 설정 — Sidecar 주입 정책, mTLS 설정, 네트워크 정책
+- Cloudflare / WAF — DDoS 방어, Bot Management, rate limiting 규칙 (인프라 레벨)
+- 네트워크 격리 — 백엔드 서비스 내부 네트워크 구성
+- K8s 보안 — RBAC 설정, Secret 관리 방식, Pod Security Policy
+- SSL/TLS — 인증서 관리, TLS 버전 정책
+- 모니터링 — Kiali, Grafana, Prometheus 접근 제어
+
+### AI팀에게
+
+- Istio Sidecar 메트릭 수집 — 어떤 요청 정보를 가로채서 AI 서버로 보내는지
+- 실시간 탐지 로직 — 봇 판별 기준 (요청 빈도, IP 분산도, 행동 패턴 등)
+- 프론트 텔레메트리 — 마우스 이동, 클릭 패턴, 페이지 체류 시간 등 수집 항목
+- LLM 사후 분석 — 어떤 데이터를 분석하는지, 판단 기준
+- 차단 판단 임계값 — 실시간 차단과 사후 차단의 기준
+- 차단 API 연동 — `POST /internal/users/{userId}/block` 호출 방식, Internal API Key 관리
