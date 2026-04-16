@@ -1,6 +1,6 @@
 # 인프라 개요
 
-Playball의 클라우드 인프라는 서비스가 안정적으로 동작하도록 자원 구성, 배포 자동화, 고가용성, 관측, 복구 기준을 갖추고 있습니다. 서비스는 `CloudFront`, `EKS`, `RDS`, `ElastiCache`, `ArgoCD`, `Karpenter`를 기반으로 운영합니다. 상태 확인과 장애 분석은 `Grafana`, `Policy Reporter`, `CloudTrail`, `CloudWatch`를 기준으로 수행합니다.
+Playball의 클라우드 인프라는 서비스가 안정적으로 동작하도록 자원 구성, 배포 자동화, 고가용성, 관측, 복구 기준을 갖추고 있습니다. 서비스는 `CloudFront`, `EKS`, `RDS`, `ElastiCache`, `ArgoCD`, `Karpenter/KEDA`를 기반으로 운영합니다. 상태 확인과 장애 분석은 `Grafana`, `Policy Reporter`, `CloudTrail`, `CloudWatch`를 기준으로 수행합니다.
 
 ---
 
