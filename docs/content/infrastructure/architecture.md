@@ -54,25 +54,25 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    TF["301 Terraform"] --> AWS["AWS 리소스"]
-    BOOT["302 Bootstrap"] --> CLUSTER["EKS / kubeadm 클러스터"]
-    GITOPS["303 Helm + ArgoCD"] --> APPS["애플리케이션 / 공통 인프라"]
+    TF["301 Terraform<br>(인프라 구조)"]
+    REPO["303 Helm/Values<br>GitOps"] -. sync .-> ARGO
 
-    AWS --> CLUSTER
-    CLUSTER --> ISTIO["Istio"]
-    CLUSTER --> ESO["External Secrets Operator"]
-    CLUSTER --> KARP["Karpenter"]
-    CLUSTER --> POLICY["Kyverno + Policy Reporter"]
-    CLUSTER --> ACCESS["SSO + IRSA + RBAC"]
-    CLUSTER --> APPS
+    subgraph CLUSTER["EKS / kubeadm 클러스터"]
+        ARGO["ArgoCD<br>Root App"]
+        ARGO --> INFRA_APPS["Infra Apps"]
+        ARGO --> APP_APPS["Application Apps"]
 
-    APPS --> PROM["Prometheus + Alertmanager"]
-    APPS --> LOKI["Loki"]
-    APPS --> TEMPO["Tempo"]
-    PROM --> GRAF["Grafana"]
-    LOKI --> GRAF
-    TEMPO --> GRAF
-    PROM --> THANOS["Thanos (S3)"]
+        INFRA_APPS --> ISTIO["Istio"]
+        INFRA_APPS --> ESO["External Secrets Operator"]
+        INFRA_APPS --> KARP["Karpenter/KEDA"]
+        INFRA_APPS --> POLICY["Kyverno + Policy Reporter"]
+        INFRA_APPS --> OBS["Grafana 스택<br>Prometheus · Loki · Tempo"]
+
+        APP_APPS --> SVC["백엔드 / 프론트엔드 서비스"]
+    end
+
+    BOOT["302 Bootstrap"] -->|초기 설치| ARGO
+
 ```
 
 ---
@@ -86,19 +86,16 @@ flowchart LR
     USER["외부 요청"] --> EDGE["CloudFront + AWS Shield"]
     EDGE --> ALB["ALB Security Group"]
     ALB --> GW["Istio IngressGateway"]
-    GW --> WAF["EnvoyFilter + Rate Limit + ext_authz"]
-    WAF --> APP["Application Pods"]
-    APP --> MESH["mTLS + NetworkPolicy"]
+    GW --> WAF["EnvoyFilter + Rate Limit<br> + ext_authz"]
+    WAF --> APP["Application Pods<br>(mTLS + NetworkPolicy)"]
 
     OPS["운영 접근"] --> SSO["AWS IAM Identity Center SSO"]
-    SSO --> ROLE["IAM Role"]
+    SSO --> ROLE["IAM Role 선택"]
     ROLE --> AWS["AWS / EKS"]
 
-    DEPLOY["배포 리소스"] --> POLICY["Kyverno + Policy Reporter"]
-    AWS --> TRAIL["CloudTrail"]
-    TRAIL --> EB["EventBridge"]
-    EB --> LAMBDA["Lambda"]
-    LAMBDA --> DISC["Discord"]
+    DEPLOY["배포 리소스"] --> POLICY["Kyverno <br> /Policy Reporter"]
+    AWS --> TRAILEB["CloudTrail/EventBridge<br>+Lambda"]
+    TRAILEB --> DISC["Discord"]
     POLICY --> DISC
 ```
 
