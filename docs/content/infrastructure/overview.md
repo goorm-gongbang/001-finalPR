@@ -30,16 +30,17 @@ flowchart LR
 
 ## 티켓팅 서비스 특성 × 인프라 대응
 
-티켓팅은 **피크 집중 · 실시간 경쟁 · 가용성 · 추적성** 4가지 특성이 인프라 설계를 결정합니다. 각 특성에 **어떤 인프라 요소로 대응했는지** 가 Playball 인프라의 설계 철학입니다.
+티켓팅은 **피크 집중 · 가용성 · 보안 · 비용 · 추적성** 5가지 특성이 인프라 설계를 결정합니다. 각 특성에 **어떤 인프라 요소로 대응했는지** 가 Playball 인프라의 설계 철학입니다.
 
 | 서비스 특성 | 우리의 인프라 대응 |
 |-----------|-----------------|
 | **트래픽 집중** (티켓 오픈 시점에 대량 요청이 짧은 시간에 집중) | **KEDA Cron Scaler**(피크 선제 스케일) + **Karpenter**(노드 동적 확장) + **HPA**(CPU/Memory) + **Istio Rate Limit** + CloudFront 엣지 캐싱 — 부하테스트 기반 튜닝 |
-| **실시간 경쟁** (대기열·좌석 선점·결제 동시성) | **ElastiCache Redis**(분산 락·대기열 ZSET) + Kafka(이벤트 순서) + Istio `ext_authz`(Admission Token 재검증) + HikariCP 튜닝 + **추천 분산 알고리즘**(핫스팟 경합 구조 자체 완화) |
 | **가용성 요구** (배포·노드·DB 장애 내성) | **Multi-AZ EKS / RDS / Redis**(복제본 + 자동 장애조치) + **ArgoCD GitOps 재배포** + RDS PITR + `pg_dump → S3` 보조 백업 + PDB + Terraform IaC |
+| **보안 요구** (매크로 방어·모의해킹 지적 반영) | **7축 보안 체계**(클라이언트 · Gateway/mTLS · 봇 대응 · 백엔드 · 데이터 · 인프라 · 접근 제어) + IAM Identity Center SSO 최소권한 + CloudTrail 감사 |
+| **비용 효율** (Staging 장기 운영 + 포트폴리오 규모 제약) | **Staging Spot 중심**(Karpenter Spot 다양화로 중단 내성 확보) + **공통 인프라 공유**(kube-prometheus-stack · Istio · Grafana 공용) + **Loki/Tempo S3 lifecycle**(장기 로그 자동 expiry) + ElastiCache 단일 인스턴스(네임스페이스 분리로 대체) |
 | **운영 추적성** (장애 분석·감사·복구 판단) | **3 시그널 통합 관측**(Prometheus+Thanos / Loki / Tempo→Grafana) + CloudTrail(API 감사) + Policy Reporter(정책 위반) + EventBridge·Lambda → Discord 알림 |
 
-> 이 표는 Playball 인프라의 **의사결정 로직** 그 자체입니다. 모든 기술 선택은 위 4가지 특성 중 하나에 대응합니다.
+> 이 표는 Playball 인프라의 **의사결정 로직** 그 자체입니다. 모든 기술 선택은 위 5가지 특성 중 하나에 대응합니다. (실시간 경쟁·동시성 제어는 [백엔드 시스템 아키텍처](../development/system-architecture)에서 전담)
 
 ---
 

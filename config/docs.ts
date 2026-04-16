@@ -153,7 +153,6 @@ export const docsConfig = {
       title: "보안",
       items: [
         { title: "개요", href: "/security/overview" },
-        { title: "보안 흐름", href: "/security/flow" },
         { title: "클라이언트 보안", href: "/security/client-security" },
         { title: "Gateway / mTLS", href: "/security/gateway-mtls" },
         { title: "봇 대응 체계", href: "/security/bot-defense" },
