@@ -6,7 +6,20 @@ Playball은 운영 로그, 감사 로그, 장기보관 증적 데이터, 운영 
 
 ## 보관 구조
 
-![보관 구조](/images/infrastructure/log-backup-policy/01_log-backup-policy.svg?w=67%)
+```mermaid
+flowchart LR
+    OBS["관측 데이터<br/>로그 · Trace · 메트릭"] --> WARM1["Loki · Tempo · Thanos"] --> S3OBS["S3 관측 저장소"]
+    DB["RDS 운영 데이터"] --> WARM2["자동 백업 + PITR"] --> S3OP["S3 운영 백업"]
+    AUD["AWS 변경/접근 이력"] --> WARM3["감사 로그"] --> S3AUD["S3 감사 (Glacier Flex)"]
+    RET["회원 · 거래 증적"] --> WARM4["장기보관 아카이브"] --> S3ARC["S3 아카이브 (Glacier Deep)"]
+
+    classDef srcBox fill:#fff8e1,stroke:#d6b656,color:#5a4a1a
+    classDef warmBox fill:#e7f0fb,stroke:#6c8ebf,color:#223b63
+    classDef coldBox fill:#ece3f1,stroke:#9673a6,color:#4a2e5f
+    class OBS,DB,AUD,RET srcBox
+    class WARM1,WARM2,WARM3,WARM4 warmBox
+    class S3OBS,S3OP,S3AUD,S3ARC coldBox
+```
 
 ---
 

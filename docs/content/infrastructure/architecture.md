@@ -36,19 +36,81 @@ Playball 인프라는 `프로비저닝`, `클러스터 부트스트랩`, `GitOps
 
 ## 외부 진입 구조
 
-![외부 진입 구조](/images/infrastructure/architecture/01_infra-arc.svg?w=40%)
+```mermaid
+flowchart LR
+    CLIENT(["외부 요청"]) --> EDGE["CloudFront + Shield<br/>ALB + SG"] --> MESH["Istio Gateway<br/>EnvoyFilter · RateLimit · ext_authz"] --> APP["Backend Services"] --> DATA["RDS (PostgreSQL)<br/>ElastiCache (Redis)"]
+
+    classDef edgeBox fill:#fff8e1,stroke:#d6b656,color:#5a4a1a
+    classDef meshBox fill:#e7f0fb,stroke:#6c8ebf,color:#223b63
+    classDef appBox fill:#e6f4ea,stroke:#82b366,color:#2d5a34
+    classDef dataBox fill:#ece3f1,stroke:#9673a6,color:#4a2e5f
+    class EDGE edgeBox
+    class MESH meshBox
+    class APP appBox
+    class DATA dataBox
+```
 
 ---
 
 ## 내부 구성
 
-![내부 구성](/images/infrastructure/architecture/02_infra-arc.svg?w=60%)
+```mermaid
+flowchart LR
+    IAC["Terraform · Bootstrap<br/>Helm + ArgoCD"] --> CLUSTER["EKS Common Infra<br/>Istio · ESO · Karpenter · Kyverno"] --> APP["App Workloads"]
+    IDENT["SSO · IRSA · RBAC"] --> APP
+
+    classDef iacBox fill:#fff8e1,stroke:#d6b656,color:#5a4a1a
+    classDef clusterBox fill:#e6f4ea,stroke:#82b366,color:#2d5a34
+    classDef identBox fill:#e7f0fb,stroke:#6c8ebf,color:#223b63
+    classDef appBox fill:#ece3f1,stroke:#9673a6,color:#4a2e5f
+    class IAC iacBox
+    class CLUSTER clusterBox
+    class IDENT identBox
+    class APP appBox
+```
 
 ---
 
 ## 보안 / 감사 구조
 
-![보안 / 감사 구조](/images/infrastructure/architecture/03_infra-arc.svg?w=80%)
+### 보안 5계층 심층 방어
+
+```mermaid
+flowchart LR
+    CLIENT(["외부 요청"]) --> L1["① 엣지<br/>CloudFront + Shield"] --> L2["② LB<br/>ALB + SG"] --> L3["③ 메쉬 WAF<br/>Istio + EnvoyFilter"] --> L4["④ 내부 통신<br/>mTLS + NetworkPolicy"] --> L5["⑤ 앱<br/>JWT + 보안 헤더"]
+
+    classDef edgeBox fill:#fff8e1,stroke:#d6b656,color:#5a4a1a
+    classDef lbBox fill:#ffe6cc,stroke:#d79b00,color:#6b4a12
+    classDef meshBox fill:#e7f0fb,stroke:#6c8ebf,color:#223b63
+    classDef netBox fill:#e6f4ea,stroke:#82b366,color:#2d5a34
+    classDef appBox fill:#ece3f1,stroke:#9673a6,color:#4a2e5f
+    class L1 edgeBox
+    class L2 lbBox
+    class L3 meshBox
+    class L4 netBox
+    class L5 appBox
+```
+
+### 운영 접근 경로
+
+```mermaid
+flowchart LR
+    USER(["운영자"]) --> SSO["AWS IAM Identity Center<br/>SSO"] --> ROLE["IAM Role"] --> TGT["AWS · EKS"]
+
+    classDef opsBox fill:#fbeaea,stroke:#b85450,color:#6b2a26
+    class SSO,ROLE,TGT opsBox
+```
+
+### 감사 경로
+
+```mermaid
+flowchart LR
+    SRC["AWS 변경/접근 이력<br/>· Kyverno 정책 위반"] --> CT["CloudTrail · EventBridge"] --> LMB["Lambda"] --> DC(["Discord"])
+    KYV["Kyverno<br/>Policy Reporter"] --> DC
+
+    classDef auditBox fill:#e0f0ee,stroke:#4db6ac,color:#254c48
+    class SRC,CT,LMB,KYV auditBox
+```
 
 **엣지(CloudFront + Shield) → LB(ALB + SG) → 메쉬(Istio WAF) → 내부통신(mTLS) → 앱(JWT + 보안 헤더)** 의 5계층 심층 방어 위에, SSO·IAM 기반 운영 접근과 CloudTrail·Kyverno 기반 감사 경로를 함께 구성합니다.
 
