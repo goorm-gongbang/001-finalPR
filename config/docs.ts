@@ -65,6 +65,7 @@ export const docsConfig = {
                 { title: "Gateway / mTLS", href: "/security/istio-mtls" },
                 { title: "클라이언트 보안", href: "/security/client" },
                 { title: "접근 제어", href: "/security/iam" },
+                { title: "데이터 보안", href: "/security/data-security" },                
                 { title: "봇 대응 체계", href: "/security/bot-defense" },
                 { title: "백엔드 방어 체계", href: "/security/backend-defense" },
                 { title: "취약점 관리", href: "/security/pentest-remediation" },
