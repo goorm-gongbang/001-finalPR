@@ -6,51 +6,7 @@ Playball 배포는 수동 서버 반영이 아니라 `이미지 빌드`, `환경
 
 ## 배포 흐름
 
-```mermaid
-flowchart LR
-    DEV["코드 업데이트"] --> CI["이미지 빌드"]
-    
-    subgraph CICD["Teamcity 환경"]
-        CI --> ECR["ECR 이미지 푸시"]
-        ECR --> VALUES["환경별 values 업데이트"]
-        VALUES --> SYNC["argocd-sync 브랜치 반영"]
-    end
-    
-    SYNC --> ARGO["ArgoCD 자동 감지"]
-    ARGO --> CLUSTER["환경별 클러스터 배포"]
-```
-```mermaid
-flowchart TD
-    %% 외부 엔티티 및 저장소 노드 정의
-    DEV["개발자"]
-    CODE_REPO["원본 코드 저장소 (GitHub)"]
-    ECR["프로그램 보관소 (ECR)"]
-    CONFIG_REPO["배포 설정 저장소 (Helm)"]
-    ARGO["자동 배포 도구 (ArgoCD)"]
-    CLUSTER["실제 서비스 환경 (K3S 클러스터)"]
-
-    %% Teamcity 파이프라인 내부 흐름 (서브그래프)
-    subgraph TeamcityPipeline ["자동화 작업 파이프라인 (TeamCity)"]
-        direction TB
-        TC_SERVER["작업 관리 서버 (Server)"]
-        TC_AGENT_BUILD["1단계: 프로그램 포장 (Build)"]
-        TC_AGENT_EDIT["2단계: 배포 설정 수정 (Edit)"]
-        TC_AGENT_PUSH["3단계: 새 설정 저장 (Push)"]
-
-        TC_SERVER -->|"작업 지시"| TC_AGENT_BUILD
-        TC_AGENT_BUILD --> TC_AGENT_EDIT
-        TC_AGENT_EDIT --> TC_AGENT_PUSH
-    end
-
-    %% 전체 시스템 간의 연결 (Edge)
-    DEV -->|"코드 변경 및 저장 (Commit)"| CODE_REPO
-    TC_SERVER -->|"코드 변경 확인 (60초 주기)"| CODE_REPO
-    TC_AGENT_BUILD -->|"포장된 프로그램 등록"| ECR
-    CONFIG_REPO -->|"기존 배포 설정 가져오기"| TC_AGENT_EDIT
-    TC_AGENT_PUSH -->|"새로운 배포 설정 반영"| CONFIG_REPO
-    CONFIG_REPO -->|"새로운 설정 감지"| ARGO
-    ARGO -->|"최신 상태로 서비스 업데이트 (Sync)"| CLUSTER
-```
+![CICD 다이어그램](/images/infrastructure/01_CICID_diagram.png)
 
 ---
 
