@@ -6,7 +6,7 @@ Playball 배포는 수동 서버 반영이 아니라 `이미지 빌드`, `환경
 
 ## 배포 흐름
 
-![CICD 다이어그램](/images/infrastructure/01_CICID_diagram.png)
+![CICD 다이어그램](/images/infrastructure/CICD/01_CICD_diagram.png)
 
 ---
 
