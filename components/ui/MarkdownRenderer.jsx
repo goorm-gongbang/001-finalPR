@@ -181,6 +181,12 @@ export function MarkdownRenderer({ content }) {
             const { src, alt } = props;
             return <ZoomableImage src={src} alt={alt} />;
         },
+        p({ node, children }) {
+            const onlyChild =
+                node?.children?.length === 1 && node.children[0].tagName === "img";
+            if (onlyChild) return <>{children}</>;
+            return <p>{children}</p>;
+        },
     };
 
     const renderMarkdownChunk = (chunk, key) => (
