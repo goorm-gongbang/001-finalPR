@@ -1,4 +1,4 @@
-# Istio / mTLS
+# Gateway / mTLS
 
 Istio는 외부 요청 검사와 내부 서비스 통신 보호를 함께 처리합니다. Ingress Gateway는 차단과 제한을 먼저 수행하고, 서비스 간 통신은 `STRICT` mTLS를 기준으로 운영합니다.
 
