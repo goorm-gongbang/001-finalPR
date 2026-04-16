@@ -1,6 +1,6 @@
-# 모니터링 / 알림 체계
+# 모니터링
 
-Playball은 EKS 내부 경로, AWS 네이티브 경로, 정책 위반 경로를 분리해 운영하고, 최종 알림 채널은 Discord로 통합합니다.
+Playball은 메트릭, 로그, 트레이스를 Grafana 기준으로 통합 확인하고, AWS 리소스와 감사 이벤트는 CloudWatch, CloudTrail, Policy Reporter 경로로 함께 추적합니다.
 
 ---
 
@@ -13,80 +13,47 @@ Playball은 EKS 내부 경로, AWS 네이티브 경로, 정책 위반 경로를 
 | **Prometheus** | 메트릭 수집 | CPU, Memory, 요청 수, 응답 시간 |
 | **Loki** | 로그 수집 | 앱 로그, 에러 로그 |
 | **Tempo** | 분산 트레이싱 | 요청 흐름 추적 |
-| **Thanos** | 장기 메트릭 보관 | Prometheus block 장기 저장 |
-| **Grafana** | 대시보드 | 통합 시각화 |
-| **Alertmanager** | EKS 내부 알람 | 임계치 기반 알림 |
-| **CloudWatch Alarm → SNS/Lambda** | AWS 리소스 알람 | ALB, RDS 등 AWS 운영 메트릭 |
-| **CloudTrail → EventBridge → Lambda** | AWS 감사/보안 이벤트 | 권한 변경, 감사 이상 징후 |
-| **Policy Reporter → Discord** | 정책 위반 알림 | Kyverno PolicyReport, ClusterPolicyReport |
+| **Thanos** | 장기 메트릭 보관 | Prometheus 장기 메트릭 데이터 |
+| **Grafana** | 통합 대시보드 | 메트릭, 로그, 트레이스 시각화 |
+| **CloudWatch** | AWS 리소스 상태 확인 | ALB, RDS, ElastiCache, 운영 알람 |
+| **CloudTrail** | 운영 변경 추적 | 권한 변경, 감사 이벤트, 보안 이벤트 |
+| **Policy Reporter** | 정책 위반 확인 | Kyverno PolicyReport, ClusterPolicyReport |
 
 ---
 
-## 알림 단계
+## 주요 관측 대상
 
-| 단계 | 의미 | 채널 | 멘션 | 대응 시간 |
-|---|---|---|---|---|
-| **Critical** | 서비스 장애/중단 위험 | `#alerts-critical` | 운영 멘션 | 5분 이내 |
-| **Warning** | 성능 저하, 장애 전조 | `#alerts-warning` | 없음 | 30분 이내 |
-| **Info** | 참고성 이벤트, 추세 공유 | `#alerts-info` | 없음 | 확인만 |
-
-보안/감사 이벤트는 `#alerts-security-critical`, `#alerts-security-warning`, `#alerts-security-info` 채널로 분리 운영합니다.
-`Info`는 기본적으로 실시간 전송 대상에서 제외하고, `Warning`도 사용자 영향 가능성이 높은 항목만 선택적으로 실시간 전송합니다.
-
----
-
-## 전파 구조
-
-| 영역 | 파이프라인 | 최종 채널 |
+| 구분 | 확인 기준 | 주요 도구 |
 |---|---|---|
-| **EKS 내부 메트릭/로그** | Prometheus/Loki 룰 → Alertmanager → Discord | 운영 채널 또는 보안/감사 채널 |
-| **AWS 리소스 운영 메트릭** | CloudWatch Alarm → SNS/Lambda → Discord | 운영 채널 |
-| **AWS 감사/보안 이벤트** | CloudTrail → EventBridge → Lambda → Discord | 보안/감사 채널 |
-| **정책 위반** | Policy Reporter → Discord direct | `#alerts-security-info` |
-| **노드 상태 / Spot interruption** | 전용 인프라 경로 | `#staging-eks-spot`, `#prod-eks-spot` |
+| **애플리케이션 메트릭** | 응답 시간, 5xx 비율, 요청 수, Pod 상태 | Grafana, Prometheus |
+| **애플리케이션 로그** | 예외 로그, 인증 실패, WAF 차단, 배포 직후 오류 | Grafana, Loki |
+| **분산 추적** | API 요청 흐름, 서비스 간 지연 구간 | Grafana, Tempo |
+| **클러스터 상태** | Node 상태, 리소스 사용률, 재시작 수, 오토스케일링 | Grafana, Prometheus |
+| **데이터 계층** | RDS 연결률, Redis 상태, 백업/복구 가능성 | Grafana, CloudWatch |
+| **운영 변경 추적** | 권한 변경, 보안 이벤트, 감사 이벤트 | CloudTrail, CloudWatch |
+| **정책 위반** | Kyverno PolicyReport, ClusterPolicyReport | Policy Reporter |
 
 ---
 
-## 운영 알림 기준
+## 운영 확인 기준
 
-| 알람 | 조건 | 심각도 | 참고 경로 |
-|---|---|---|---|
-| **5xx 에러율 증가** | > 1% (5분) / > 3% (5분) | Warning / Critical | Grafana `애플리케이션 모니터링 (Spring Boot)` |
-| **응답 지연(P99)** | > 3초 / > 5초 | Warning / Critical | Grafana `애플리케이션 모니터링 (Spring Boot)` |
-| **Pod CrashLoop** | 재시작 > 3회 (10분) | Critical | Grafana `K8s 운영 현황판 (Pods)` |
-| **Node NotReady** | Ready 아닌 노드 1개 이상 (5분) | Critical | Grafana `K8s 운영 현황판 (k9s 스타일)` |
-| **클러스터 CPU 사용률** | > 65% / > 80% | Warning / Critical | Grafana `K8s 운영 현황판 (k9s 스타일)` |
-| **클러스터 메모리 사용률** | > 70% / > 90% | Warning / Critical | Grafana `K8s 운영 현황판 (k9s 스타일)` |
-| **PostgreSQL 연결 포화** | > 70% / > 90% | Warning / Critical | Grafana `Database - RDS PostgreSQL` |
-| **RDS 백업/복구 상태 이상** | Backup 실패, PITR 비활성, 수동 스냅샷 미생성, 최근 PostgreSQL 데이터베이스 보조 백업 부재 | Warning / Critical | Grafana `운영 알람 현황`, CloudWatch |
-| **Redis 가용성** | `redis_up = 0` | Critical | Grafana `Cache & Queue - ElastiCache Redis` |
-| **Redis 메모리 사용률** | > 80% / > 90% | Warning / Critical | Grafana `Cache & Queue - ElastiCache Redis` |
-| **ALB 자체 5xx 응답** | 5분간 5건 이상 | Critical | CloudWatch `ALB` |
+| 구분 | 확인 경로 | 목적 |
+|---|---|---|
+| **서비스 상태 확인** | Grafana | 메트릭, 로그, 트레이스를 한 화면에서 확인 |
+| **AWS 리소스 상태 확인** | CloudWatch | ALB, RDS, ElastiCache, 운영 알람 상태 확인 |
+| **운영 변경 추적** | CloudTrail | 변경 주체, 시각, API 호출 추적 |
+| **정책 위반 확인** | Policy Reporter | 배포 정책 위반 리소스와 위반 유형 확인 |
 
 ---
 
-## 보안/감사 알림 기준
+## 데이터 보존과 장기 추적
 
-| 알람 | 조건 | 심각도 | 참고 경로 |
-|---|---|---|---|
-| **매크로/봇 탐지 수** | > 50건 (5분) / > 200건 (5분) | Warning / Critical | Grafana `Lua WAF 보안 정책` |
-| **차단 IP 수** | > 100건 (5분) / > 500건 (5분) | Warning / Critical | Grafana `Rate Limit 모니터링` |
-| **인증 실패율** | > 30% (5분) / > 50% (5분) | Warning / Critical | Grafana `Loki Kubernetes Logs`, `애플리케이션 모니터링 (Spring Boot)` |
-| **WAF 차단 이벤트(403/429)** | > 200건 (15분) / > 1000건 (15분) | Warning / Critical | Grafana `Istio WAF 모니터링`, `Rate Limit 모니터링` |
-| **Kyverno 정책 위반** | privileged, latest 태그, 리소스 제한, 필수 라벨, ArgoCD 관리 라벨, probe 위반 감지 | Info | `Policy Reporter UI` |
-| **권한/보안 설정 변경** | 루트 계정 로그인, AccessKey 생성/변경, 정책 변경, CloudTrail 비활성 시도, 위험한 보안그룹 변경 | Critical | CloudTrail, CloudWatch, `#alerts-security-critical` |
-| **감사 저장소 삭제 이벤트** | 감사 저장소 삭제 또는 고위험 삭제 이벤트 감지 | Warning / Critical | CloudTrail, 감사 보고서, 파기 요약 |
-
----
-
-## 복구 가능성 알림 기준
-
-| 항목 | 기준 | 단계 | 참고 경로 |
-|---|---|---|---|
-| **RDS 백업 실패 / PITR 비활성 / 예정된 수동 스냅샷 미생성 / 최근 PostgreSQL 데이터베이스 보조 백업 부재** | 1회 이상 감지 | Warning | Grafana `운영 알람 현황`, CloudWatch |
-| **복구 가능성 상실** | PITR 불가, 자동백업 실패 지속, PostgreSQL 데이터베이스 보조 백업 부재 지속 | Critical | Grafana `운영 알람 현황`, CloudWatch |
-| **Loki / Tempo S3 저장 이상** | 객체 저장소 접근 실패, 적재 실패 | Warning | Grafana, S3 버킷 |
-| **Thanos 장기 메트릭 업로드 이상** | 장기 메트릭 업로드 실패, object storage secret 이상 | Warning | Grafana, S3 버킷 |
+| 구분 | 운영 기준 | 확인 경로 |
+|---|---|---|
+| **로그 보관** | Loki 기반 운영 로그 확인, S3 관측 저장소 적재 유지 | Grafana, S3 |
+| **트레이스 보관** | Tempo 기반 요청 흐름 추적, S3 관측 저장소 적재 유지 | Grafana, S3 |
+| **장기 메트릭 보관** | Thanos 기준 장기 메트릭 조회 유지 | Grafana, S3 |
+| **감사 로그 보관** | CloudTrail과 감사 저장소 기준으로 운영 변경 이력 유지 | CloudTrail, S3 |
 
 ---
 

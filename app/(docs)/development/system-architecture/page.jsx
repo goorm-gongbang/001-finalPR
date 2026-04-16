@@ -41,6 +41,9 @@ export default function Page() {
             <p>
                 PlayBall 백엔드는 <strong>5개 마이크로서비스</strong>와 <strong>1개 공통 라이브러리</strong>로 구성되며,
                 서비스 간 직접 REST 호출 없이 <strong>Redis / Kafka를 통한 간접 데이터 공유</strong>만 존재합니다.
+                현재 DB는 단일 PostgreSQL 인스턴스에 테이블 소유권만 분리된 상태이며, 향후
+                <strong>Payment 서비스 분리</strong>와 <strong>DB 스키마 분리</strong>를 대비해 EDA(Event-Driven Architecture)로 전환했습니다.
+                상세 내용은 <a href="/development/eda-architecture">MSA · EDA 전환 문서</a> 참고.
             </p>
 
             <hr />

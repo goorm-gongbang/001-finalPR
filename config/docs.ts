@@ -19,6 +19,7 @@ export const docsConfig = {
                 { title: "티켓팅 플로우", href: "/development/ticketing-flow" },
                 { title: "추천 알고리즘", href: "/development/recommendation" },
                 { title: "Redis 구성", href: "/development/redis" },
+                { title: "MSA · EDA 전환 (Kafka 채택)", href: "/development/eda-architecture" },
                 { title: "Kafka · Caffeine 캐싱", href: "/development/kafka-caching" },
                 { title: "좌석 분산락/Hold 동시성", href: "/development/seat-concurrency" },
                 { title: "성능 최적화 요약", href: "/development/performance-optimization" },
@@ -51,7 +52,13 @@ export const docsConfig = {
                     ],
                 },
                 { title: "트래픽 대응", href: "/infrastructure/traffic" },
-                { title: "모니터링 / 알림 체계", href: "/infrastructure/monitoring" },
+                {
+                    title: "모니터링",
+                    href: "/infrastructure/monitoring",
+                    children: [
+                        { title: "그라파나 대시보드", href: "/infrastructure/grafana-dashboards" },
+                    ],
+                },
                 { title: "장애 대응", href: "/infrastructure/incident-response" },
                 { title: "로그/백업/보관 정책", href: "/infrastructure/log-backup-policy" },
                 { 
