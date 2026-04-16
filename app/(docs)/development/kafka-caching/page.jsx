@@ -8,6 +8,11 @@ export default function Page() {
                 PlayBall은 서비스 간 비동기 메시징으로 <strong>Apache Kafka 3.7.1</strong>을 사용하며,
                 DB 부하를 흡수하기 위해 <strong>Caffeine</strong> 로컬 캐시와 <strong>Redis</strong> 분산 캐시를 계층적으로 활용합니다.
             </p>
+            <p>
+                Kafka를 채택한 맥락(MSA 현황, EDA 전환 동기, Payment 분리/DB 스키마 분리 로드맵)은
+                별도 문서 <a href="/development/eda-architecture"><strong>MSA · EDA 전환 (Kafka 채택)</strong></a>에 정리되어 있습니다.
+                이 페이지는 토픽·설정·캐싱 구성 같은 <strong>운영 디테일</strong>에 집중합니다.
+            </p>
 
             <hr />
 

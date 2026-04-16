@@ -19,6 +19,7 @@ export const docsConfig = {
                 { title: "티켓팅 플로우", href: "/development/ticketing-flow" },
                 { title: "추천 알고리즘", href: "/development/recommendation" },
                 { title: "Redis 구성", href: "/development/redis" },
+                { title: "MSA · EDA 전환 (Kafka 채택)", href: "/development/eda-architecture" },
                 { title: "Kafka · Caffeine 캐싱", href: "/development/kafka-caching" },
                 { title: "좌석 분산락/Hold 동시성", href: "/development/seat-concurrency" },
                 { title: "성능 최적화 요약", href: "/development/performance-optimization" },
