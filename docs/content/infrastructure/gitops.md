@@ -8,10 +8,14 @@ Playball 배포는 수동 서버 반영이 아니라 `이미지 빌드`, `환경
 
 ```mermaid
 flowchart LR
-    DEV["개발 코드 머지"] --> CI["CI 빌드 (TeamCity)"]
-    CI --> ECR["ECR 이미지 푸시"]
-    ECR --> VALUES["환경별 values 업데이트"]
-    VALUES --> SYNC["argocd-sync 브랜치 반영"]
+    DEV["코드 업데이트"] --> CI["이미지 빌드"]
+    
+    subgraph CICD["Teamcity 환경"]
+        CI --> ECR["ECR 이미지 푸시"]
+        ECR --> VALUES["환경별 values 업데이트"]
+        VALUES --> SYNC["argocd-sync 브랜치 반영"]
+    end
+    
     SYNC --> ARGO["ArgoCD 자동 감지"]
     ARGO --> CLUSTER["환경별 클러스터 배포"]
 ```
@@ -39,7 +43,7 @@ flowchart LR
 | **Staging** | `argocd-sync/staging` | AWS 검증 환경 반영 |
 | **Prod** | `argocd-sync/prod` | 실제 운영 반영 |
 
-애플리케이션 이미지는 `TeamCity`에서 빌드하고, 실제 배포 타이밍은 환경별 `argocd-sync/*` 브랜치 기준으로 결정합니다. ArgoCD는 해당 브랜치를 감시하고, 변경을 감지하면 자동으로 동기화합니다.
+애플리케이션 이미지 빌드부터 환경별 argocd-sync/* 브랜치 업데이트까지의 과정은 TeamCity에서 일괄 수행됩니다. 이후 ArgoCD가 해당 브랜치를 감시하다가 변경 사항을 감지하면 클러스터에 자동으로 동기화(배포)합니다.
 
 ---
 
