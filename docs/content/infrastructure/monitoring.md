@@ -6,48 +6,7 @@ Playball은 EKS 내부 경로, AWS 네이티브 경로, 정책 위반 경로를 
 
 ## 모니터링 스택
 
-```mermaid
-flowchart LR
-    subgraph EKS["EKS 내부"]
-        EKS_PODS[EKS Pods]
-        PROM[Prometheus]
-        LOKI[Loki]
-        TEMPO[Tempo]
-        ALERT[Alertmanager]
-    end
-
-    subgraph AWS["AWS 네이티브"]
-        CW[CloudWatch Alarm]
-        CT[CloudTrail]
-        EB[EventBridge]
-        SNS[SNS]
-        LAMBDA[Lambda]
-    end
-
-    subgraph POLICY["정책 위반"]
-        KYV[Kyverno]
-        PR[Policy Reporter]
-    end
-
-    GRAF[Grafana]
-    DISCORD[Discord]
-
-    EKS_PODS -->|메트릭| PROM
-    EKS_PODS -->|로그| LOKI
-    EKS_PODS -->|트레이싱| TEMPO
-
-    PROM --> GRAF
-    LOKI --> GRAF
-    TEMPO --> GRAF
-    PROM --> ALERT
-    LOKI --> ALERT
-    ALERT --> DISCORD
-
-    CW --> SNS
-    SNS --> LAMBDA --> DISCORD
-    CT --> EB --> LAMBDA
-    KYV --> PR --> DISCORD
-```
+![모니터링 스택](/images/infrastructure/monitoring/01_monitoring.svg?w=67%)
 
 | 도구 | 역할 | 대상 |
 |---|---|---|

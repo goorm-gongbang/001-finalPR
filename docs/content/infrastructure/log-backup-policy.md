@@ -6,22 +6,7 @@ Playball은 운영 로그, 감사 로그, 장기보관 증적 데이터, 운영 
 
 ## 보관 구조
 
-```mermaid
-flowchart LR
-    APP["애플리케이션 / 인프라"] --> OPLOG["운영 로그"]
-    APP --> TRACE["Trace 데이터"]
-    APP --> METRIC["메트릭 장기 데이터"]
-    AWS["AWS 변경 / 접근 이력"] --> AUDIT["감사 로그"]
-    BIZ["회원 / 거래 증적 데이터"] --> ARCH["장기보관 아카이브"]
-    RDS["RDS 운영 데이터"] --> DBBACKUP["운영 DB 복구 백업"]
-
-    OPLOG --> LOKI["Loki / S3 관측 저장소"]
-    TRACE --> TEMPO["Tempo / S3 관측 저장소"]
-    METRIC --> THANOS["Prometheus + Thanos / S3 관측 저장소"]
-    AUDIT --> AUDITS3["S3 감사 저장소 / S3 Glacier Flexible Retrieval"]
-    ARCH --> ARCHS3["S3 아카이브 저장소 / S3 Glacier Deep Archive"]
-    DBBACKUP --> BACKUPS3["S3 운영 백업 저장소"]
-```
+![보관 구조](/images/infrastructure/log-backup-policy/01_log-backup-policy.svg?w=67%)
 
 ---
 

@@ -54,7 +54,13 @@ export const docsConfig = {
                 { title: "모니터링 / 알림 체계", href: "/infrastructure/monitoring" },
                 { title: "장애 대응", href: "/infrastructure/incident-response" },
                 { title: "로그/백업/보관 정책", href: "/infrastructure/log-backup-policy" },
-                { title: "클러스터 정책", href: "/infrastructure/cluster-policy" },
+                { 
+                    title: "클러스터 정책", 
+                    href: "/infrastructure/cluster-policy", 
+                    children: [
+                        { title: "policy-reporter", href: "/infrastructure/policy-reporter" },
+                    ],
+                },
             ],
         },
         {

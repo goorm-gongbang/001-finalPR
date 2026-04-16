@@ -6,13 +6,7 @@
 
 ## 대응 배경
 
-```mermaid
-flowchart LR
-    subgraph Problem["기존 방식의 문제"]
-        A["11:00:00<br/>트래픽 폭주"] --> B["11:00:30<br/>확장 시작"]
-        B --> C["11:01:00<br/>확장 완료"]
-    end
-```
+![기존 확장](/images/infrastructure/traffic/01_traffic.svg?w=23%)
 
 예매 오픈 시각인 `11:00` 이후에만 확장을 시작하면 Pod 준비까지 **수십 초 단위 지연**이 발생합니다. 이 구간 동안 사용자 요청이 처리되지 못해 타임아웃과 에러가 집중됩니다.
 
@@ -32,15 +26,8 @@ flowchart LR
 
 ## 대응 구조
 
-```mermaid
-flowchart LR
-    CRON["Cron Pre-Warming"] --> POD["Pod 수 선반영"]
-    LOAD["실시간 요청 증가"] --> KEDA["KEDA ScaledObject"]
-    QUEUE["Kafka lag / Queue 적체"] --> KEDA
-    KEDA --> POD
-    POD --> NODE["노드 자원 부족"]
-    NODE --> KARP["Karpenter NodePool"]
-```
+![대응 구조](/images/infrastructure/traffic/02_traffic.svg?w=80%)
+
 
 예매 오픈 전에는 `Cron pre-warming`으로 Pod를 먼저 늘리고, 오픈 이후에는 `CPU`, `Kafka lag`, `Queue 적체`를 기준으로 KEDA가 Pod 수를 조정합니다. 노드 자원이 부족해지면 Karpenter가 NodePool 기준으로 노드를 추가합니다.
 
