@@ -53,7 +53,13 @@ export const docsConfig = {
                 { title: "트래픽 대응", href: "/infrastructure/traffic" },
                 { title: "모니터링 / 알림 체계", href: "/infrastructure/monitoring" },
                 { title: "장애 대응", href: "/infrastructure/failover" },
-                { title: "로그/백업/보관 정책", href: "/infrastructure/log-backup-policy" },
+                {
+                    title: "로그/백업/보관 정책",
+                    href: "/infrastructure/log-backup-policy",
+                    children: [
+                        { title: "클러스터 정책", href: "/infrastructure/kyverno" },
+                    ],
+                },
             ],
         },
         {
@@ -64,7 +70,6 @@ export const docsConfig = {
                 { title: "Istio/mTLS", href: "/security/istio-mtls" },
                 { title: "클라이언트 보안", href: "/security/client" },
                 { title: "접근 제어", href: "/security/iam" },
-                { title: "클러스터 정책", href: "/security/kyverno" },
                 { title: "봇 대응 체계", href: "/security/bot-defense" },
                 { title: "백엔드 방어 체계", href: "/security/backend-defense" },
                 { title: "침투 테스트 조치 결과", href: "/security/pentest-remediation" },
