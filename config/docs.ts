@@ -21,7 +21,20 @@ export const docsConfig = {
                 { title: "Redis 구성", href: "/development/redis" },
                 { title: "Kafka · Caffeine 캐싱", href: "/development/kafka-caching" },
                 { title: "좌석 분산락/Hold 동시성", href: "/development/seat-concurrency" },
-                { title: "성능 최적화 / 부하테스트", href: "/development/performance-optimization" },
+                { title: "성능 최적화 요약", href: "/development/performance-optimization" },
+                {
+                    title: "부하테스트 (3일차 통합)",
+                    href: "/development/load-test",
+                    children: [
+                        { title: "부하테스트 개요", href: "/development/load-test/overview" },
+                        { title: "테스트 시나리오 Flow", href: "/development/load-test/scenarios" },
+                        { title: "기술 용어 해설", href: "/development/load-test/tech-terms" },
+                        { title: "Phase별 최적화 타임라인", href: "/development/load-test/phases" },
+                        { title: "테스트별 결과 요약", href: "/development/load-test/results" },
+                        { title: "503 트러블슈팅 스토리", href: "/development/load-test/503-story" },
+                        { title: "Before/After 시각화", href: "/development/load-test/comparison" },
+                    ],
+                },
             ],
         },
         {
