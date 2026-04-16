@@ -44,29 +44,6 @@ Playball 인프라는 `프로비저닝`, `클러스터 부트스트랩`, `GitOps
 
 ![내부 구성](/images/infrastructure/architecture/02_infra-arc.svg?w=60%)
 
-```mermaid
-flowchart LR
-    TF["301 Terraform<br>(인프라 구조)"]
-    REPO["303 Helm/Values<br>GitOps"] -. sync .-> ARGO
-
-    subgraph CLUSTER["EKS / kubeadm 클러스터"]
-        ARGO["ArgoCD<br>Root App"]
-        ARGO --> INFRA_APPS["Infra Apps"]
-        ARGO --> APP_APPS["Application Apps"]
-
-        INFRA_APPS --> ISTIO["Istio"]
-        INFRA_APPS --> ESO["External Secrets Operator"]
-        INFRA_APPS --> KARP["Karpenter/KEDA"]
-        INFRA_APPS --> POLICY["Kyverno + Policy Reporter"]
-        INFRA_APPS --> OBS["Grafana 스택<br>Prometheus · Loki · Tempo"]
-
-        APP_APPS --> SVC["백엔드 / 프론트엔드 서비스"]
-    end
-
-    BOOT["302 Bootstrap"] -->|초기 설치| ARGO
-
-```
-
 ---
 
 ## 보안 / 감사 구조
@@ -74,24 +51,6 @@ flowchart LR
 ![보안 / 감사 구조](/images/infrastructure/architecture/03_infra-arc.svg?w=80%)
 
 **엣지(CloudFront + Shield) → LB(ALB + SG) → 메쉬(Istio WAF) → 내부통신(mTLS) → 앱(JWT + 보안 헤더)** 의 5계층 심층 방어 위에, SSO·IAM 기반 운영 접근과 CloudTrail·Kyverno 기반 감사 경로를 함께 구성합니다.
-
-```mermaid
-flowchart LR
-    USER["외부 요청"] --> EDGE["CloudFront + AWS Shield"]
-    EDGE --> ALB["ALB Security Group"]
-    ALB --> GW["Istio IngressGateway"]
-    GW --> WAF["EnvoyFilter + Rate Limit<br> + ext_authz"]
-    WAF --> APP["Application Pods<br>(mTLS + NetworkPolicy)"]
-
-    OPS["운영 접근"] --> SSO["AWS IAM Identity Center SSO"]
-    SSO --> ROLE["IAM Role 선택"]
-    ROLE --> AWS["AWS / EKS"]
-
-    DEPLOY["배포 리소스"] --> POLICY["Kyverno <br> /Policy Reporter"]
-    AWS --> TRAILEB["CloudTrail/EventBridge<br>+Lambda"]
-    TRAILEB --> DISC["Discord"]
-    POLICY --> DISC
-```
 
 
 ---
