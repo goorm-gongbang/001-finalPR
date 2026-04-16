@@ -135,8 +135,12 @@ export const docsConfig = {
       items: [
         { title: "개요", href: "/security/overview" },
         { title: "보안 흐름", href: "/security/flow" },
-        { title: "Gateway / mTLS", href: "/security/gateway-mtls" },
         { title: "클라이언트 보안", href: "/security/client-security" },
+        { title: "Gateway / mTLS", href: "/security/gateway-mtls" },
+        { title: "봇 대응 체계", href: "/security/bot-defense" },
+        { title: "백엔드 방어 체계", href: "/security/backend-defense" },
+        { title: "데이터 보안", href: "/security/data-security" },
+        { title: "인프라 보안", href: "/security/infrastructure-security" },
         {
           title: "접근 제어",
           href: "/security/access-control",
@@ -147,10 +151,7 @@ export const docsConfig = {
             },
           ],
         },
-        { title: "데이터 보안", href: "/security/data-security" },
-        { title: "봇 대응 체계", href: "/security/bot-defense" },
-        { title: "백엔드 방어 체계", href: "/security/backend-defense" },
-        { title: "취약점 관리", href: "/security/vulnerability-management" },
+        { title: "[부록] 취약점 관리", href: "/security/vulnerability-management" },
       ],
     },
     {

@@ -87,6 +87,7 @@ Playball은 AWS Organizations로 다계정 환경을 분리하고, IAM Identity 
 - **환경 태그 기반 조건부 허용**: `DevOps-*` Permission Set은 `aws:ResourceTag/Environment` 조건으로 환경 간 교차 접근을 막습니다.
 - **Secrets 네임스페이스 분리**: 모든 Secrets 정책은 `arn:aws:secretsmanager:*:*:secret:{env}/*` 처럼 환경 prefix로 제한되어 Prod 시크릿이 Staging 권한으로 노출되지 않습니다.
 - **S3 버킷 prefix 스코프**: `playball-*`(서비스 데이터) vs `goormgb-{env}-*`(환경 전용) 로 계층이 나뉘고, Permission Set이 허용 prefix만 지정합니다.
+- **SSM은 Session 액션만 허용 (전 팀 공통)**: 모든 Permission Set의 SSM은 `StartSession/TerminateSession/ResumeSession/Describe*` 로 제한합니다. Bastion 경유 DB·EKS 터널링은 가능하지만 `SendCommand`(임의 EC2 원격 명령), `PutParameter`(설정 오염), `AutomationExecution`(대량 재시작·삭제) 같은 **우회 공격 경로는 차단**됩니다.
 - **IAM은 "접속"까지만 제어**: IAM Permission Set은 DB에 **로그인 가능한지(yes/no)** 와 **SSM 세션을 열 수 있는지**만 결정합니다. 실제 DB 안에서 `SELECT` vs `UPDATE` vs `DELETE` 같은 세밀한 SQL 명령 제어는 **PostgreSQL Role/GRANT**(DB 레벨) 에서 별도 관리합니다. 즉 **IAM = 게이트웨이, DB Role = 내부 권한** 2중 구조.
 
 > **📝 향후 확장 — IAM DB Authentication 연동 가능**
