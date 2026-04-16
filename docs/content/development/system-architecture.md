@@ -8,21 +8,20 @@
 
 ```mermaid
 flowchart TD
-    U[사용자 Web / Mobile]
-    U --> CDN[Vercel CDN DDOS 방어]
-    CDN --> NLB[NLB 접근 제한]
-    NLB --> ISTIO[Istio Gateway WAF + mTLS]
-    ISTIO --> G[API-Gateway :8085 Spring Cloud Gateway]
+    U["사용자 Web / Mobile"] --> CDN["Vercel CDN<br/>DDoS 방어"]
+    CDN --> NLB["NLB 접근 제한"]
+    NLB --> ISTIO["Istio Gateway<br/>WAF + mTLS"]
+    ISTIO --> G["API-Gateway :8085<br/>Spring Cloud Gateway"]
 
-    G --> AG[Auth-Guard :8080]
-    G --> Q[Queue :8081]
-    G --> S[Seat :8082]
-    G --> O[Order-Core :8083]
+    G --> AG["Auth-Guard :8080"]
+    G --> Q["Queue :8081"]
+    G --> S["Seat :8082"]
+    G --> O["Order-Core :8083"]
 
-    subgraph SharedLib[common-core 공유 라이브러리]
-        XF[XUserIdAuthFilter]
-        ENT[User · Match · Club · Stadium]
-        CFG[Redis · JPA · Swagger · Exception]
+    subgraph SharedLib ["common-core 공유 라이브러리"]
+        XF["XUserIdAuthFilter"]
+        ENT["User · Match · Club · Stadium"]
+        CFG["Redis · JPA · Swagger · Exception"]
     end
 
     AG --> SharedLib
@@ -30,24 +29,24 @@ flowchart TD
     S --> SharedLib
     O --> SharedLib
 
-    subgraph RedisQ[Redis — Queue 전용]
-        RQ[queue:wait ZSET]
-        RA[queue:ready TTL 30초]
-        RP[seat:preference TTL 900초]
+    subgraph RedisQ ["Redis - Queue 전용"]
+        RQ["queue:wait ZSET"]
+        RA["queue:ready TTL 30초"]
+        RP["seat:preference TTL 900초"]
     end
 
-    subgraph RedisC[Redis — Auth/Lock 전용]
-        RS[refresh_token TTL 7일]
-        RB[token_blacklist TTL 잔여시간]
-        RL[block_lock TTL 5초]
-        RSE[seat:session]
+    subgraph RedisC ["Redis - Auth/Lock 전용"]
+        RS["refresh_token TTL 7일"]
+        RB["token_blacklist TTL 잔여시간"]
+        RL["block_lock TTL 5초"]
+        RSE["seat:session"]
     end
 
-    subgraph PG[PostgreSQL]
-        P1[users · user_sns]
-        P2[seats · blocks · match_seats · seat_holds]
-        P3[orders · payments · cash_receipts]
-        P4[matches · clubs · stadiums]
+    subgraph PG ["PostgreSQL"]
+        P1["users · user_sns"]
+        P2["seats · blocks · match_seats · seat_holds"]
+        P3["orders · payments · cash_receipts"]
+        P4["matches · clubs · stadiums"]
     end
 
     AG --> RS
@@ -64,11 +63,11 @@ flowchart TD
     O --> P3
     O --> P4
 
-    AG --> KK[Kakao OAuth Server]
+    AG --> KK["Kakao OAuth Server"]
 
-    S -.->|향후| K[Kafka Event Bus]
+    S -.->|향후| K["Kafka Event Bus"]
     O -.->|향후| K
-    K -.-> W[Async Worker / Notifier]
+    K -.-> W["Async Worker / Notifier"]
 ```
 
 ---
