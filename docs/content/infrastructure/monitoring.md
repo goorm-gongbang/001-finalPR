@@ -99,7 +99,7 @@ flowchart LR
 | **클러스터 CPU 사용률** | > 65% / > 80% | Warning / Critical | Grafana `K8s 운영 현황판 (k9s 스타일)` |
 | **클러스터 메모리 사용률** | > 70% / > 90% | Warning / Critical | Grafana `K8s 운영 현황판 (k9s 스타일)` |
 | **PostgreSQL 연결 포화** | > 70% / > 90% | Warning / Critical | Grafana `Database - RDS PostgreSQL` |
-| **RDS 백업/복구 상태 이상** | Backup 실패, PITR 비활성, 수동 스냅샷 미생성, 최근 PostgreSQL SQL dump 백업 부재 | Warning / Critical | Grafana `운영 알람 현황`, CloudWatch |
+| **RDS 백업/복구 상태 이상** | Backup 실패, PITR 비활성, 수동 스냅샷 미생성, 최근 PostgreSQL 데이터베이스 보조 백업 부재 | Warning / Critical | Grafana `운영 알람 현황`, CloudWatch |
 | **Redis 가용성** | `redis_up = 0` | Critical | Grafana `Cache & Queue - ElastiCache Redis` |
 | **Redis 메모리 사용률** | > 80% / > 90% | Warning / Critical | Grafana `Cache & Queue - ElastiCache Redis` |
 | **ALB 자체 5xx 응답** | 5분간 5건 이상 | Critical | CloudWatch `ALB` |
@@ -124,8 +124,8 @@ flowchart LR
 
 | 항목 | 기준 | 단계 | 참고 경로 |
 |---|---|---|---|
-| **RDS 백업 실패 / PITR 비활성 / 예정된 수동 스냅샷 미생성 / 최근 SQL dump 백업 부재** | 1회 이상 감지 | Warning | Grafana `운영 알람 현황`, CloudWatch |
-| **복구 가능성 상실** | PITR 불가, 자동백업 실패 지속, SQL dump 백업 부재 지속 | Critical | Grafana `운영 알람 현황`, CloudWatch |
+| **RDS 백업 실패 / PITR 비활성 / 예정된 수동 스냅샷 미생성 / 최근 PostgreSQL 데이터베이스 보조 백업 부재** | 1회 이상 감지 | Warning | Grafana `운영 알람 현황`, CloudWatch |
+| **복구 가능성 상실** | PITR 불가, 자동백업 실패 지속, PostgreSQL 데이터베이스 보조 백업 부재 지속 | Critical | Grafana `운영 알람 현황`, CloudWatch |
 | **Loki / Tempo S3 저장 이상** | 객체 저장소 접근 실패, 적재 실패 | Warning | Grafana, S3 버킷 |
 | **Thanos 장기 메트릭 업로드 이상** | 장기 메트릭 업로드 실패, object storage secret 이상 | Warning | Grafana, S3 버킷 |
 

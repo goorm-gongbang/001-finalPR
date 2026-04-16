@@ -1,6 +1,6 @@
 # 클라이언트 보안
 
-클라이언트 보안은 브라우저 노출 범위를 줄이고, 응답 헤더와 쿠키 속성을 보수적으로 유지하는 방식으로 구성합니다.
+Playball은 브라우저에 노출되는 정보를 줄이고, 응답 헤더와 쿠키 속성을 보수적으로 유지하는 방식으로 클라이언트 보안을 구성합니다. 인증 판단과 주요 검증은 브라우저가 아니라 Gateway와 백엔드 계층에서 처리합니다.
 
 ---
 
@@ -11,6 +11,7 @@
 | **브라우저 소스맵** | 운영 빌드에서 비활성화 |
 | **JavaScript 난독화** | 프로덕션 빌드 후 정적 청크 난독화 |
 | **응답 헤더 최소화** | `poweredByHeader` 비활성화 |
+| **정적 자산 분리** | 운영 빌드에서 CDN 경로 기준으로 정적 자산 제공 |
 
 운영 빌드는 `build:prod` 스크립트에서 `next build` 이후 `javascript-obfuscator`를 적용합니다.
 
@@ -22,7 +23,7 @@ Next.js 응답 헤더에 기본 보안 정책을 적용합니다.
 
 | 헤더 | 목적 |
 |---|---|
-| **Content-Security-Policy-Report-Only** | 허용된 출처만 단계적으로 검증 |
+| **Content-Security-Policy-Report-Only** | 허용된 출처만 연결되도록 위반 내역 수집 |
 | **X-Content-Type-Options: nosniff** | MIME 타입 추측 방지 |
 | **X-Frame-Options: DENY** | 클릭재킹 방지 |
 | **Referrer-Policy** | 외부 전송 Referrer 최소화 |
@@ -53,3 +54,4 @@ Refresh Token 쿠키 속성은 `JwtProperties`에서 관리하고, Admission Tok
 | **헤더 정책** | CSP, Frame, MIME 관련 헤더가 유지되는지 |
 | **쿠키 속성** | `HttpOnly`, `Secure`, `SameSite` 설정이 의도대로 적용되는지 |
 | **인증 흐름** | 로그인, 갱신, 대기열 토큰 흐름이 브라우저에서 정상 동작하는지 |
+| **API 연결 범위** | 브라우저가 허용된 API 및 수집 경로로만 연결되는지 |

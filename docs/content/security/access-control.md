@@ -1,6 +1,6 @@
 # 접근 제어
 
-운영 접근은 `AWS IAM Identity Center SSO`, `IAM Role`, `IRSA`, `Kubernetes RBAC`를 함께 사용합니다. 사람 계정의 AWS Console/CLI 접근은 SSO 로그인과 Role 전환을 기준으로 처리합니다.
+Playball은 SSO 기반 접근과 워크로드 접근을 분리하고, `AWS IAM Identity Center SSO`, `IAM Role`, `IRSA`, `Kubernetes RBAC`를 함께 사용합니다. AWS Console과 CLI 접근은 SSO 로그인과 Role 전환을 기준으로 처리하고, 클러스터 내부 워크로드는 필요한 AWS 권한만 사용합니다.
 
 ---
 
@@ -36,9 +36,10 @@ flowchart TD
 
 ---
 
-## 사람 계정 접근
+## SSO 기반 접근
 
-- 사람 계정은 `AWS IAM Identity Center SSO` 기반으로 접근합니다.
+- AWS Console과 CLI 접근은 `AWS IAM Identity Center SSO`를 기준으로 처리합니다.
+- 환경별 권한은 SSO Permission Set과 Role 전환 기준으로 분리합니다.
 - 관리자성 작업은 별도 Role 전환을 통해 수행합니다.
 - 운영 접근에는 `MFA`를 기본 요구사항으로 둡니다.
 - 접근 기록은 CloudTrail과 별도 감사 로그 경로에 남깁니다.
@@ -62,6 +63,8 @@ Kubernetes 내부 권한은 RBAC로 분리합니다.
 | **배포 계정** | 지정된 네임스페이스 배포 작업 |
 | **모니터링 구성요소** | 메트릭과 리소스 조회 |
 | **개발/운영 사용자** | 허용된 네임스페이스 기준 조회 또는 제한적 작업 |
+
+EKS 접근은 SSO 기반 Access Entry와 RBAC를 함께 사용해 AWS 계정 권한과 클러스터 내부 권한을 분리합니다.
 
 ---
 
