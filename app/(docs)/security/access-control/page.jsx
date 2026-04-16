@@ -3,10 +3,10 @@ import { MarkdownRenderer } from "@/components/ui/MarkdownRenderer";
 import { DocPageLayout } from "@/components/docs/DocPageLayout";
 
 export default async function Page() {
-    const content = await getDocContent(["security", "backend-defense"]);
+    const content = await getDocContent(["security", "access-control"]);
 
     return (
-        <DocPageLayout category="security" title="백엔드 방어 체계">
+        <DocPageLayout category="security" title="접근 제어">
             <MarkdownRenderer content={content} />
         </DocPageLayout>
     );

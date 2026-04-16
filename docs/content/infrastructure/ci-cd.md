@@ -60,7 +60,7 @@ Playball 배포는 수동 서버 반영이 아니라 `이미지 빌드`, `환경
 - **애플리케이션 이상**: 이전 이미지 태그 또는 이전 values 기준으로 되돌립니다.
 - **설정 오류**: Helm values / ArgoCD Application 정의를 이전 커밋으로 복원합니다.
 - **인프라 이상**: Terraform 상태와 Bootstrap 절차를 기준으로 다시 구성합니다.
-- **데이터 이상**: GitOps가 아니라 RDS PITR, 수동 스냅샷, `pg_dump -> S3` 기준으로 복구합니다.
+- **데이터 이상**: GitOps가 아니라 RDS PITR, 수동 스냅샷, PostgreSQL 데이터베이스 보조 백업 기준으로 복구합니다.
 
 ---
 
@@ -71,4 +71,4 @@ Playball 배포는 수동 서버 반영이 아니라 `이미지 빌드`, `환경
 | **현재 배포 버전** | values에 기록된 이미지 태그 |
 | **배포 성공 여부** | ArgoCD Sync / Health 상태 |
 | **서비스 영향** | Grafana 대시보드, Alertmanager, Discord 알림 |
-| **복구 가능성** | RDS 백업 상태, PITR 가능 여부, 최근 `pg_dump -> S3` 성공 여부 |
+| **복구 가능성** | RDS 백업 상태, PITR 가능 여부, 최근 PostgreSQL 데이터베이스 보조 백업 성공 여부 |

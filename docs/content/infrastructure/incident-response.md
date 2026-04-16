@@ -45,7 +45,7 @@ flowchart TB
 | **데이터** | DB 연결 포화, 데이터 손상, 잘못된 배치 | 쿼리, 락, PITR 필요 여부 |
 | **캐시/세션** | Redis down, 메모리 포화 | Redis 상태, eviction, 의존 기능 영향 |
 | **보안/감사** | 권한 변경, 루트 로그인, WAF 급증, 감사 저장소 이상 | CloudTrail, EventBridge, WAF 이벤트 |
-| **복구 가능성** | RDS 백업 실패, PITR 비활성, 수동 스냅샷 미생성, 최근 PostgreSQL SQL dump 백업 부재 | 자동백업, 수동 스냅샷, SQL dump 백업 성공 시각 |
+| **복구 가능성** | RDS 백업 실패, PITR 비활성, 수동 스냅샷 미생성, 최근 PostgreSQL 데이터베이스 보조 백업 부재 | 자동백업, 수동 스냅샷, PostgreSQL 데이터베이스 보조 백업 성공 시각 |
 | **장기보관 적재** | `member-retention/`, `commerce-retention/`, `pis-access/` 적재 실패 | 배치, Lambda, CronJob, 매니페스트 검증 |
 
 ---
@@ -101,7 +101,7 @@ flowchart TD
 |---|---|---|
 | **애플리케이션** | Kubernetes self-healing, 재스케줄링, GitOps 재적용, 재배포 | Pod 상태, 최근 배포, Helm values, 이미지 태그 |
 | **데이터베이스** | RDS Automated Backup + PITR, 수동 스냅샷, 필요 시 신규 복원 후 전환 | PITR 가능 여부, 자동백업 정상 여부, 스냅샷 보유 여부 |
-| **보조 백업** | PostgreSQL SQL dump 백업 | 최근 성공 시각, Job 실패 여부, 오브젝트 생성 여부 |
+| **보조 백업** | PostgreSQL 데이터베이스 보조 백업 | 최근 성공 시각, Job 실패 여부, 오브젝트 생성 여부 |
 | **캐시** | Replica 기반 복구 또는 재구성 | 가용성, 메모리 사용률, eviction, 의존 기능 영향 |
 | **관측 저장소** | Loki/Tempo S3 저장, Prometheus 로컬 TSDB + Thanos 장기 메트릭 저장 | 객체 저장소 접근, 장기 데이터 업로드, 적재 상태 |
 
@@ -127,6 +127,6 @@ flowchart TD
 |---|---|
 | **서비스 정상화** | 핵심 기능이 정상 응답하고 사용자 영향이 해소됨 |
 | **지표 회복** | 5xx, P99, DB 연결률, Redis 상태 등 핵심 지표가 기준선으로 복귀 |
-| **복구 가능성 확보** | PITR, 자동백업, 수동 스냅샷, PostgreSQL SQL dump 백업 상태가 정상으로 확인됨 |
+| **복구 가능성 확보** | PITR, 자동백업, 수동 스냅샷, PostgreSQL 데이터베이스 보조 백업 상태가 정상으로 확인됨 |
 | **증적 확보** | 장애 시각, 로그, 알림, 변경 이력, 영향 범위가 정리됨 |
 | **후속 작업 등록** | 원인 분석과 재발 방지 항목이 티켓 또는 GitHub 작업으로 남겨짐 |
