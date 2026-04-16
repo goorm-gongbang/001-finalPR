@@ -1,6 +1,6 @@
-# 모니터링
+# 모니터링 / 알림 체계
 
-운영 기준은 EKS 내부 경로와 AWS 네이티브 경로를 분리하고, 최종 알림 채널은 Discord로 통합합니다.
+Playball은 EKS 내부 경로, AWS 네이티브 경로, 정책 위반 경로를 분리해 운영하고, 최종 알림 채널은 Discord로 통합합니다.
 
 ---
 
@@ -24,6 +24,11 @@ flowchart LR
         LAMBDA[Lambda]
     end
 
+    subgraph POLICY["정책 위반"]
+        KYV[Kyverno]
+        PR[Policy Reporter]
+    end
+
     GRAF[Grafana]
     DISCORD[Discord]
 
@@ -41,6 +46,7 @@ flowchart LR
     CW --> SNS
     SNS --> LAMBDA --> DISCORD
     CT --> EB --> LAMBDA
+    KYV --> PR --> DISCORD
 ```
 
 | 도구 | 역할 | 대상 |
@@ -53,10 +59,11 @@ flowchart LR
 | **Alertmanager** | EKS 내부 알람 | 임계치 기반 알림 |
 | **CloudWatch Alarm → SNS/Lambda** | AWS 리소스 알람 | ALB, RDS 등 AWS 운영 메트릭 |
 | **CloudTrail → EventBridge → Lambda** | AWS 감사/보안 이벤트 | 권한 변경, 감사 이상 징후 |
+| **Policy Reporter → Discord** | 정책 위반 알림 | Kyverno PolicyReport, ClusterPolicyReport |
 
 ---
 
-## 알람 단계
+## 알림 단계
 
 | 단계 | 의미 | 채널 | 멘션 | 대응 시간 |
 |---|---|---|---|---|
@@ -65,6 +72,7 @@ flowchart LR
 | **Info** | 참고성 이벤트, 추세 공유 | `#alerts-info` | 없음 | 확인만 |
 
 보안/감사 이벤트는 `#alerts-security-critical`, `#alerts-security-warning`, `#alerts-security-info` 채널로 분리 운영합니다.
+`Info`는 기본적으로 실시간 전송 대상에서 제외하고, `Warning`도 사용자 영향 가능성이 높은 항목만 선택적으로 실시간 전송합니다.
 
 ---
 
@@ -75,6 +83,7 @@ flowchart LR
 | **EKS 내부 메트릭/로그** | Prometheus/Loki 룰 → Alertmanager → Discord | 운영 채널 또는 보안/감사 채널 |
 | **AWS 리소스 운영 메트릭** | CloudWatch Alarm → SNS/Lambda → Discord | 운영 채널 |
 | **AWS 감사/보안 이벤트** | CloudTrail → EventBridge → Lambda → Discord | 보안/감사 채널 |
+| **정책 위반** | Policy Reporter → Discord direct | `#alerts-security-info` |
 | **노드 상태 / Spot interruption** | 전용 인프라 경로 | `#staging-eks-spot`, `#prod-eks-spot` |
 
 ---
@@ -90,7 +99,7 @@ flowchart LR
 | **클러스터 CPU 사용률** | > 65% / > 80% | Warning / Critical | Grafana `K8s 운영 현황판 (k9s 스타일)` |
 | **클러스터 메모리 사용률** | > 70% / > 90% | Warning / Critical | Grafana `K8s 운영 현황판 (k9s 스타일)` |
 | **PostgreSQL 연결 포화** | > 70% / > 90% | Warning / Critical | Grafana `Database - RDS PostgreSQL` |
-| **RDS 백업/복구 상태 이상** | Backup 실패, PITR 비활성, 수동 스냅샷 미생성, 최근 `pg_dump -> S3` 성공 백업 부재 | Warning / Critical | Grafana `운영 알람 현황`, CloudWatch |
+| **RDS 백업/복구 상태 이상** | Backup 실패, PITR 비활성, 수동 스냅샷 미생성, 최근 PostgreSQL SQL dump 백업 부재 | Warning / Critical | Grafana `운영 알람 현황`, CloudWatch |
 | **Redis 가용성** | `redis_up = 0` | Critical | Grafana `Cache & Queue - ElastiCache Redis` |
 | **Redis 메모리 사용률** | > 80% / > 90% | Warning / Critical | Grafana `Cache & Queue - ElastiCache Redis` |
 | **ALB 자체 5xx 응답** | 5분간 5건 이상 | Critical | CloudWatch `ALB` |
@@ -105,7 +114,9 @@ flowchart LR
 | **차단 IP 수** | > 100건 (5분) / > 500건 (5분) | Warning / Critical | Grafana `Rate Limit 모니터링` |
 | **인증 실패율** | > 30% (5분) / > 50% (5분) | Warning / Critical | Grafana `Loki Kubernetes Logs`, `애플리케이션 모니터링 (Spring Boot)` |
 | **WAF 차단 이벤트(403/429)** | > 200건 (15분) / > 1000건 (15분) | Warning / Critical | Grafana `Istio WAF 모니터링`, `Rate Limit 모니터링` |
-| **Kyverno 정책 위반** | privileged, latest 태그, 리소스 제한, 필수 라벨, ArgoCD 관리 라벨, probe 위반 감지 | Info | `Policy Reporter UI`, Grafana `security-ops` |
+| **Kyverno 정책 위반** | privileged, latest 태그, 리소스 제한, 필수 라벨, ArgoCD 관리 라벨, probe 위반 감지 | Info | `Policy Reporter UI` |
+| **권한/보안 설정 변경** | 루트 계정 로그인, AccessKey 생성/변경, 정책 변경, CloudTrail 비활성 시도, 위험한 보안그룹 변경 | Critical | CloudTrail, CloudWatch, `#alerts-security-critical` |
+| **감사 저장소 삭제 이벤트** | 감사 저장소 삭제 또는 고위험 삭제 이벤트 감지 | Warning / Critical | CloudTrail, 감사 보고서, 파기 요약 |
 
 ---
 
@@ -113,10 +124,10 @@ flowchart LR
 
 | 항목 | 기준 | 단계 | 참고 경로 |
 |---|---|---|---|
-| **RDS 백업 실패 / PITR 비활성 / 예정된 수동 스냅샷 미생성 / 최근 dump 백업 부재** | 1회 이상 감지 | Warning | Grafana `운영 알람 현황`, CloudWatch |
-| **복구 가능성 상실** | PITR 불가, 자동백업 실패 지속, dump 백업 부재 지속 | Critical | Grafana `운영 알람 현황`, CloudWatch |
-| **Loki / Tempo S3 backend 이상** | 객체 저장소 접근 실패, 적재 실패 | Warning | Grafana, S3 버킷 |
-| **Thanos block 업로드 이상** | block 업로드 실패, object storage secret 이상 | Warning | Grafana, S3 버킷 |
+| **RDS 백업 실패 / PITR 비활성 / 예정된 수동 스냅샷 미생성 / 최근 SQL dump 백업 부재** | 1회 이상 감지 | Warning | Grafana `운영 알람 현황`, CloudWatch |
+| **복구 가능성 상실** | PITR 불가, 자동백업 실패 지속, SQL dump 백업 부재 지속 | Critical | Grafana `운영 알람 현황`, CloudWatch |
+| **Loki / Tempo S3 저장 이상** | 객체 저장소 접근 실패, 적재 실패 | Warning | Grafana, S3 버킷 |
+| **Thanos 장기 메트릭 업로드 이상** | 장기 메트릭 업로드 실패, object storage secret 이상 | Warning | Grafana, S3 버킷 |
 
 ---
 
