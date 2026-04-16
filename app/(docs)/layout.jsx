@@ -13,7 +13,7 @@ export default function DocsLayout({ children }) {
                         <SidebarTrigger />
                         <span className="ml-3 font-semibold text-[14px] text-slate-700">목차 열기</span>
                     </div>
-                    <div className="mx-auto max-w-4xl px-6 py-10 md:px-12 md:py-16">
+                    <div className="mx-auto max-w-5xl px-6 py-10 md:px-12 md:py-16">
                         {children}
                     </div>
                 </main>
