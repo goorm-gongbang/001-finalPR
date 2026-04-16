@@ -1,6 +1,7 @@
-# Thanos·S3 기반 장기 저장 — PVC(EBS)에서 S3로 전환
+# [Spot 안정성 작업 스토리] Thanos·S3 기반 장기 저장 — PVC(EBS)에서 S3로 전환
 
-> **분류**: 스토리지 아키텍처 · **환경**: Staging EKS · **상태**: ✅ 적용
+> **분류**: 스토리지 아키텍처 · **환경**: Staging EKS · **상태**: ✅ 적용  
+> **시리즈**: Spot 불안정 대응 — [(1) Staging Spot 다양화](./staging-spot) / (2) Thanos·S3 저장 전환
 
 ## 발견 계기
 

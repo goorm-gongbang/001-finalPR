@@ -75,17 +75,25 @@ export const docsConfig = {
           title: "인프라 아키텍처",
           href: "/infrastructure/architecture",
           children: [
-            { title: "외부 진입 구조", href: "/infrastructure/external-entry" },
-            {
-              title: "내부 구성",
-              href: "/infrastructure/internal-composition",
-            },
-            { title: "계정 경계", href: "/infrastructure/account-boundary" },
-            { title: "K8s 클러스터 구성", href: "/infrastructure/k8s-cluster" },
             {
               title: "도메인 · 라우팅",
               href: "/infrastructure/domain-routing",
             },
+            { title: "외부 진입 구조", href: "/infrastructure/external-entry" },
+            { title: "계정 경계", href: "/infrastructure/account-boundary" },
+            {
+              title: "아우터 아키텍처 - Dev",
+              href: "/infrastructure/outer-architecture-dev",
+            },
+            {
+              title: "아우터 아키텍처 - EKS",
+              href: "/infrastructure/outer-architecture-eks",
+            },
+            {
+              title: "내부 구성",
+              href: "/infrastructure/internal-composition",
+            },
+            { title: "K8s 클러스터 구성", href: "/infrastructure/k8s-cluster" },
           ],
         },
         {

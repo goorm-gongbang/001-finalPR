@@ -1,6 +1,7 @@
-# Staging Spot 다양화 — Karpenter NodePool 인스턴스 타입 분산
+# [Spot 안정성 작업 스토리] Staging Spot 다양화 — Karpenter NodePool 인스턴스 타입 분산
 
-> **분류**: 비용·가용성 · **환경**: Staging EKS · **상태**: ✅ 적용 (관측 중)
+> **분류**: 비용·가용성 · **환경**: Staging EKS · **상태**: ✅ 적용 (관측 중)  
+> **시리즈**: Spot 불안정 대응 — (1) 다양화 / [(2) Thanos·S3 저장 전환](./thanos-s3)
 
 ## 증상
 
