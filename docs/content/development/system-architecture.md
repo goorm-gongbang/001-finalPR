@@ -2,72 +2,39 @@
 
 사용자 요청은 Playball이 구성한 CDN → NLB → Istio를 통과한 뒤 API Gateway에 도달합니다. Gateway에서 JWT를 중앙 검증하고, `X-User-Id` 헤더를 주입하여 하위 서비스로 라우팅합니다. 하위 서비스는 JWT를 직접 파싱하지 않고 헤더만 신뢰합니다.
 
+PlayBall 백엔드는 **5개 마이크로서비스와 1개 공통 라이브러리**로 구성되며, 서비스 간 직접 REST 호출 없이 **Redis / Kafka를 통한 간접 데이터 공유**만 존재합니다. 현재 DB는 단일 PostgreSQL 인스턴스에 테이블 소유권만 분리된 상태이며, 향후 Payment 서비스 분리와 DB 스키마 분리를 대비해 **EDA(Event-Driven Architecture)로 전환**했습니다. 상세 내용은 [MSA · EDA 전환](./eda-architecture.md) 문서 참고.
+
 ---
 
 ## 전체 구조
 
 ```mermaid
 flowchart TD
-    U["사용자 Web / Mobile"] --> CDN["Vercel CDN<br/>DDoS 방어"]
+    U["사용자"] --> CDN["Vercel CDN<br/>DDoS 방어"]
     CDN --> NLB["NLB 접근 제한"]
     NLB --> ISTIO["Istio Gateway<br/>WAF + mTLS"]
-    ISTIO --> G["API-Gateway :8085<br/>Spring Cloud Gateway"]
+    ISTIO --> G["API-Gateway :8085"]
 
     G --> AG["Auth-Guard :8080"]
     G --> Q["Queue :8081"]
     G --> S["Seat :8082"]
     G --> O["Order-Core :8083"]
 
-    subgraph SharedLib ["common-core 공유 라이브러리"]
-        XF["XUserIdAuthFilter"]
-        ENT["User · Match · Club · Stadium"]
-        CFG["Redis · JPA · Swagger · Exception"]
-    end
+    AG -.-> RC["공용 Redis :6379"]
+    S -.-> RC
+    O -.-> RC
+    G -.-> RC
+    Q -.-> RQ["Queue 전용 Redis :6380"]
+    S -.-> RQ
 
-    AG --> SharedLib
-    Q --> SharedLib
-    S --> SharedLib
-    O --> SharedLib
+    AG --> DB[("PostgreSQL :5432")]
+    S --> DB
+    O --> DB
 
-    subgraph RedisQ ["Redis - Queue 전용"]
-        RQ["queue:wait ZSET"]
-        RA["queue:ready TTL 30초"]
-        RP["seat:preference TTL 900초"]
-    end
-
-    subgraph RedisC ["Redis - Auth/Lock 전용"]
-        RS["refresh_token TTL 7일"]
-        RB["token_blacklist TTL 잔여시간"]
-        RL["block_lock TTL 5초"]
-        RSE["seat:session"]
-    end
-
-    subgraph PG ["PostgreSQL"]
-        P1["users · user_sns"]
-        P2["seats · blocks · match_seats · seat_holds"]
-        P3["orders · payments · cash_receipts"]
-        P4["matches · clubs · stadiums"]
-    end
-
-    AG --> RS
-    AG --> RB
-    G --> RB
-    Q --> RQ
-    Q --> RA
-    Q --> RP
-    S --> RP
-    S --> RL
-    S --> RSE
-    AG --> P1
-    S --> P2
-    O --> P3
-    O --> P4
-
-    AG --> KK["Kakao OAuth Server"]
-
-    S -.->|향후| K["Kafka Event Bus"]
-    O -.->|향후| K
-    K -.-> W["Async Worker / Notifier"]
+    AG -->|publish| KF["Kafka :9092"]
+    O -->|publish| KF
+    S -->|consume| KF
+    O -->|consume| KF
 ```
 
 ---

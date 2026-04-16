@@ -38,6 +38,7 @@ On-Premise MiniPC 2대에 kubeadm으로 Kubernetes 클러스터를 구성해 **2
 
 - **접근 제어**: Cloudflare whitelist IP + Google OAuth(Istio) — 팀원만 진입 (모니터링 도구 포함)
 - **지원 도구**: CloudBeaver(DB), RedisInsight(Redis), Grafana(메트릭, 로그 등) 대시보드 제공
+- **AWS 서비스 연동 (부분 사용)**: Dev는 On-Prem 클러스터지만 **이미지 레지스트리·시크릿 관리**는 AWS를 그대로 사용합니다. 컨테이너 이미지는 **ECR**에서 Pull(`bot-kubeadm` IAM User + ECR credential refresh DaemonSet), 시크릿은 **Secrets Manager**에서 ESO ClusterSecretStore(`aws-secrets-manager`)를 통해 동기화합니다. Staging/Prod와 동일한 이미지·시크릿 경로를 쓰므로 환경 간 재현성을 확보합니다.
 
 ---
 

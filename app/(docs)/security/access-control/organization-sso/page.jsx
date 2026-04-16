@@ -6,7 +6,7 @@ export default async function Page() {
     const content = await getDocContent(["security", "access-control", "organization-sso"]);
 
     return (
-        <DocPageLayout category="security" title="Organization & SSO">
+        <DocPageLayout category="security" title="Organization & IAM Identity Center">
             <MarkdownRenderer content={content} />
         </DocPageLayout>
     );

@@ -26,7 +26,7 @@ flowchart LR
 | **Edge** | CloudFront, AWS Shield Standard | 외부 진입점 통합, 정적 캐시 처리, 대규모 트래픽 흡수 |
 | **LB** | ALB, Security Group | 허용된 진입 경로만 유지하고 메쉬 계층으로 전달 |
 | **Mesh** | Istio Gateway, EnvoyFilter + Lua, Rate Limit, ext_authz | 공격 패턴 차단, 과도한 요청 제한, 민감 경로 추가 검증 |
-| **Internal** | Istio mTLS | 서비스 간 통신 암호화와 상호 인증 |
+| **Internal** | Istio mTLS, Redis TLS(in-transit) | 서비스 간 통신 암호화와 상호 인증, ElastiCache Redis는 TLS(required)로 전 환경 강제 |
 | **Application** | JWT, 보안 헤더, 난독화, Admission Token | 사용자 인증 상태와 토큰 유효성 확인, 대기열 우회와 비정상 선점 요청 방지 |
 
 ---

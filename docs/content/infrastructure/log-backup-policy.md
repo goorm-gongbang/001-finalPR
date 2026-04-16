@@ -59,12 +59,6 @@ Playball은 운영 로그, 감사 로그, 장기보관 증적 데이터, 운영 
 | **S3 Glacier 장기보관 저장소** | 회원/거래 장기보관 데이터 | 정책/법정 보존 데이터 | `playball-retention-archive` |
 | **S3 관측 저장소** | Loki 로그, Tempo Trace, Thanos 메트릭 장기 데이터 | 관측 데이터 장기 저장 | `playball-{prod,staging}-{loki,tempo,thanos,clickhouse}` |
 
-**예시) 실제 운영 중인 S3 버킷 구성**
-
-> AWS 콘솔에서 조회한 Playball의 S3 General Purpose Bucket 목록입니다. 4가지 저장 목적(운영 백업 / 감사 / 장기보관 / 관측)에 따라 네이밍과 환경(`prod` / `staging`) 접두사로 버킷을 분리해 Lifecycle·권한·접근 통제를 독립적으로 관리합니다.
-
-![AWS S3 Console – 저장소 구성](/images/infrastructure/log-backup-policy/aws-console-backup-env.png)
-
 ---
 
 ## 운영 기준
@@ -80,6 +74,8 @@ Playball은 운영 로그, 감사 로그, 장기보관 증적 데이터, 운영 
 
 ## 백업 및 아카이브 스케줄
 
+> **Prod 운영 기준 설계**입니다. Staging은 부하테스트·검증 환경이라 현재 `rds-backup`·`logs-backup-infra`·`logs-backup-service` 3개 CronJob만 실제 스케줄되어 있으며, 환경별 실행 시각은 최대 30분 내에서 운영 편의에 따라 조정될 수 있습니다. 나머지 증적/매니페스트 적재 잡은 Prod 전환 시점에 동일 CronJob 프레임으로 활성화합니다.
+
 | 구분 | KST | 대상 |
 |---|---|---|
 | **운영 DB 보조 백업** | 02:00~02:30 | PostgreSQL 데이터베이스 보조 백업 |
@@ -89,6 +85,16 @@ Playball은 운영 로그, 감사 로그, 장기보관 증적 데이터, 운영 
 | **회원 장기보관 적재** | 03:40 | 회원 장기보관 증적 데이터 |
 | **거래/정산 법정증적 적재** | 03:50 | 주문, 예매, 결제, 취소, 환불, 정산, 세무 증빙 |
 | **매니페스트 생성** | 04:00 | 장기보관 적재 검증 |
+
+**Staging 현재 운영 상태 (참고용 스크린샷)**
+
+현재 Staging에서는 아래 3개 CronJob이 실제로 스케줄되어 있으며, 시간은 UTC 기준이라 KST로 +9시간 환산되어 실행됩니다. `0 17 * * *` = **KST 02:00** 처럼 cron 표현이 문서의 KST 표와 1:1로 대응됩니다.
+
+![Staging CronJob 목록](/images/infrastructure/log-backup-policy/backup-cronjob.png)
+
+실제 생성된 백업 객체도 확인 가능합니다. 아래는 `playball-web-backup/staging/postgres/goormgb/` prefix에 적재된 오늘자 덤프로, **파일명의 UTC 타임스탬프**(`20260415-170020` = UTC 17:00:20)와 **S3 Last modified**(KST 02:01:13)가 **CronJob 실행 시각과 정확히 일치**합니다.
+
+![S3 객체 생성 증거 – playball-web-backup/staging/postgres/goormgb](/images/infrastructure/log-backup-policy/backup-example.png)
 
 ---
 

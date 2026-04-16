@@ -23,7 +23,7 @@ Next.js 응답 헤더에 기본 보안 정책을 적용합니다.
 
 | 헤더 | 목적 |
 |---|---|
-| **Content-Security-Policy-Report-Only** | 허용된 출처만 연결되도록 위반 내역 수집 |
+| **Content-Security-Policy-Report-Only (CSP)** | 허용된 출처만 연결되도록 위반 내역 수집 |
 | **X-Content-Type-Options: nosniff** | MIME 타입 추측 방지 |
 | **X-Frame-Options: DENY** | 클릭재킹 방지 |
 | **Referrer-Policy** | 외부 전송 Referrer 최소화 |
