@@ -5,6 +5,9 @@ import "./globals.css";
 export const metadata = {
   title: "Playball Guide",
   description: "Playball Service Documentation and Sandbox",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({ children }) {

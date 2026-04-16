@@ -10,7 +10,7 @@ export async function GET() {
         for (const group of config.sidebarNav) {
             for (const item of group.items) {
                 // Determine slug array
-                // href examples: "/docs/planning/overview", "/sandbox/traffic"
+                // href examples: "/planning/overview", "/sandbox/traffic"
                 const parts = item.href.split("/").filter(Boolean); // ["docs", "planning", "overview"]
                 const slug = parts.slice(1); // ["planning", "overview"]
 

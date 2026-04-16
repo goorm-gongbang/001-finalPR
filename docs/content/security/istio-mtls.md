@@ -1,64 +1,88 @@
 # Istio / mTLS
 
-Istio 서비스 메시를 활용해 서비스 간 내부 통신 전체에 Zero Trust 보안 관계를 구현합니다. 외부에서 인증된 요청이라도 내부 서비스 간에는 서로를 암호화된 채널과 인증서로 다시 검증합니다.
+Istio는 외부 요청 검사와 내부 서비스 통신 보호를 함께 처리합니다. Ingress Gateway는 차단과 제한을 먼저 수행하고, 서비스 간 통신은 `STRICT` mTLS를 기준으로 운영합니다.
 
 ---
 
-## Zero Trust 내부 통신 구조
-
-Istio Sidecar Proxy(Envoy)가 각 Pod에 주입되어 애플리케이션 코드가 보안 로직을 직접 다루지 않아도 됩니다. Istiod(Control Plane)가 실시간으로 인증서를 갱신·배포하고, 각 프록시가 이를 적용합니다.
+## 서비스 메시 구조
 
 ```mermaid
 flowchart TB
-    subgraph CP["Istio 컨트롤 플레인"]
-        ISTIOD[Istiod<br/>인증서 발급 및 정책 배포]
+    subgraph CP["Istio Control Plane"]
+        ISTIOD[Istiod]
     end
 
-    subgraph DP["데이터 플레인 (EKS 워커 노드)"]
-        subgraph PodA["파드 A"]
-            PA_PROXY[Envoy Sidecar<br/>인증서 X.509 보유]
-            PA_APP[앱 컨테이너]
+    subgraph DP["Data Plane"]
+        subgraph PodA["서비스 A"]
+            A_PROXY[Envoy Sidecar]
+            A_APP[App]
         end
-        subgraph PodB["파드 B"]
-            PB_PROXY[Envoy Sidecar<br/>인증서 X.509 보유]
-            PB_APP[앱 컨테이너]
+        subgraph PodB["서비스 B"]
+            B_PROXY[Envoy Sidecar]
+            B_APP[App]
         end
     end
 
-    ISTIOD -->|인증서 주입 / 정책 배포| PA_PROXY
-    ISTIOD -->|인증서 주입 / 정책 배포| PB_PROXY
-    PA_PROXY <-->|mTLS 암호화 터널| PB_PROXY
+    ISTIOD -->|인증서 및 정책 배포| A_PROXY
+    ISTIOD -->|인증서 및 정책 배포| B_PROXY
+    A_PROXY <-->|mTLS| B_PROXY
 ```
 
 ---
 
-## mTLS 동작 원리
+## mTLS 운영 방식
 
-| 단계 | 동작 |
+| 항목 | 운영 기준 |
 |---|---|
-| **1. 인증서 발급** | Istiod가 각 Pod의 Sidecar에 X.509 인증서를 실시간으로 주입 |
-| **2. 상호 인증** | 두 서비스가 서로의 인증서를 교차 검증해 신뢰 확인 |
-| **3. 암호화 통신** | 검증 완료 후 TLS 암호화 채널로 데이터 전송 |
-| **4. 자동 갱신** | Istiod가 인증서 만료 전 자동 교체, 운영자 개입 불필요 |
+| **기본 모드** | 서비스 간 통신은 `STRICT` 기준으로 운영 |
+| **인증서 관리** | Istiod가 Sidecar에 인증서를 배포하고 자동 갱신 |
+| **기본 효과** | 서비스 간 상호 인증과 내부 통신 암호화 |
+| **예외 처리** | non-mesh 네임스페이스, Prometheus 스크랩 포트, AI 메트릭 포트는 예외 허용 |
+
+예외 대상에는 `messaging`, `data` 네임스페이스 같은 non-mesh 서비스와 `monitoring`의 스크랩, `staging-ai/prod-ai` 메트릭 포트가 포함됩니다.
 
 ---
 
-## Rate Limiting 정책
+## Ingress Gateway 보안 기능
 
-과도한 세션 점유나 비정상 호출을 Ingress Gateway 단계에서 제어합니다.
+### EnvoyFilter + Lua 보안 필터
 
-| API 유형 | 허용 정책 | 이유 |
-|---|---|---|
-| **좌석 조회** (`/seat/**`) | 높은 허용치 | 사용자 경험(UX)과 직결, 가용성 우선 |
-| **결제/예매** (`/payments`, `/orders`) | 보수적 제한 | DB Lock 유발 가능, 429로 즉시 거부 |
-| **대기열** (`/queue/**`) | 중간 허용치 | 폴링 간격이 있어 부하 자연 분산 |
+- SQL Injection, XSS, Path Traversal, Command Injection 등 주요 패턴을 검사합니다.
+- Log4Shell, LDAP Injection, XXE, SSRF, Header Injection, Bot Scanner 패턴도 함께 검사합니다.
+- `block` 모드로 운영하며 차단 응답은 `403`입니다.
+- 보안 이벤트는 Istio 프록시 로그와 보안 대시보드에서 확인합니다.
+
+### ext_authz 연동
+
+- Istio는 `authz-adapter`와 gRPC `9001` 포트로 연동합니다.
+- 대상 경로는 `POST /queue/matches/{id}/enter`, `GET /seat/matches/{id}/recommendations/blocks`, `POST /seat/matches/{id}/recommendations/blocks/{id}/assign`, `GET /seat/matches/{id}/seat-groups`, `GET /seat/matches/{id}/sections/{id}/blocks`, `POST /seat/matches/{id}/seat-holds` 입니다.
+- AI 계층 장애 시에는 `failOpen: true`로 동작합니다.
+
+### Rate Limit
+
+- 기본 Local Rate Limit은 초당 `100` 요청, IP별 기준은 초당 `50` 요청입니다.
+- 경로별 Local Rate Limit은 `/auth/` 초당 `10`, `/payment/` 초당 `5`, `/signup` 초당 `3` 요청입니다.
+- Global Rate Limit은 Redis 기반으로 운영하며, IP 기준 분당 `300`, `/auth/kakao/login` 분당 `10`, `/auth/signup` 분당 `5`, `/order/payment` 분당 `20`, `/seat/hold` 분당 `30` 요청 제한을 둡니다.
+- 429 응답은 서비스 내부까지 요청을 넘기지 않고 Gateway에서 종료합니다.
 
 ---
 
-## Coraza WAF
+## 적용 제외 경로
 
-Istio Ingress Gateway에 Coraza WAF를 통합하여 웹 공격을 자체 구현으로 차단합니다.
+| 구분 | 경로 |
+|---|---|
+| **WAF 제외** | `/load-test/`, `/faro/`, `/api/datasources/`, `/socket.io/`, `/assets/`, `/explore`, `/api/ds/query`, health, metrics, swagger, OAuth callback |
+| **ext_authz 제외** | `/ai/`, `/load-test/`, health, metrics, actuator |
+| **Rate Limit 제외** | `/load-test/`, health, metrics, actuator health |
 
-- **차단 항목**: SQL Injection, XSS, CSRF, 경로 순회(Path Traversal) 등 OWASP 주요 공격
-- **비용**: AWS WAF 대비 비용 $0 (자체 구현)
-- **성능**: Envoy 필터로 동작해 별도 홉 없이 처리
+---
+
+## 점검 항목
+
+| 항목 | 확인 내용 |
+|---|---|
+| **mTLS 상태** | STRICT 정책과 예외 포트 구성이 적용되었는지 |
+| **보안 필터 로그** | 403 차단, 필터 매칭 패턴, 비정상 요청 급증 여부 |
+| **Rate Limit 상태** | 429 증가, 경로별 제한 동작 여부 |
+| **ext_authz 상태** | authz-adapter 연결, 응답 지연, fail-open 발생 여부 |
+| **메트릭 수집 예외** | Prometheus 스크랩 포트가 정상 노출되는지 |

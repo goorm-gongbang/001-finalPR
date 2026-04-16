@@ -1,64 +1,87 @@
-# IAM 접근 제어
+# SSO 접근 제어
 
-운영 클라우드 환경의 접근 권한을 세분화하여 관리합니다. 관리 계정 탈취나 권한 남용이 전체 서비스 붕괴(SPOF)로 번지지 않도록 RBAC(역할 기반 접근 제어) 모델을 설계했습니다.
+운영 접근은 `AWS IAM Identity Center SSO`, `IAM Role`, `IRSA`, `Kubernetes RBAC`를 함께 사용합니다. 사람 계정의 AWS Console/CLI 접근은 SSO 로그인과 Role 전환을 기준으로 처리합니다.
 
 ---
 
-## 최소 권한 원칙 (Principle of Least Privilege)
-
-광범위한 자원 허용 정책을 배제하고, 역할별로 필요한 최소 권한만 부여합니다.
+## 접근 제어 구조
 
 ```mermaid
 flowchart TD
-    subgraph IAM["AWS IAM"]
-        ADMIN[관리자 역할<br/>EKS/RDS 생성·삭제·수정]
-        DEV[개발자 역할<br/>로그 조회 / Pod exec]
-        READONLY[Read-Only 역할<br/>리소스 상태 조회만]
-        CICD[CI/CD 역할<br/>ECR Push / EKS 배포만]
-    end
+    USER[운영자 / 개발자] --> SSO[AWS IAM Identity Center]
+    SSO --> ROLE[IAM Role]
+    ROLE --> AWS[AWS 리소스]
+    ROLE --> EKS[EKS 접근]
+    EKS --> RBAC[Kubernetes RBAC]
 
-    ADMIN -->|엄격히 제한| RESOURCE[AWS 리소스]
-    DEV -->|범위 한정| RESOURCE
-    READONLY -->|조회만| RESOURCE
-    CICD -->|특정 액션만| RESOURCE
+    POD[서비스 계정] --> IRSA[IRSA]
+    IRSA --> SECRET[Secrets Manager / AWS API]
+
+    AWS --> TRAIL[CloudTrail]
+    TRAIL --> EVENT[EventBridge]
+    EVENT --> LAMBDA[Lambda]
+    TRAIL --> ATHENA[Athena]
 ```
 
 ---
 
-## 역할별 권한 설계
+## 권한 분리 기준
 
-| 역할 | 허용 권한 | 제한 이유 |
+| 주체 | 사용 권한 | 분리 목적 |
 |---|---|---|
-| **관리자** | EKS, RDS, Redis 생성/수정/삭제 | 최소 인원에게만 부여, MFA 강제 |
-| **개발자** | CloudWatch 로그 조회, kubectl exec (제한된 네임스페이스) | 운영 데이터 직접 접근 차단 |
-| **Read-Only** | 리소스 상태 조회만 | 변경 작업 불가 |
-| **CI/CD** | ECR 이미지 Push, EKS 특정 Deployment 업데이트만 | 파이프라인 전용 최소 권한 |
+| **운영자** | 환경 관리, 배포 확인, 장애 대응 | 운영 변경 책임 분리 |
+| **개발자** | 제한된 조회와 개발 지원 작업 | 운영 리소스 직접 변경 최소화 |
+| **CI/CD** | 이미지 반영과 배포 자동화 범위 | 자동화 계정의 권한 범위 고정 |
+| **워크로드** | 필요한 AWS API만 사용 | 장기 Access Key 없이 서비스별 최소 권한 부여 |
 
 ---
 
-## 접근 제어 정책
+## 사람 계정 접근
 
-### MFA (다중 인증) 강제화
-관리자 역할과 AWS 콘솔 접근 시 MFA를 필수로 요구합니다. MFA 없이 접근을 시도하면 Deny 정책이 먼저 적용됩니다.
-
-### 자격증명 자동 순환
-- EC2/EKS 서비스용 자격증명: IAM Role for Service Account(IRSA)로 임시 토큰 자동 발급
-- 장기 Access Key 사용 금지
-- 키 유출 시 즉시 폐기 가능한 토큰 기반 인증 채택
-
-### 접근 이력 감사
-- **CloudTrail**: 모든 AWS API 호출을 S3에 기록
-- **보관 기간**: 일반 감사 로그 400일, 개인정보처리시스템 접속 기록 2년
-- **EventBridge + SNS**: 이상 접근 탐지 시 Discord 즉시 알림
+- 사람 계정은 `AWS IAM Identity Center SSO` 기반으로 접근합니다.
+- 관리자성 작업은 별도 Role 전환을 통해 수행합니다.
+- 운영 접근에는 `MFA`를 기본 요구사항으로 둡니다.
+- 접근 기록은 CloudTrail과 별도 감사 로그 경로에 남깁니다.
 
 ---
 
-## Kubernetes RBAC
+## 워크로드 접근
 
-EKS 클러스터 내부에서도 Kubernetes RBAC로 네임스페이스별 접근을 제한합니다.
+- 클러스터 내부 워크로드는 `IRSA`를 기준으로 AWS 권한을 부여합니다.
+- `External Secrets Operator`, `External DNS`, `AWS Load Balancer Controller`, `Karpenter`, `Grafana CloudWatch`, `RDS Backup`, `AI Defense` 등은 각각 필요한 Role만 사용합니다.
+- 시크릿은 장기 Access Key 대신 Secrets Manager와 IRSA 조합으로 주입합니다.
 
-| 주체 | 권한 범위 |
+---
+
+## 클러스터 내부 권한
+
+Kubernetes 내부 권한은 RBAC로 분리합니다.
+
+| 대상 | 권한 범위 |
 |---|---|
-| **배포 서비스 계정** | 특정 네임스페이스의 Deployment 업데이트만 |
-| **모니터링 에이전트** | 전 네임스페이스 Pod/Node 메트릭 읽기만 |
-| **개발자 계정** | 지정 네임스페이스 로그 조회, exec 허용 |
+| **배포 계정** | 지정된 네임스페이스 배포 작업 |
+| **모니터링 구성요소** | 메트릭과 리소스 조회 |
+| **개발/운영 사용자** | 허용된 네임스페이스 기준 조회 또는 제한적 작업 |
+
+---
+
+## 감사와 추적
+
+| 항목 | 운영 방식 |
+|---|---|
+| **AWS API 추적** | CloudTrail |
+| **실시간 이벤트 전파** | EventBridge → Lambda → Discord |
+| **일반 감사로그 보관** | 총 400일 |
+| **개인정보처리시스템 접속기록** | 총 2년 |
+| **감사 저장소 보호** | Versioning, HTTPS 강제, 무결성 검증 |
+
+---
+
+## 추적 대상 예시
+
+| 항목 | 확인 방식 |
+|---|---|
+| **권한 변경** | IAM 정책, Role, Access Key 관련 CloudTrail 이벤트 확인 |
+| **Route53 변경** | `ChangeResourceRecordSets` 이벤트와 호출 주체 확인 |
+| **보안그룹/리소스 설정 변경** | EventBridge 보안 이벤트와 CloudTrail 원본 대조 |
+| **사후 조사** | Athena에서 CloudTrail S3 로그 조회 |
