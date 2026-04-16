@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useId } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 import mermaid from "mermaid";
 import { Maximize2Icon } from "lucide-react";
 
@@ -240,6 +241,7 @@ export function MarkdownRenderer({ content }) {
         <ReactMarkdown
             key={key}
             remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw]}
             components={markdownComponents}
         >
             {chunk}
