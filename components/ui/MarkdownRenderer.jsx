@@ -122,9 +122,26 @@ function ZoomableImage({ src, alt = "" }) {
 
     if (!src) return null;
 
+    let customWidth = null;
+    let cleanSrc = src;
+
+    try {
+        const urlObj = src.startsWith('http') ? new URL(src) : new URL(src, 'http://localhost');
+        if (urlObj.searchParams.has('w')) {
+            customWidth = urlObj.searchParams.get('w');
+            urlObj.searchParams.delete('w');
+            cleanSrc = src.startsWith('http') ? urlObj.toString() : urlObj.pathname + urlObj.search;
+        }
+    } catch (e) {
+        // parsing 에러 무시
+    }
+
     return (
         <>
-            <div className="doc-image-shell">
+            <div 
+                className="doc-image-shell" 
+                style={customWidth ? { maxWidth: /^\d+$/.test(customWidth) ? `${customWidth}px` : customWidth, margin: '0 auto' } : undefined}
+            >
                 <button
                     type="button"
                     className="doc-image-preview"
@@ -136,7 +153,7 @@ function ZoomableImage({ src, alt = "" }) {
                             <Maximize2Icon className="size-4" />
                         </span>
                     </span>
-                    <img src={src} alt={alt} className="doc-image-preview__img" />
+                    <img src={cleanSrc} alt={alt} className="doc-image-preview__img" />
                 </button>
             </div>
 
@@ -151,7 +168,7 @@ function ZoomableImage({ src, alt = "" }) {
                 >
                     <div className="doc-image-dialog">
                         <div className="doc-image-dialog__canvas">
-                            <img src={src} alt={alt} className="doc-image-dialog__img" />
+                            <img src={cleanSrc} alt={alt} className="doc-image-dialog__img" />
                         </div>
                     </div>
                 </DialogContent>

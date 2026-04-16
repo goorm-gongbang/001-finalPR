@@ -2,7 +2,7 @@
 
 Playball은 Dev, Staging, Prod 세 가지 환경을 분리해 변경 범위와 검증 단계를 나눕니다. Dev는 기능 개발과 실험, Staging은 실제 배포 전 검증, Prod는 실서비스 제공을 담당합니다. 비용 격리와 보안 경계를 위해 **AWS Organizations 기반으로 환경별 계정을 분리**해 운영합니다.
 
-![환경 구성 다이어그램](/images/infrastructure/environment/01_environment.png)
+![환경 구성 다이어그램](/images/infrastructure/environment/01_environment.png?w=70%)
 
 
 ---
