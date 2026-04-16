@@ -1,61 +1,55 @@
 # 봇 대응 체계
 
-티켓팅 서비스는 요청 급증, 반복 접근, 대기열 우회 시도를 함께 막아야 하므로 `WAF`, `Rate Limit`, `ext_authz`, `Admission Token` 검증을 연계해 운영합니다.
+Playball은 짧은 시간에 요청이 집중되는 티켓팅 특성을 기준으로 봇 대응 체계를 구성합니다. 요청 급증, 반복 접근, 대기열 우회, 좌석 선점 시도를 함께 막기 위해 Gateway 차단, 행동 판단, 애플리케이션 재검증을 연계합니다.
 
 ---
 
-## 대응 계층
+## 대응 흐름
 
 ```mermaid
 flowchart LR
-    BOT[비정상 자동화 요청] --> EDGE[CloudFront + AWS Shield]
-    EDGE --> WAF[EnvoyFilter + Lua]
-    WAF --> LIMIT[Istio Rate Limit]
-    LIMIT --> AUTHZ[ext_authz + authz-adapter]
-    AUTHZ -->|통과| APP[Queue / Seat / Order]
-    AUTHZ -->|차단 또는 제한| BLOCK[403 / 429]
+    BOT["비정상 자동화 요청"] --> EDGE["CloudFront + AWS Shield"]
+    EDGE --> GATEWAY["Istio Gateway<br/>EnvoyFilter + Lua<br/>Rate Limit + ext_authz"]
+    GATEWAY -->|통과| APP["Queue / Seat / Order"]
+    GATEWAY -->|차단 또는 제한| BLOCK["403 / 429"]
+    APP -->|재검증| TOKEN["Admission Token / 주문 조건"]
 ```
 
 ---
 
-## 계층별 역할
+## 대응 기준
 
-| 계층 | 구성 | 역할 |
+| 영역 | 주요 구성 | 적용 기준 |
 |---|---|---|
-| **Edge** | CloudFront + AWS Shield Standard | 대규모 트래픽 흡수와 외부 진입점 통합 |
-| **WAF** | EnvoyFilter + Lua | 웹 공격 패턴과 Bot Scanner 탐지, 403 차단 |
-| **Gateway 제한** | Istio Rate Limit | 과도한 요청을 429로 제한 |
-| **행동 판단** | ext_authz + authz-adapter + AI Defense | 민감 API에 추가 판단 적용 |
-| **애플리케이션 검증** | Queue / Seat / Order 계층 | 대기열, Hold, 주문 흐름 재검증 |
+| **외부 진입 보호** | CloudFront, AWS Shield Standard | 대규모 요청 급증과 비정상 진입을 1차로 흡수 |
+| **Gateway 차단** | EnvoyFilter + Lua | Bot Scanner, 웹 공격 패턴, 비정상 요청을 403으로 차단 |
+| **요청 제한** | Local / Global Rate Limit | 과도한 요청을 429로 종료하고 서비스 내부까지 전달하지 않음 |
+| **행동 판단** | ext_authz, authz-adapter, AI Defense | 대기열 진입, 좌석 선점 계열 민감 경로에 추가 판단 적용 |
+| **애플리케이션 재검증** | Queue, Seat, Order | Admission Token, 좌석 Hold, 주문 조건을 다시 검증 |
 
 ---
 
-## 제어 기준
+## 주요 보호 지점
 
-### 1. Rate Limit
+| 구분 | 처리 기준 |
+|---|---|
+| **대기열 진입** | 예매 옵션과 Admission Token 기준으로 정상 입장 경로를 확인 |
+| **좌석 선점** | 추천 좌석, 좌석 조회, Seat Hold 계열 경로에 추가 인가 판단 적용 |
+| **주문 생성** | 과도한 요청과 비정상 결제 시도를 Gateway와 주문 계층에서 함께 제한 |
+| **반복 요청** | IP, 경로, 요청 패턴 기준으로 Rate Limit과 차단 로그를 추적 |
+| **사후 제재** | 차단 사용자, 차단 IP, 이상 징후를 로그와 메트릭으로 남겨 후속 조치에 반영 |
 
-- Local Rate Limit은 기본 초당 `100`, IP별 초당 `50` 요청입니다.
-- 경로별 Local Rate Limit은 `/auth/` 초당 `10`, `/payment/` 초당 `5`, `/signup` 초당 `3` 요청입니다.
-- Global Rate Limit은 Redis 기준으로 IP 분당 `300`, `/auth/kakao/login` 분당 `10`, `/auth/signup` 분당 `5`, `/order/payment` 분당 `20`, `/seat/hold` 분당 `30` 요청입니다.
-- 요청이 기준을 넘으면 서비스 내부까지 전달하지 않고 `429`로 종료합니다.
+---
 
-### 2. AI Defense 연동
+## 운영 확인
 
-- `authz-adapter`가 AI Defense 평가 결과를 받아 Gateway 판단에 반영합니다.
-- ext_authz는 대기열 진입과 좌석 선점 계열 민감 경로에 적용합니다.
-- ext_authz 장애 시에는 `failOpen: true`로 동작합니다.
-
-### 3. 대기열 우회 방지
-
-- 대기열 입장과 좌석 선점은 별도 토큰 검증 기준을 둡니다.
-- `Admission Token`은 쿠키 기반으로 전달되고, Seat 진입 시 다시 확인합니다.
-- 단순 요청 성공보다 정상 입장 경로를 거쳤는지 여부를 함께 확인합니다.
-
-### 4. WAF 차단
-
-- `EnvoyFilter + Lua`는 SQL Injection, XSS, Path Traversal, Command Injection, LDAP Injection, XXE, SSRF, Log4Shell, Header Injection, Bot Scanner 패턴을 검사합니다.
-- 차단 모드는 `block`으로 운영합니다.
-- staging 구성에는 반복 탐지 기반 자동 블랙리스트 등록 경로가 포함됩니다.
+| 항목 | 확인 경로 |
+|---|---|
+| **429 증가** | Grafana, Rate Limit 관련 대시보드 |
+| **403 증가** | Grafana, Loki, Istio 보안 대시보드 |
+| **행동 판단 이벤트** | Discord, authz-adapter 로그, AI Defense 연계 로그 |
+| **대기열 우회 징후** | Queue / Seat 로그, Admission Token 검증 실패 로그 |
+| **차단 사용자 추적** | CloudTrail, Discord, 백엔드 로그 |
 
 ---
 
@@ -63,8 +57,8 @@ flowchart LR
 
 | 항목 | 확인 내용 |
 |---|---|
-| **429 증가** | 경로별 Rate Limit이 과도하게 발동하는지 |
-| **403 증가** | WAF 또는 ext_authz 차단이 급증하는지 |
-| **인증 실패율** | 비정상 로그인 또는 접근 시도가 늘어나는지 |
-| **차단 IP 증가** | 특정 시간대와 대역에 집중되는지 |
-| **대기열 우회 징후** | 정상 토큰 없이 진입하려는 요청이 반복되는지 |
+| **차단 / 제한** | 403, 429가 특정 시간대에 급증하는지 |
+| **행동 판단** | ext_authz와 authz-adapter 연동이 정상인지 |
+| **대기열 우회 방지** | Admission Token 없는 진입이 반복되지 않는지 |
+| **좌석 선점 보호** | Hold 실패와 비정상 선점 요청이 증가하지 않는지 |
+| **사후 추적** | 차단 사용자와 비정상 요청 이력이 남는지 |

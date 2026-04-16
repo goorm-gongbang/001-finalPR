@@ -1,4 +1,4 @@
-# SSO 접근 제어
+# 접근 제어
 
 운영 접근은 `AWS IAM Identity Center SSO`, `IAM Role`, `IRSA`, `Kubernetes RBAC`를 함께 사용합니다. 사람 계정의 AWS Console/CLI 접근은 SSO 로그인과 Role 전환을 기준으로 처리합니다.
 
