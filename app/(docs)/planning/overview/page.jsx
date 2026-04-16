@@ -71,13 +71,13 @@ export default function Page() {
                     </tr>
                     <tr>
                         <td><strong>클라우드 인프라</strong></td>
-                        <td>멀티 환경(Dev/Staging/Prod), 고가용성 배포, 피크 대비 리소스 확장</td>
-                        <td>AWS EKS, Karpenter, KEDA, Grafana</td>
+                        <td>멀티 환경(Dev/Staging/Prod), 고가용성 배포, 피크 대비 리소스 확장, 서비스메쉬 트래픽 제어, 분산 트레이싱 기반 SRE/관측성</td>
+                        <td>AWS EKS, Karpenter, KEDA, Istio, Grafana 스택(Prometheus·Loki·Tempo)</td>
                     </tr>
                     <tr>
                         <td><strong>보안</strong></td>
-                        <td>외부망부터 애플리케이션까지 4계층 심층 방어(CDN, ALB, Istio WAF, mTLS)</td>
-                        <td>Istio, AWS Shield, Lua</td>
+                        <td>외부망부터 애플리케이션까지 4계층 심층 방어(CDN, ALB, Istio WAF, mTLS), 앱 보안(JWT 인증, 보안 헤더, 난독화)</td>
+                        <td>Istio, AWS Shield, Lua, JWT</td>
                     </tr>
                     <tr>
                         <td><strong>AI</strong></td>
