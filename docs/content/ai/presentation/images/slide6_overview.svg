@@ -100,8 +100,8 @@
   <text x="625" y="596" text-anchor="middle" font-size="10" fill="#6a1b9a">NORMAL / SUSPICIOUS</text>
 
   <rect x="770" y="555" width="260" height="60" rx="8" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="1.5"/>
-  <text x="900" y="578" text-anchor="middle" font-size="12" font-weight="700" fill="#4a148c">PostgreSQL + 백엔드 전달</text>
-  <text x="900" y="596" text-anchor="middle" font-size="10" fill="#6a1b9a">post_review_session_results</text>
+  <text x="900" y="578" text-anchor="middle" font-size="12" font-weight="700" fill="#4a148c">PostgreSQL 저장</text>
+  <text x="900" y="596" text-anchor="middle" font-size="10" fill="#6a1b9a">운영자 DB 조회로 사후 판단</text>
 
   <!-- Track A arrows -->
   <line x1="481" y1="585" x2="508" y2="585" stroke="#6a1b9a" stroke-width="1.8" marker-end="url(#arrowPurple)"/>

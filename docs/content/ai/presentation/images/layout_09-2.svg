@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" font-family="'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs>
+    <marker id="arrD" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#616161"/>
+    </marker>
+    <marker id="arrA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1565c0"/>
+    </marker>
+    <marker id="arrO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#e65100"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="675" fill="#f8f9fa"/>
+
+  <!-- Header -->
+  <rect x="0" y="0" width="1200" height="88" fill="#4a148c"/>
+  <text x="48" y="46" font-size="24" font-weight="700" fill="#ffffff">AI Defense — Offline Plane</text>
+  <text x="48" y="72" font-size="13" fill="#ce93d8">런타임이 못 잡은 회색지대는 LLM이 사후에 재검토하고, 정책 파라미터를 자동 튜닝한다.</text>
+  <text x="1160" y="50" text-anchor="end" font-size="13" fill="#9c4dcc">9-2 / 11</text>
+
+  <!-- Top: audit source -->
+  <rect x="460" y="104" width="280" height="52" rx="8" fill="#ede7f6" stroke="#7b1fa2" stroke-width="1.5"/>
+  <text x="600" y="126" text-anchor="middle" font-size="13" font-weight="700" fill="#4a148c">세션 종료 로그</text>
+  <text x="600" y="146" text-anchor="middle" font-size="11" fill="#6a1b9a">runtime audit</text>
+
+  <!-- Arrow down -->
+  <line x1="600" y1="158" x2="600" y2="186" stroke="#616161" stroke-width="1.5" marker-end="url(#arrD)"/>
+
+  <!-- ETL bar -->
+  <rect x="200" y="188" width="800" height="44" rx="8" fill="#f3e5f5" stroke="#ab47bc" stroke-width="1.5"/>
+  <text x="600" y="215" text-anchor="middle" font-size="13" font-weight="700" fill="#6a1b9a">S3 archive → ETL → ClickHouse / PostgreSQL</text>
+
+  <!-- Fork arrows -->
+  <line x1="350" y1="234" x2="350" y2="262" stroke="#616161" stroke-width="1.5" marker-end="url(#arrD)"/>
+  <line x1="850" y1="234" x2="850" y2="262" stroke="#616161" stroke-width="1.5" marker-end="url(#arrD)"/>
+  <line x1="200" y1="234" x2="1000" y2="234" stroke="#616161" stroke-width="1.5"/>
+
+  <!-- Track A -->
+  <rect x="60" y="264" width="580" height="214" rx="10" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+  <rect x="60" y="264" width="580" height="36" rx="10" fill="#1976d2"/>
+  <rect x="60" y="290" width="580" height="10" fill="#1976d2"/>
+  <text x="350" y="288" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">Track A — backoffice_copilot</text>
+
+  <text x="110" y="326" font-size="12" fill="#0d47a1">입력: T1·T2 NOT_BLOCKED 세션만 필터</text>
+  <line x1="110" y1="334" x2="610" y2="334" stroke="#90caf9"/>
+  <text x="350" y="360" text-anchor="middle" font-size="13" font-weight="700" fill="#0d47a1">LLM 세션 재판단</text>
+
+  <rect x="110" y="372" width="200" height="52" rx="8" fill="#ffffff" stroke="#42a5f5"/>
+  <text x="210" y="396" text-anchor="middle" font-size="14" font-weight="700" fill="#1565c0">NORMAL</text>
+  <text x="210" y="416" text-anchor="middle" font-size="10" fill="#546e7a">정상 세션</text>
+
+  <rect x="370" y="372" width="200" height="52" rx="8" fill="#fff3e0" stroke="#ffa726"/>
+  <text x="470" y="396" text-anchor="middle" font-size="14" font-weight="700" fill="#e65100">SUSPICIOUS</text>
+  <text x="470" y="416" text-anchor="middle" font-size="10" fill="#546e7a">의심 세션</text>
+
+  <text x="350" y="460" text-anchor="middle" font-size="11" fill="#37474f">→ PostgreSQL 저장 (운영자 DB 조회)</text>
+
+  <!-- Track B -->
+  <rect x="660" y="264" width="480" height="214" rx="10" fill="#fff3e0" stroke="#e65100" stroke-width="2"/>
+  <rect x="660" y="264" width="480" height="36" rx="10" fill="#e65100"/>
+  <rect x="660" y="290" width="480" height="10" fill="#e65100"/>
+  <text x="900" y="288" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">Track B — OfflineOptimizer</text>
+
+  <text x="700" y="326" font-size="12" fill="#bf360c">입력: 집계 지표 (ClickHouse)</text>
+  <line x1="700" y1="334" x2="1100" y2="334" stroke="#ffcc80"/>
+  <text x="900" y="360" text-anchor="middle" font-size="13" font-weight="700" fill="#bf360c">LLM 파라미터 제안</text>
+
+  <rect x="700" y="372" width="360" height="40" rx="6" fill="#ffffff" stroke="#ffa726"/>
+  <text x="880" y="397" text-anchor="middle" font-size="12" fill="#e65100">5% → 20% → 50% → 100%</text>
+
+  <text x="900" y="438" text-anchor="middle" font-size="11" fill="#bf360c">단계 배포 · 악화 시 자동 롤백</text>
+  <text x="900" y="458" text-anchor="middle" font-size="11" fill="#bf360c">policy version 이력 보존</text>
+
+  <!-- Bottom bar -->
+  <rect x="32" y="498" width="1136" height="52" rx="8" fill="#fce4ec" stroke="#f48fb1"/>
+  <text x="600" y="529" text-anchor="middle" font-size="12" fill="#880e4f">LLM 장애 시 → 규칙 기반 폴백으로 운영 연속성 유지</text>
+
+  <!-- Audit note -->
+  <rect x="32" y="564" width="1136" height="88" rx="8" fill="#f3e5f5" stroke="#ce93d8"/>
+  <text x="600" y="591" text-anchor="middle" font-size="13" font-weight="700" fill="#4a148c">감사·재현성</text>
+  <text x="600" y="613" text-anchor="middle" font-size="12" fill="#6a1b9a">audit log + policy version 이력 → 매크로 분쟁 시 증거 보존</text>
+  <text x="600" y="635" text-anchor="middle" font-size="11" fill="#7b1fa2">두 트랙 모두 비동기 · 런타임 지연 없음</text>
+</svg>

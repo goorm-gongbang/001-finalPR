@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" font-family="'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <rect width="1200" height="675" fill="#f8f9fa"/>
+
+  <!-- Header -->
+  <rect x="0" y="0" width="1200" height="88" fill="#0d47a1"/>
+  <text x="48" y="48" font-size="26" font-weight="700" fill="#ffffff">공격자가 되어본다</text>
+  <text x="48" y="74" font-size="13" fill="#90caf9">시나리오 방어는 시나리오 밖에서 뚫린다 — 그래서 우리는 스스로 공격자가 되었다.</text>
+  <text x="1160" y="50" text-anchor="end" font-size="13" fill="#5c8ff0">8 / 11</text>
+
+  <!-- Left panel -->
+  <rect x="32" y="104" width="370" height="344" rx="10" fill="#ffffff" stroke="#e0e0e0" stroke-width="1.5"/>
+  <rect x="32" y="104" width="370" height="36" rx="10" fill="#e3f2fd"/>
+  <rect x="32" y="130" width="370" height="10" fill="#e3f2fd"/>
+  <text x="52" y="128" font-size="13" font-weight="700" fill="#1565c0">기존 방어의 전제 → 무효</text>
+
+  <text x="52" y="160" font-size="12" fill="#616161">T0~T3: 공통 전제 = "많은 요청"</text>
+
+  <rect x="52" y="174" width="330" height="88" rx="6" fill="#ffebee" stroke="#ef9a9a"/>
+  <text x="66" y="193" font-size="12" font-weight="700" fill="#c62828">T3+ 공격은 반대로 움직인다</text>
+  <text x="66" y="213" font-size="11" fill="#424242">• 소수 요청 · 인간 마우스 궤적 모방</text>
+  <text x="66" y="231" font-size="11" fill="#424242">• 사람과 구별 불가 · 실제 Chromium 조작</text>
+  <text x="66" y="249" font-size="11" fill="#c62828">→ 기존 방어 전부 무효</text>
+
+  <rect x="52" y="276" width="330" height="60" rx="6" fill="#e8f5e9" stroke="#a5d6a7"/>
+  <text x="66" y="296" font-size="12" font-weight="700" fill="#2e7d32">우리의 선택</text>
+  <text x="66" y="316" font-size="11" fill="#424242">공격 에이전트 + 방어 시스템 동시 제작</text>
+  <text x="66" y="332" font-size="10" fill="#546e7a">AI 공격 에이전트  /  AI Defense</text>
+
+  <rect x="52" y="350" width="330" height="76" rx="6" fill="#f3e5f5" stroke="#ce93d8"/>
+  <text x="66" y="370" font-size="12" font-weight="700" fill="#6a1b9a">핵심 구조 원칙</text>
+  <text x="66" y="390" font-size="11" fill="#424242">에이전트 = 결정론 (LLM 없음, 재현 가능)</text>
+  <text x="66" y="408" font-size="11" fill="#424242">스웜 전략 = LLM (비동기 적응)</text>
+
+  <!-- Right panel: swarm image area -->
+  <rect x="418" y="104" width="750" height="344" rx="10" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5" stroke-dasharray="8 5"/>
+  <text x="793" y="252" text-anchor="middle" font-size="15" font-weight="700" fill="#1565c0">[ 스웜 구조 이미지 ]</text>
+  <text x="793" y="276" text-anchor="middle" font-size="12" fill="#546e7a">slide8_swarm.png</text>
+  <text x="793" y="298" text-anchor="middle" font-size="11" fill="#78909c">에이전트 N개 독립 실행 + LLM 코디네이터</text>
+
+  <!-- Bottom: mouse trajectory area -->
+  <rect x="32" y="462" width="1136" height="130" rx="10" fill="#fce4ec" stroke="#e91e63" stroke-width="1.5" stroke-dasharray="8 5"/>
+  <text x="600" y="512" text-anchor="middle" font-size="15" font-weight="700" fill="#880e4f">[ 마우스 궤적 비교 이미지 ]</text>
+  <text x="600" y="534" text-anchor="middle" font-size="12" fill="#ad1457">slide5_mouse_trajectory.png</text>
+  <text x="600" y="556" text-anchor="middle" font-size="11" fill="#c2185b">형태는 인간, 속도는 장인 — 단순 봇 vs AI 에이전트</text>
+
+  <!-- Bridge bar -->
+  <rect x="0" y="608" width="1200" height="67" fill="#1a237e"/>
+  <text x="600" y="648" text-anchor="middle" font-size="15" fill="#e8eaf6" font-style="italic">"이 정도 공격을 실제로 받아낸 방어는 어떻게 설계했는가 —"</text>
+</svg>

@@ -170,7 +170,140 @@
 
 ---
 
-## 6.3 트러블슈팅 — 실행 중 마주친 문제와 대응
+## 6.3 방어 측 정량 지표
+
+> **기준**: `trace_id` 기준으로 산정.
+> **이유**: 현재 `session_id`는 재사용 가능성이 있어 시뮬레이션 시도 수와 1:1 대응하지 않을 수 있음. 방어 로그 분석에서는 **동일 시간 구간 내 고유 `trace_id` 수**를 기준으로 사용.
+
+### B.1 Runtime Tier 분포
+
+해당 시간 구간에서 각 `trace_id`의 최종 tier(`latest_tier`)가 T0 / T1 / T2 / T3 중 어디에 속하는지 분포.
+
+**수식**: `Tier Ratio_x = #(latest_tier = x) / #(unique trace_id) × 100`  (x ∈ {T0, T1, T2, T3})
+
+| Tier | trace 수 | 비율 |
+|------|---------|------|
+| T0 | -- | --% |
+| T1 | -- | --% |
+| T2 | -- | --% |
+| T3 | -- | --% |
+| **합계** | **--** | **100%** |
+
+**해석**
+- **T0**: 실질 개입 없는 정상/저위험 구간
+- **T1**: 경미한 위험 또는 초기 개입 구간
+- **T2**: 명확한 이상행동으로 인식된 중간 이상 구간
+- **T3**: 최상위 위험 구간
+- 방어 시스템이 공격 세션을 어느 정도 강도로 분류했는지 보여준다.
+
+### B.2 Runtime Action 분포
+
+각 `trace_id`의 최종 action(`latest_action`)이 NONE / THROTTLE / BLOCK 중 어디였는지 분포.
+
+**수식**: `Action Ratio_a = #(latest_action = a) / #(unique trace_id) × 100`  (a ∈ {NONE, THROTTLE, BLOCK})
+
+| Action | trace 수 | 비율 |
+|--------|---------|------|
+| NONE | -- | --% |
+| THROTTLE | -- | --% |
+| BLOCK | -- | --% |
+| **합계** | **--** | **100%** |
+
+**해석**
+- **NONE**: 실시간 개입 없음
+- **THROTTLE**: 지연/마찰 유도
+- **BLOCK**: 직접 차단
+- 방어가 공격 세션에 대해 실제로 어떤 방식으로 개입했는지.
+
+### B.3 Post-Review Candidate · Suspicious 수
+
+동일 시간 구간에서 Post-Review가 생성한 window 기준 `candidate_count`와 `suspicious_count`를 합산.
+
+**수식**
+- `Total Candidate Count = Σ candidate_count`
+- `Total Suspicious Count = Σ suspicious_count`
+- `Suspicious Rate = Total Suspicious Count / Total Candidate Count × 100`
+
+| 지표 | 값 |
+|------|---|
+| Candidate 총합 | -- |
+| Suspicious 총합 | -- |
+| **Suspicious 비율** | **--%** |
+
+**해석**
+- **candidate_count**: Post-Review 검토 대상으로 올라온 세션 수
+- **suspicious_count**: 그중 사후판단이 이상 세션으로 분류한 수
+- 실시간 방어 이후, 사후판단이 얼마나 많은 세션을 후속 검토 대상으로 삼았는지 보여준다.
+
+### B.4 Reviewed Session 수
+
+Post-Review가 실제로 review를 수행해 저장한 세션 수.
+
+**수식**
+- `Reviewed Session Count = #(post_review_session_results)`
+- `Suspicious Session Count = #(review_result = 'SUSPICIOUS')`
+
+| 지표 | 값 |
+|------|---|
+| Reviewed session 수 | -- |
+| Suspicious session 수 | -- |
+
+**해석**
+- `candidate_count`는 윈도우 단위 집계, `reviewed session 수`는 실제 review row 기준.
+- Post-Review가 실제로 몇 개 세션을 처리했는지를 보여주는 실행 결과 지표.
+
+### B.5 방어 저지율
+
+공격 세션 중 최종적으로 공격 성공(Hold 도달) 하지 못한 비율.
+
+**수식**: `Defense Interception Rate = 1 − Attack Success Rate = (Total − Successful) / Total × 100`
+
+| 지표 | 값 |
+|------|---|
+| 총 공격 세션 수 | -- |
+| 공격 성공 세션 수 | -- |
+| **방어 저지율** | **--%** |
+
+**해석**: 방어 저지율은 공격자가 최종 목표(Hold/좌석 확보)에 도달하지 못한 비율로, 방어 성과를 가장 직관적으로 보여주는 핵심 지표.
+
+### B.6 방어 개입 단계 분포
+
+공격 퍼널을 방어 관점으로 재해석 — 공격이 어느 단계에서 방어에 의해 꺾였는지.
+
+| 개입 단계 | 세션 수 | 비율 |
+|---------|-------|------|
+| 대기열 구간 개입 | -- | --% |
+| Challenge 구간 개입 | -- | --% |
+| 구역/좌석 선택 구간 개입 | -- | --% |
+| 직접 차단 종료 | -- | --% |
+| 내부 실패/중단 종료 | -- | --% |
+| 최종 성공 종료 | -- | --% |
+
+**해석**: 방어가 어느 단계에서 가장 강하게 작동했는지.
+
+### B.7 좌석 확보 차단/저지 비율
+
+좌석 확보 성공 관점에서, 최종적으로 좌석 확보를 막아낸 비율.
+
+**수식**: `Seat Acquisition Prevention Rate = 1 − Seat Acquisition Success Rate`
+
+| 지표 | 값 |
+|------|---|
+| 좌석 확보 성공 세션 수 | -- |
+| 총 공격 세션 수 | -- |
+| **좌석 확보 차단/저지 비율** | **--%** |
+
+**해석**: 공격자의 실질 목표였던 좌석 확보를 방어가 얼마나 억제했는지.
+
+### 방어 KPI 목록 정리
+
+**방어 로그 기반** (`trace_id` 기준): B.1 Runtime Tier 분포 · B.2 Runtime Action 분포 · B.3 Post-Review Candidate/Suspicious · B.4 Reviewed Session
+
+**공격 KPI에서 재해석**: B.5 방어 저지율 · B.6 방어 개입 단계 분포 · B.7 좌석 확보 차단/저지 비율
+
+---
+
+## 6.4 트러블슈팅 — 실행 중 마주친 문제와 대응
 
 실제 운영에서 관찰·해결한 구체적 문제들이다.
 
@@ -249,7 +382,7 @@
 
 ---
 
-## 6.4 정리 — 이번 실행이 말하는 것
+## 6.5 정리 — 이번 실행이 말하는 것
 
 ### 공격 관점 (에이전트 성능)
 
@@ -274,7 +407,7 @@
 
 ---
 
-## 6.5 추후 개선 방향
+## 6.6 추후 개선 방향
 
 ## 공격 측
 
@@ -372,6 +505,6 @@
 
 ---
 
-## 6.6 한 줄 요약
+## 6.7 한 줄 요약
 
 > **스웜 6 × 에이전트 5 = 30명 투입, 20명(66.7%)이 총 75석 확보.** 나머지 10명은 대기열·VQA·구역 탐색 단계에서 차단·중단 — 방어가 **앞단에서 선별적으로 작동**하는 구조를 공격 로그만으로도 간접 확인.

@@ -1,0 +1,243 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 880" font-family="'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <rect width="1200" height="880" fill="#f0f2f5"/>
+
+  <!-- Header -->
+  <rect x="0" y="0" width="1200" height="52" fill="#212121"/>
+  <text x="32" y="32" font-size="18" font-weight="700" fill="#ffffff">맞대결 결과 + 마무리</text>
+  <text x="32" y="46" font-size="10" fill="#bdbdbd">6 스웜 × 5 에이전트 = 30명 동시 투입 · 2026-04-16 · staging 환경</text>
+  <text x="1168" y="32" text-anchor="end" font-size="10" fill="#757575">10 / 11</text>
+
+  <!-- ======================================== -->
+  <!-- ① 공격 측 실측 KPI                        -->
+  <!-- ======================================== -->
+  <text x="32" y="70" font-size="11" font-weight="700" fill="#263238">① 공격 측 실측 KPI</text>
+
+  <!-- Hero row -->
+  <rect x="32" y="76" width="370" height="82" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="32" y="76" width="370" height="5" rx="8" fill="#c62828"/>
+  <text x="217" y="100" text-anchor="middle" font-size="11" font-weight="700" fill="#b71c1c">Hold 도달률 (공격 성공)</text>
+  <text x="217" y="135" text-anchor="middle" font-size="28" font-weight="700" fill="#b71c1c">66.7%</text>
+  <text x="217" y="152" text-anchor="middle" font-size="10" fill="#757575">20 / 30 좌석 확보</text>
+
+  <rect x="414" y="76" width="370" height="82" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="414" y="76" width="370" height="5" rx="8" fill="#ad1457"/>
+  <text x="599" y="100" text-anchor="middle" font-size="11" font-weight="700" fill="#880e4f">총 확보 좌석</text>
+  <text x="599" y="135" text-anchor="middle" font-size="28" font-weight="700" fill="#880e4f">75<tspan font-size="20">석</tspan></text>
+  <text x="599" y="152" text-anchor="middle" font-size="10" fill="#757575">단 한 번의 공격 세션</text>
+
+  <rect x="796" y="76" width="372" height="82" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="796" y="76" width="372" height="5" rx="8" fill="#37474f"/>
+  <text x="982" y="100" text-anchor="middle" font-size="11" font-weight="700" fill="#263238">TERMINAL 분포 (n=30)</text>
+  <rect x="812" y="112" width="232" height="16" fill="#66bb6a"/>
+  <rect x="1044" y="112" width="58" height="16" fill="#e53935"/>
+  <rect x="1102" y="112" width="58" height="16" fill="#9e9e9e"/>
+  <text x="928" y="124" text-anchor="middle" font-size="10" font-weight="700" fill="#ffffff">DONE 20</text>
+  <text x="1073" y="124" text-anchor="middle" font-size="9" font-weight="700" fill="#ffffff">BLK 5</text>
+  <text x="1131" y="124" text-anchor="middle" font-size="9" font-weight="700" fill="#ffffff">ABR 5</text>
+  <text x="812" y="148" font-size="9" fill="#33691e">● 66.7% DONE</text>
+  <text x="905" y="148" font-size="9" fill="#c62828">● 16.7% 방어 차단</text>
+  <text x="1015" y="148" font-size="9" fill="#616161">● 16.7% 내부 실패</text>
+
+  <!-- Funnel row -->
+  <text x="32" y="178" font-size="10" font-weight="700" fill="#546e7a">단계별 퍼널 — 어디서 막혔나</text>
+  <rect x="32" y="184" width="278" height="62" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="32" y="184" width="278" height="4" rx="8" fill="#5e35b1"/>
+  <text x="171" y="206" text-anchor="middle" font-size="10" font-weight="700" fill="#4527a0">대기열 통과</text>
+  <text x="171" y="228" text-anchor="middle" font-size="20" font-weight="700" fill="#4527a0">80.0%</text>
+  <text x="171" y="240" text-anchor="middle" font-size="9" fill="#757575">24 / 30</text>
+
+  <rect x="318" y="184" width="278" height="62" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="318" y="184" width="278" height="4" rx="8" fill="#00897b"/>
+  <text x="457" y="206" text-anchor="middle" font-size="10" font-weight="700" fill="#004d40">VQA 통과</text>
+  <text x="457" y="228" text-anchor="middle" font-size="20" font-weight="700" fill="#004d40">83.3%</text>
+  <text x="457" y="240" text-anchor="middle" font-size="9" fill="#757575">25 / 30 (팝업 30회)</text>
+
+  <rect x="604" y="184" width="278" height="62" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="604" y="184" width="278" height="4" rx="8" fill="#43a047"/>
+  <text x="743" y="206" text-anchor="middle" font-size="10" font-weight="700" fill="#1b5e20">구역 선택 완료</text>
+  <text x="743" y="228" text-anchor="middle" font-size="20" font-weight="700" fill="#1b5e20">100%</text>
+  <text x="743" y="240" text-anchor="middle" font-size="9" fill="#757575">20 / 20</text>
+
+  <rect x="890" y="184" width="278" height="62" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="890" y="184" width="278" height="4" rx="8" fill="#43a047"/>
+  <text x="1029" y="206" text-anchor="middle" font-size="10" font-weight="700" fill="#1b5e20">구역 선택 → Hold</text>
+  <text x="1029" y="228" text-anchor="middle" font-size="20" font-weight="700" fill="#1b5e20">100%</text>
+  <text x="1029" y="240" text-anchor="middle" font-size="9" fill="#757575">20 / 20 (전원 확보)</text>
+
+  <!-- Timing/VQA/Target row -->
+  <text x="32" y="268" font-size="10" font-weight="700" fill="#546e7a">시간 지표 · VQA 디테일 · 타깃 정확도</text>
+
+  <rect x="32" y="274" width="364" height="80" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="32" y="274" width="364" height="4" rx="8" fill="#0288d1"/>
+  <text x="214" y="294" text-anchor="middle" font-size="10" font-weight="700" fill="#01579b">시간 지표 (중앙값 / p90)</text>
+  <text x="48" y="314" font-size="10" fill="#546e7a">E2E (실행 → Hold)</text>
+  <text x="380" y="314" text-anchor="end" font-size="10" font-weight="700" fill="#01579b">225.7s / 646.4s</text>
+  <text x="48" y="330" font-size="10" fill="#546e7a">VQA 풀이 (시작 → 통과)</text>
+  <text x="380" y="330" text-anchor="end" font-size="10" font-weight="700" fill="#01579b">5.8s / 6.0s</text>
+  <text x="48" y="346" font-size="10" fill="#546e7a">대기열 소요</text>
+  <text x="380" y="346" text-anchor="end" font-size="10" font-weight="700" fill="#01579b">10.5s / 35.2s</text>
+
+  <rect x="404" y="274" width="380" height="80" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="404" y="274" width="380" height="4" rx="8" fill="#fb8c00"/>
+  <text x="594" y="294" text-anchor="middle" font-size="10" font-weight="700" fill="#e65100">VQA 풀이 디테일</text>
+  <text x="420" y="314" font-size="10" fill="#546e7a">첫 시도 성공률</text>
+  <text x="768" y="314" text-anchor="end" font-size="10" font-weight="700" fill="#e65100">92.0% (23/25)</text>
+  <text x="420" y="330" font-size="10" fill="#546e7a">팝업당 평균 실패</text>
+  <text x="768" y="330" text-anchor="end" font-size="10" font-weight="700" fill="#e65100">0.08회</text>
+  <text x="420" y="346" font-size="10" fill="#546e7a">서브라운드 총 실패</text>
+  <text x="768" y="346" text-anchor="end" font-size="10" font-weight="700" fill="#e65100">12 / 39</text>
+
+  <rect x="792" y="274" width="376" height="80" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="792" y="274" width="376" height="4" rx="8" fill="#43a047"/>
+  <text x="980" y="294" text-anchor="middle" font-size="10" font-weight="700" fill="#1b5e20">타깃 적중률 (직접 좌석 모드)</text>
+  <text x="808" y="314" font-size="10" fill="#546e7a">의도 구역 적중</text>
+  <text x="1152" y="314" text-anchor="end" font-size="10" font-weight="700" fill="#1b5e20">100% (9/9)</text>
+  <text x="808" y="330" font-size="10" fill="#546e7a">연석 적중 (좌석 기준)</text>
+  <text x="1152" y="330" text-anchor="end" font-size="10" font-weight="700" fill="#1b5e20">96% (24/25)</text>
+  <text x="808" y="346" font-size="10" fill="#546e7a">평가 대상</text>
+  <text x="1152" y="346" text-anchor="end" font-size="10" font-weight="700" fill="#1b5e20">9 에이전트</text>
+
+  <!-- LLM + 부수 row -->
+  <text x="32" y="376" font-size="10" font-weight="700" fill="#546e7a">LLM 코디네이터 정책 수행 · 부수 지표</text>
+
+  <rect x="32" y="382" width="764" height="70" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="32" y="382" width="764" height="4" rx="8" fill="#6a1b9a"/>
+  <text x="414" y="402" text-anchor="middle" font-size="10" font-weight="700" fill="#4a148c">LLM 코디네이터 (스웜 전략 조정)</text>
+  <text x="52" y="422" font-size="10" fill="#546e7a">총 결정 수</text>
+  <text x="52" y="438" font-size="14" font-weight="700" fill="#4a148c">40회</text>
+  <text x="172" y="422" font-size="10" fill="#546e7a">수행률</text>
+  <text x="172" y="438" font-size="14" font-weight="700" fill="#4a148c">100%</text>
+  <text x="278" y="422" font-size="10" fill="#546e7a">반영 지연</text>
+  <text x="278" y="438" font-size="14" font-weight="700" fill="#4a148c">2.6s</text>
+  <text x="378" y="422" font-size="10" fill="#546e7a">에러율</text>
+  <text x="378" y="438" font-size="14" font-weight="700" fill="#4a148c">0%</text>
+  <text x="468" y="422" font-size="10" fill="#546e7a">유지(noop)</text>
+  <text x="468" y="438" font-size="14" font-weight="700" fill="#4a148c">82.5%</text>
+  <text x="588" y="422" font-size="10" fill="#546e7a">변경 지시</text>
+  <text x="588" y="438" font-size="14" font-weight="700" fill="#4a148c">17.5%</text>
+  <text x="698" y="422" font-size="10" fill="#546e7a">반영률</text>
+  <text x="698" y="438" font-size="14" font-weight="700" fill="#4a148c">100%</text>
+
+  <rect x="804" y="382" width="364" height="70" rx="8" fill="#e8f5e9" stroke="#66bb6a" stroke-width="1"/>
+  <text x="986" y="402" text-anchor="middle" font-size="10" font-weight="700" fill="#1b5e20">부수 지표 — 발생 0건</text>
+  <text x="820" y="422" font-size="10" fill="#2e7d32">● 이선좌 충돌 (409)</text>
+  <text x="1152" y="422" text-anchor="end" font-size="11" font-weight="700" fill="#1b5e20">0</text>
+  <text x="820" y="438" font-size="10" fill="#2e7d32">● Hold API 자체 실패</text>
+  <text x="1152" y="438" text-anchor="end" font-size="11" font-weight="700" fill="#1b5e20">0</text>
+
+  <!-- ======================================== -->
+  <!-- ② 방어 측 KPI                             -->
+  <!-- ======================================== -->
+  <text x="32" y="474" font-size="11" font-weight="700" fill="#263238">② 방어 측 KPI
+    <tspan font-size="9" font-weight="400" fill="#757575"> (기준: trace_id · 수치 확정 후 기입)</tspan>
+  </text>
+
+  <!-- 방어 Hero row -->
+  <rect x="32" y="480" width="370" height="62" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="32" y="480" width="370" height="4" rx="8" fill="#1565c0"/>
+  <text x="217" y="500" text-anchor="middle" font-size="10" font-weight="700" fill="#0d47a1">방어 저지율 (핵심)</text>
+  <text x="217" y="524" text-anchor="middle" font-size="22" font-weight="700" fill="#bdbdbd">--%</text>
+  <text x="217" y="538" text-anchor="middle" font-size="9" fill="#757575">1 − 공격 성공률</text>
+
+  <rect x="414" y="480" width="370" height="62" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="414" y="480" width="370" height="4" rx="8" fill="#1976d2"/>
+  <text x="599" y="500" text-anchor="middle" font-size="10" font-weight="700" fill="#0d47a1">좌석 확보 차단/저지 비율</text>
+  <text x="599" y="524" text-anchor="middle" font-size="22" font-weight="700" fill="#bdbdbd">--%</text>
+  <text x="599" y="538" text-anchor="middle" font-size="9" fill="#757575">Hold 도달 실패 비율</text>
+
+  <rect x="796" y="480" width="372" height="62" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="796" y="480" width="372" height="4" rx="8" fill="#00838f"/>
+  <text x="982" y="500" text-anchor="middle" font-size="10" font-weight="700" fill="#006064">Post-Review Suspicious 비율</text>
+  <text x="982" y="524" text-anchor="middle" font-size="22" font-weight="700" fill="#bdbdbd">--%</text>
+  <text x="982" y="538" text-anchor="middle" font-size="9" fill="#757575">Suspicious / Candidate</text>
+
+  <!-- 방어 Tier 분포 + Action 분포 row -->
+  <rect x="32" y="548" width="568" height="76" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="32" y="548" width="568" height="4" rx="8" fill="#1565c0"/>
+  <text x="316" y="568" text-anchor="middle" font-size="10" font-weight="700" fill="#0d47a1">Runtime Tier 분포 (latest_tier)</text>
+
+  <!-- Tier bar -->
+  <rect x="48" y="580" width="142" height="18" fill="#c8e6c9"/>
+  <rect x="190" y="580" width="142" height="18" fill="#fff59d"/>
+  <rect x="332" y="580" width="142" height="18" fill="#ffcc80"/>
+  <rect x="474" y="580" width="110" height="18" fill="#ef9a9a"/>
+  <text x="119" y="594" text-anchor="middle" font-size="10" font-weight="700" fill="#1b5e20">T0 --%</text>
+  <text x="261" y="594" text-anchor="middle" font-size="10" font-weight="700" fill="#9e7d0a">T1 --%</text>
+  <text x="403" y="594" text-anchor="middle" font-size="10" font-weight="700" fill="#bf360c">T2 --%</text>
+  <text x="529" y="594" text-anchor="middle" font-size="10" font-weight="700" fill="#b71c1c">T3 --%</text>
+
+  <text x="48" y="615" font-size="9" fill="#546e7a">trace 수: T0 --  ·  T1 --  ·  T2 --  ·  T3 --  (합계 --)</text>
+
+  <!-- Action 분포 -->
+  <rect x="608" y="548" width="560" height="76" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="608" y="548" width="560" height="4" rx="8" fill="#6a1b9a"/>
+  <text x="888" y="568" text-anchor="middle" font-size="10" font-weight="700" fill="#4a148c">Runtime Action 분포 (latest_action)</text>
+
+  <rect x="624" y="580" width="186" height="18" fill="#c8e6c9"/>
+  <rect x="810" y="580" width="186" height="18" fill="#ffcc80"/>
+  <rect x="996" y="580" width="156" height="18" fill="#ef9a9a"/>
+  <text x="717" y="594" text-anchor="middle" font-size="10" font-weight="700" fill="#1b5e20">NONE --%</text>
+  <text x="903" y="594" text-anchor="middle" font-size="10" font-weight="700" fill="#bf360c">THROTTLE --%</text>
+  <text x="1074" y="594" text-anchor="middle" font-size="10" font-weight="700" fill="#b71c1c">BLOCK --%</text>
+
+  <text x="624" y="615" font-size="9" fill="#546e7a">trace 수: NONE --  ·  THROTTLE --  ·  BLOCK --  (합계 --)</text>
+
+  <!-- Post-Review + 방어 개입 단계 row -->
+  <rect x="32" y="630" width="568" height="98" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="32" y="630" width="568" height="4" rx="8" fill="#00838f"/>
+  <text x="316" y="650" text-anchor="middle" font-size="10" font-weight="700" fill="#006064">Post-Review 실행 결과</text>
+
+  <text x="52" y="672" font-size="10" fill="#546e7a">Candidate 총합 (window)</text>
+  <text x="580" y="672" text-anchor="end" font-size="11" font-weight="700" fill="#006064">--</text>
+  <text x="52" y="690" font-size="10" fill="#546e7a">Suspicious 총합 (window)</text>
+  <text x="580" y="690" text-anchor="end" font-size="11" font-weight="700" fill="#006064">--</text>
+  <text x="52" y="708" font-size="10" fill="#546e7a">Reviewed session 수 (row)</text>
+  <text x="580" y="708" text-anchor="end" font-size="11" font-weight="700" fill="#006064">--</text>
+  <text x="52" y="722" font-size="9" fill="#757575">※ window 단위 집계 vs row 단위 실행 결과 구분</text>
+
+  <rect x="608" y="630" width="560" height="98" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="608" y="630" width="560" height="4" rx="8" fill="#5d4037"/>
+  <text x="888" y="650" text-anchor="middle" font-size="10" font-weight="700" fill="#3e2723">방어 개입 단계 분포</text>
+
+  <text x="624" y="670" font-size="9" fill="#546e7a">대기열 구간 개입</text>
+  <text x="1148" y="670" text-anchor="end" font-size="10" font-weight="700" fill="#3e2723">-- (--%)</text>
+  <text x="624" y="684" font-size="9" fill="#546e7a">Challenge 구간 개입</text>
+  <text x="1148" y="684" text-anchor="end" font-size="10" font-weight="700" fill="#3e2723">-- (--%)</text>
+  <text x="624" y="698" font-size="9" fill="#546e7a">구역/좌석 선택 구간 개입</text>
+  <text x="1148" y="698" text-anchor="end" font-size="10" font-weight="700" fill="#3e2723">-- (--%)</text>
+  <text x="624" y="712" font-size="9" fill="#546e7a">직접 차단 종료</text>
+  <text x="1148" y="712" text-anchor="end" font-size="10" font-weight="700" fill="#3e2723">-- (--%)</text>
+  <text x="624" y="726" font-size="9" fill="#546e7a">내부 실패/중단 종료  ·  최종 성공 종료</text>
+  <text x="1148" y="726" text-anchor="end" font-size="10" font-weight="700" fill="#3e2723">-- / --</text>
+
+  <!-- ======================================== -->
+  <!-- ③ 수렴 표                                 -->
+  <!-- ======================================== -->
+  <text x="32" y="750" font-size="11" font-weight="700" fill="#263238">③ 공격·방어가 같은 구조로 수렴</text>
+  <rect x="32" y="756" width="1136" height="66" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="32" y="756" width="1136" height="22" rx="8" fill="#37474f"/>
+  <rect x="32" y="768" width="1136" height="10" fill="#37474f"/>
+  <rect x="352" y="756" width="408" height="22" fill="#2e7d32"/>
+  <rect x="760" y="756" width="408" height="22" fill="#1565c0"/>
+  <rect x="352" y="768" width="408" height="10" fill="#2e7d32"/>
+  <rect x="760" y="768" width="408" height="10" fill="#1565c0"/>
+  <text x="551" y="772" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">결정론 (빠름 · 재현)</text>
+  <text x="963" y="772" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">LLM (적응 · 유연)</text>
+
+  <line x1="32" y1="800" x2="1168" y2="800" stroke="#eeeeee"/>
+  <text x="192" y="795" text-anchor="middle" font-size="12" font-weight="700" fill="#c62828">공격</text>
+  <text x="551" y="795" text-anchor="middle" font-size="11" fill="#33691e">Agent 상태머신 워크플로우</text>
+  <text x="963" y="795" text-anchor="middle" font-size="11" fill="#1565c0">Swarm LLM Coordinator</text>
+
+  <text x="192" y="817" text-anchor="middle" font-size="12" font-weight="700" fill="#1565c0">방어</text>
+  <text x="551" y="817" text-anchor="middle" font-size="11" fill="#33691e">D0 런타임 Online (ext_authz)</text>
+  <text x="963" y="817" text-anchor="middle" font-size="11" fill="#1565c0">Offline Copilot · Optimizer</text>
+
+  <line x1="352" y1="756" x2="352" y2="822" stroke="#e0e0e0"/>
+  <line x1="760" y1="756" x2="760" y2="822" stroke="#e0e0e0"/>
+
+  <!-- Closing -->
+  <rect x="0" y="830" width="1200" height="50" fill="#263238"/>
+  <text x="600" y="848" text-anchor="middle" font-size="11" fill="#eceff1">침투테스트는 <tspan font-weight="700" fill="#80cbc4">알려진 취약점</tspan>을 찾고, 우리는 <tspan font-weight="700" fill="#ef9a9a">AI 시대에서의 공격</tspan>까지 직접 재현했습니다.</text>
+  <text x="600" y="866" text-anchor="middle" font-size="10" fill="#90a4ae">티켓팅 매크로 방어는 한 번의 테스트가 아니라 <tspan font-weight="700" fill="#80deea">공격자와 같은 속도로 진화하는 시스템</tspan>이 답입니다.  ·  → 11장: 매크로의 경제성 자체를 깎는다</text>
+</svg>
