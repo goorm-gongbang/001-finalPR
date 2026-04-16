@@ -52,12 +52,18 @@ Playball은 운영 로그, 감사 로그, 장기보관 증적 데이터, 운영 
 
 ## 저장소 구조
 
-| 저장소 | 저장 대상 | 용도 |
-|---|---|---|
-| **S3 운영 백업 저장소** | PostgreSQL 데이터베이스 보조 백업, 운영 로그 백업 | 운영 복구와 단기 재조사 |
-| **S3 감사 저장소** | 감사 로그, 접속기록, 파기 이력 | 감사 추적 및 포렌식 |
-| **S3 Glacier 장기보관 저장소** | 회원/거래 장기보관 데이터 | 정책/법정 보존 데이터 |
-| **S3 관측 저장소** | Loki 로그, Tempo Trace, Thanos 메트릭 장기 데이터 | 관측 데이터 장기 저장 |
+| 저장소 | 저장 대상 | 용도 | 실제 버킷 |
+|---|---|---|---|
+| **S3 운영 백업 저장소** | PostgreSQL 데이터베이스 보조 백업, 운영 로그 백업 | 운영 복구와 단기 재조사 | `playball-web-backup` |
+| **S3 감사 저장소** | 감사 로그, 접속기록, 파기 이력 | 감사 추적 및 포렌식 | `playball-audit-logs`, `playball-prod-ai-audit`, `playball-staging-ai-audit` |
+| **S3 Glacier 장기보관 저장소** | 회원/거래 장기보관 데이터 | 정책/법정 보존 데이터 | `playball-retention-archive` |
+| **S3 관측 저장소** | Loki 로그, Tempo Trace, Thanos 메트릭 장기 데이터 | 관측 데이터 장기 저장 | `playball-{prod,staging}-{loki,tempo,thanos,clickhouse}` |
+
+**예시) 실제 운영 중인 S3 버킷 구성**
+
+> AWS 콘솔에서 조회한 Playball의 S3 General Purpose Bucket 목록입니다. 4가지 저장 목적(운영 백업 / 감사 / 장기보관 / 관측)에 따라 네이밍과 환경(`prod` / `staging`) 접두사로 버킷을 분리해 Lifecycle·권한·접근 통제를 독립적으로 관리합니다.
+
+![AWS S3 Console – 저장소 구성](/images/infrastructure/log-backup-policy/aws-console-backup-env.png)
 
 ---
 
@@ -87,6 +93,19 @@ Playball은 운영 로그, 감사 로그, 장기보관 증적 데이터, 운영 
 ---
 
 ## 파기 기준
+
+**예시) `playball-retention-archive` 버킷 Lifecycle 정책**
+
+> 회원 상태·민원·탈퇴 증적과 주문·결제·정산 법정 증빙은 `playball-retention-archive` 버킷에 **prefix 단위로 분리 저장**합니다. 각 prefix는 아래 Lifecycle 정책으로 S3 Standard에서 30일 뒤 **Glacier Deep Archive**로 자동 전환되고, 법정 보존기간이 도달하면 **Expiration 규칙으로 자동 삭제(파기)**됩니다. 즉 "최소 비용 저장 + 법정 보존 만료 = 자동 파기"가 한 벌의 Lifecycle로 집행됩니다.
+
+| Prefix | 저장 대상 | 전환 | 만료(자동 파기) | 법적 근거 |
+|---|---|---|---|---|
+| `member-retention/` | 회원 상태변경·동의·탈퇴·제재·민원 증적 | 30일 → Deep Archive | **3년 (1,095일)** | 회원 분쟁/민원 대응 최소 보존 |
+| `member-retention-manifest/` | 회원 증적 적재 매니페스트 (무결성 검증용) | 30일 → Deep Archive | 3년 | 원본과 동기 파기 |
+| `commerce-retention/` | 주문·예매·결제·취소·환불·정산·세무 증빙 | 30일 → Deep Archive | **5년 (1,825일)** | 전자상거래법·국세기본법 증빙 보존 |
+| `commerce-retention-manifest/` | 거래 증적 적재 매니페스트 | 30일 → Deep Archive | 5년 | 원본과 동기 파기 |
+
+![playball-retention-archive Lifecycle Rules](/images/infrastructure/log-backup-policy/aws-console-retention-archive-lifecycle.png)
 
 | 항목 | 기준 | 이유 |
 |---|---|---|

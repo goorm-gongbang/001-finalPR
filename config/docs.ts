@@ -66,11 +66,12 @@ export const docsConfig = {
                 },
                 { title: "장애 대응", href: "/infrastructure/incident-response" },
                 { title: "로그/백업/보관 정책", href: "/infrastructure/log-backup-policy" },
-                { 
-                    title: "클러스터 정책", 
-                    href: "/infrastructure/cluster-policy", 
+                {
+                    title: "클러스터 정책",
+                    href: "/infrastructure/cluster-policy",
                     children: [
                         { title: "policy-reporter", href: "/infrastructure/policy-reporter" },
+                        { title: "운영 보완 및 트러블슈팅", href: "/infrastructure/operational-troubleshooting" },
                     ],
                 },
             ],
@@ -82,7 +83,13 @@ export const docsConfig = {
                 { title: "보안 흐름", href: "/security/flow" },
                 { title: "Gateway / mTLS", href: "/security/gateway-mtls" },
                 { title: "클라이언트 보안", href: "/security/client-security" },
-                { title: "접근 제어", href: "/security/access-control" },
+                {
+                    title: "접근 제어",
+                    href: "/security/access-control",
+                    children: [
+                        { title: "Organization & SSO", href: "/security/access-control/organization-sso" },
+                    ],
+                },
                 { title: "데이터 보안", href: "/security/data-security" },
                 { title: "봇 대응 체계", href: "/security/bot-defense" },
                 { title: "백엔드 방어 체계", href: "/security/backend-defense" },
