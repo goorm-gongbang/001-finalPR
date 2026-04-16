@@ -61,7 +61,7 @@ export const docsConfig = {
                         { title: "서비스 관측", href: "/infrastructure/service-observability" },
                         { title: "보안 관측", href: "/infrastructure/security-observability" },
                         { title: "비즈니스 관측", href: "/infrastructure/business-observability" },
-                        { title: "부하 테스트 관측", href: "/infrastructure/load-test-observability" },
+                        { title: "부하테스트 전용", href: "/infrastructure/load-test-observability" },
                     ],
                 },
                 { title: "장애 대응", href: "/infrastructure/incident-response" },
