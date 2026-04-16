@@ -19,6 +19,9 @@ export const docsConfig = {
                 { title: "티켓팅 플로우", href: "/development/ticketing-flow" },
                 { title: "추천 알고리즘", href: "/development/recommendation" },
                 { title: "Redis 구성", href: "/development/redis" },
+                { title: "Kafka · Caffeine 캐싱", href: "/development/kafka-caching" },
+                { title: "좌석 분산락/Hold 동시성", href: "/development/seat-concurrency" },
+                { title: "성능 최적화 / 부하테스트", href: "/development/performance-optimization" },
             ],
         },
         {
@@ -50,6 +53,7 @@ export const docsConfig = {
                 { title: "접근 제어", href: "/security/iam" },
                 { title: "클러스터 정책", href: "/security/kyverno" },
                 { title: "봇 대응 체계", href: "/security/bot-defense" },
+                { title: "백엔드 방어 체계", href: "/security/backend-defense" },
                 { title: "침투 테스트 조치 결과", href: "/security/pentest-remediation" },
             ],
         },
