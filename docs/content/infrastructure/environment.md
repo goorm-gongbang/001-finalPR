@@ -43,8 +43,10 @@ flowchart LR
 
 On-Premise MiniPC 2대에 kubeadm으로 Kubernetes 클러스터를 구성했습니다. 애플리케이션, PostgreSQL, Redis를 클러스터 내부에서 함께 운영하며 기능 개발, 초기 통합 검증, 인프라 실험을 수행합니다.
 
+또한 **개발자 온보딩 가속**을 위해 로컬 `docker-compose`에서 공유 Dev 클러스터까지 빠르게 연결되도록 지원함으로써, 백엔드·프론트엔드가 초기부터 실제 API·데이터와 연동하며 협업할 수 있도록 했습니다.
+
 - **접근 제어**: Cloudflare whitelist IP + Google OAuth(Istio) — 팀원만 진입 (모니터링 도구 포함)
-- **지원 도구**: CloudBeaver, RedisInsight, Kafka-UI
+- **지원 도구**: 로컬에서 작업하듯 DB·Redis·메시지·메트릭 상태를 시각적으로 확인할 수 있도록 CloudBeaver(DB), RedisInsight(Redis), Kafka-UI(메시지), Grafana(메트릭) 제공
 
 ---
 
@@ -58,7 +60,7 @@ AWS EKS 기반 검증 환경입니다. CloudFront, ALB, EKS, RDS, ElastiCache를
 - **부하 테스트**: 티켓팅 오픈 시나리오 기준 동시 접속 부하 테스트
 - **보안 테스트**: Istio EnvoyFilter + Lua WAF, mTLS, AI 방어 시스템 검증
 - **접근 제어**: whitelist IP + Google OAuth(Istio) 필수
-- **지원 도구**: CloudBeaver, RedisInsight, Kafka-UI
+- **지원 도구**: CloudBeaver, RedisInsight, Kafka-UI, Grafana
 - **Bastion SSM**: Prod CLI 접근에 익숙해지도록 사전 연습 허용
 
 Staging에서 검증이 완료된 코드만 Prod에 반영합니다.
