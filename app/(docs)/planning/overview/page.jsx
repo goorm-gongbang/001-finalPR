@@ -71,7 +71,10 @@ export default function Page() {
                     </tr>
                     <tr>
                         <td><strong>클라우드 인프라</strong></td>
-                        <td>멀티 환경(Dev/Staging/Prod), 고가용성 배포, 피크 대비 리소스 확장, 서비스메쉬 트래픽 제어, 분산 트레이싱 기반 SRE/관측성</td>
+                        <td>
+                            멀티 환경(Dev/Staging/Prod), 고가용성 아키텍처<br />
+                            피크 대비 리소스 확장, 서비스 메쉬/분산 트레이싱 기반 SRE/관측
+                        </td>
                         <td>AWS EKS, Karpenter, KEDA, Istio, Grafana 스택(Prometheus·Loki·Tempo)</td>
                     </tr>
                     <tr>
