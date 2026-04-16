@@ -1,48 +1,12 @@
 # 인프라 개요
 
-Playball의 클라우드 인프라는 서비스가 안정적으로 동작하도록 자원 구성, 배포 자동화, 고가용성, 관측, 복구 기준을 갖추고 있습니다. 서비스는 `CloudFront`, `EKS`, `Istio Mesh`, `RDS`, `ElastiCache`, `ArgoCD`, `Karpenter/KEDA`를 기반으로 운영합니다. 상태 확인과 장애 분석은 `Grafana`, `Policy Reporter`, `CloudTrail`, `CloudWatch`를 기준으로 수행합니다.
-
----
-
-## 서비스 특성
-
-| 항목 | 내용 | 대응 인프라 |
-|---|---|---|
-| **트래픽 집중** | 티켓 오픈 시점에 대량 요청이 짧은 시간에 집중 | Karpenter(노드 확장), KEDA(Kafka lag·Cron Pre-Warming), HPA, Istio Rate Limit, CloudFront |
-| **실시간 경쟁** | 대기열, 좌석 선점, 결제 단계에서 동시성 제어가 중요 | ElastiCache Redis(분산 락·대기열), Kafka(이벤트 순서), Istio ext_authz(Admission Token), HikariCP 튜닝 |
-| **가용성 요구** | 배포 오류, 노드 장애, DB 문제에도 서비스 흐름이 빠르게 복구되어야 함 | Multi-AZ EKS, RDS Multi-AZ + Standby, Redis 복제본 + 자동 장애조치, ArgoCD GitOps 재배포, PDB, Terraform IaC |
-| **운영 추적성** | 장애 분석, 감사 추적, 복구 판단을 위한 로그·메트릭·이력 관리가 필요 | Prometheus + Thanos, Loki, Tempo(+OTel), Grafana, CloudTrail, Policy Reporter, Discord 알림 |
-
----
-
-## 인프라 구성 목적
-
-| 항목 | 내용 |
-|---|---|
-| **서비스 연속성** | 배포 이후에도 서비스가 지속적으로 동작하도록 인프라 구조와 운영 기준을 함께 설계 |
-| **환경 분리** | Dev, Staging, Prod를 목적에 따라 분리해 변경 영향과 검증 범위를 분리 |
-| **자동화 운영** | Terraform, Helm, ArgoCD, CI/CD 기준으로 인프라와 배포 과정을 자동화 |
-| **고가용성** | 장애가 발생해도 서비스가 이어지도록 Multi-AZ, 오토스케일링, 선언형 복구 기준을 구성 |
-| **확장과 보호** | 티켓 오픈 시점의 급격한 요청 증가를 전제로 확장, 보호, 복구 기준을 설계 |
-| **관측과 복구** | 모니터링 알람, 로그·백업 보관, 장애 대응 절차를 운영 기준으로 관리 |
-
----
-
-## 구성 범위
-
-| 구분 | 내용 |
-|---|---|
-| **환경 운영** | Dev, Staging, Prod 분리 운영 |
-| **프로비저닝** | Terraform 기반 AWS 인프라 생성과 환경별 구성 관리 |
-| **클러스터 운영** | ESO, ArgoCD, Karpenter, DB 초기화, 공통 인프라 구성 |
-| **배포 자동화** | Helm + ArgoCD 기반 GitOps |
-| **고가용성 / 확장** | Multi-AZ, KEDA, HPA, Karpenter |
-| **장애 대응** | 배포 복구 검증, GitOps 재적용, RDS PITR, PostgreSQL 데이터베이스 보조 백업 |
-| **운영 정책** | 모니터링 알람, 로그 및 데이터베이스 보관/백업, 장애 대응 절차 |
+Playball의 클라우드 인프라는 **티켓팅 서비스 특성에 맞춰 설계된 운영 체계**입니다. 서비스는 `CloudFront`, `EKS`, `Istio Mesh`, `RDS`, `ElastiCache`, `ArgoCD`, `Karpenter/KEDA`를 기반으로 운영하고, 상태 확인과 장애 분석은 `Grafana`, `Policy Reporter`, `CloudTrail`, `CloudWatch`를 기준으로 수행합니다.
 
 ---
 
 ## 운영 흐름
+
+사용자 요청부터 배포·관측까지의 전체 흐름입니다. 이후 각 섹션은 이 뼈대의 **설계 근거**와 **세부 기술**을 설명합니다.
 
 ```mermaid
 flowchart LR
@@ -62,7 +26,34 @@ flowchart LR
     class OBS obsBox
 ```
 
-서비스 요청은 `CloudFront`와 `EKS`를 거쳐 애플리케이션으로 전달되고, 운영 데이터는 `RDS`와 `ElastiCache`에서 처리합니다. 배포는 `ArgoCD` 기준으로 반영하며, 상태 확인과 장애 분석은 `Grafana`, `Policy Reporter`, `CloudTrail`, `CloudWatch`를 기준으로 수행합니다.
+---
+
+## 티켓팅 서비스 특성 × 인프라 대응
+
+티켓팅은 **피크 집중 · 실시간 경쟁 · 가용성 · 추적성** 4가지 특성이 인프라 설계를 결정합니다. 각 특성에 **어떤 인프라 요소로 대응했는지** 가 Playball 인프라의 설계 철학입니다.
+
+| 서비스 특성 | 우리의 인프라 대응 |
+|-----------|-----------------|
+| **트래픽 집중** (티켓 오픈 시점에 대량 요청이 짧은 시간에 집중) | **KEDA Cron Scaler**(피크 선제 스케일) + **Karpenter**(노드 동적 확장) + **HPA**(CPU/Memory) + **Istio Rate Limit** + CloudFront 엣지 캐싱 — 부하테스트 기반 튜닝 |
+| **실시간 경쟁** (대기열·좌석 선점·결제 동시성) | **ElastiCache Redis**(분산 락·대기열 ZSET) + Kafka(이벤트 순서) + Istio `ext_authz`(Admission Token 재검증) + HikariCP 튜닝 + **추천 분산 알고리즘**(핫스팟 경합 구조 자체 완화) |
+| **가용성 요구** (배포·노드·DB 장애 내성) | **Multi-AZ EKS / RDS / Redis**(복제본 + 자동 장애조치) + **ArgoCD GitOps 재배포** + RDS PITR + `pg_dump → S3` 보조 백업 + PDB + Terraform IaC |
+| **운영 추적성** (장애 분석·감사·복구 판단) | **3 시그널 통합 관측**(Prometheus+Thanos / Loki / Tempo→Grafana) + CloudTrail(API 감사) + Policy Reporter(정책 위반) + EventBridge·Lambda → Discord 알림 |
+
+> 이 표는 Playball 인프라의 **의사결정 로직** 그 자체입니다. 모든 기술 선택은 위 4가지 특성 중 하나에 대응합니다.
+
+---
+
+## 레포 구성 (3-레포 분리)
+
+운영 단계를 저장소 단위로 분리해 **"인프라 준비 → 클러스터 부트스트랩 → 선언형 배포"** 를 독립적으로 관리합니다.
+
+| 레포 | 담당 단계 | 주요 내용 |
+|-----|---------|---------|
+| **301 Terraform** | 프로비저닝 | AWS 리소스(VPC, EKS, RDS, Redis, CDN, IAM 등) 선언적 관리 — `stacks/` + `environments/{dev,staging,prod}` 분리 |
+| **302 Bootstrap** | 클러스터 초기 설치 | EKS/kubeadm에 ESO, Karpenter, ArgoCD, Root App, DB 초기화를 1회성으로 주입 |
+| **303 Helm** | GitOps 방식의 선언형 Helm/Values 관리 | Helm 차트 + ArgoCD Application + `argocd-sync/*` 브랜치 기반 지속 배포 |
+
+상세한 상호작용과 다이어그램은 [인프라 아키텍처](./architecture) 문서 참조.
 
 ---
 
@@ -73,11 +64,12 @@ flowchart LR
 | 영역 | 기술 · 버전 |
 |---|---|
 | **클라우드** | AWS EKS `1.35`, RDS PostgreSQL `16`, ElastiCache Redis `7`, CloudFront, ALB, Route53, ACM |
-| **서비스 메쉬** | Istio `1.29.1` (base / istiod / gateway) |
-| **프로비저닝** | Terraform |
-| **배포** | Helm, **ArgoCD** (argo-helm), TeamCity, **ECR** — ECR은 환경별 이미지 저장소(`staging/playball/web/*`, `prod/...`)로, Dev도 On-Prem에서 동일 ECR을 Pull |
-| **오토스케일링** | Karpenter `1.11.1`, KEDA `2.19.0`, HPA (k8s 내장), Metrics Server `3.13.0` |
-| **시크릿/권한** | External Secrets Operator `2.3.0`, IRSA, AWS IAM Identity Center SSO |
+| **메쉬** | Istio `1.29.1` (base / istiod / gateway) |
+| **IaC** | Terraform |
+| **CI/CD** | **TeamCity**(빌드·테스트), **ECR**(환경별 이미지 저장소 — `staging/playball/web/*`, `prod/...`) |
+| **배포** | **Helm**, **ArgoCD** (argo-helm, `argocd-sync/*` 브랜치 기반 GitOps) — Dev도 On-Prem에서 동일 ECR Pull로 환경 재현성 확보 |
+| **스케일링** | Karpenter `1.11.1`, KEDA `2.19.0`, HPA (k8s 내장), Metrics Server `3.13.0` |
+| **권한·시크릿** | External Secrets Operator `2.3.0`, IRSA, AWS IAM Identity Center SSO |
 | **관측성** | kube-prometheus-stack `83.4.0` (Prometheus · Alertmanager · Grafana 분리 `10.5.15`), Loki `6.55.0`, Tempo `1.24.4`, Thanos (kube-prom-stack 포함), OpenTelemetry Collector `0.150.0` |
-| **정책/보안** | Kyverno `3.7.1`, Policy Reporter `3.7.3` |
+| **정책·보안** | Kyverno `3.7.1`, Policy Reporter `3.7.3` |
 | **운영 확인** | CloudTrail, CloudWatch, Discord (알림 전파) |

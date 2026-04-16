@@ -48,5 +48,5 @@ Playball(구 Traffic-Master)은 스포츠 티켓팅에서 발생하는 **좌석 
 |---|---|---|
 | **백엔드** | MSA 티켓팅 시스템, 분산 락 기반 연석/준연석 배정 및 혼잡도 집계 | Spring Boot, Redis, PostgreSQL |
 | **클라우드 인프라** | 멀티 환경(Dev/Staging/Prod), 고가용성 아키텍처<br>피크 대비 리소스 확장, 서비스 메쉬/분산 트레이싱 기반 SRE/관측 | AWS EKS, Karpenter, KEDA, Istio, Grafana 스택(Prometheus·Loki·Tempo) |
-| **보안** | 외부망부터 애플리케이션까지 5계층 심층 방어: 엣지(CDN) · LB(ALB) · 메쉬(Istio WAF) · 내부통신(mTLS) · 앱(JWT·보안 헤더·난독화) | Istio, AWS Shield, Lua, JWT |
+| **보안** | 프론트부터 운영자까지 **7축 보안 체계**: 클라이언트 · Gateway/mTLS · 봇 대응 · 백엔드 · 데이터 · 인프라 · 접근 제어 | Istio, AWS Shield, Lua, JWT, Kyverno |
 | **AI** | 행동 패턴 기반 지능형 봇 탐지 및 무력화 (T0~T3 티어링 분류) | LangGraph, Playwright, Envoy ext_authz |

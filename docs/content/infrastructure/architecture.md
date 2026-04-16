@@ -34,40 +34,25 @@ Playball 인프라는 `프로비저닝`, `클러스터 부트스트랩`, `GitOps
 
 ---
 
-## 외부 진입 구조
+## 아키텍처 다이어그램
 
-![외부 진입 구조](/images/infrastructure/architecture/01_infra-arc.svg?w=40%)
+- [**외부 진입 구조**](./external-entry) — 사용자 요청이 엣지에서 백엔드까지 흐르는 경로
+- [**내부 구성**](./internal-composition) — 3-레포 분리 + ArgoCD App-of-Apps 패턴
 
----
-
-## 내부 구성
-
-![내부 구성](/images/infrastructure/architecture/02_infra-arc.svg?w=60%)
-
----
-
-## 보안 / 감사 구조
-
-![보안 / 감사 구조](/images/infrastructure/architecture/03_infra-arc.svg?w=80%)
-
-**엣지(CloudFront + Shield) → LB(ALB + SG) → 메쉬(Istio WAF) → 내부통신(mTLS) → 앱(JWT + 보안 헤더)** 의 5계층 심층 방어 위에, SSO·IAM 기반 운영 접근과 CloudTrail·Kyverno 기반 감사 경로를 함께 구성합니다.
-
+> 보안/감사 흐름은 [보안 → 보안 흐름](../security/flow) 및 [보안 개요의 7축 아키텍처](../security/overview) 참조.
 
 ---
 
 ## 아키텍처 설계 기준
 
-| 구분                      | 반영 내용                                                                                                                                                        |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **진입 경로 일원화**      | CloudFront, ALB, Istio Gateway를 기준으로 외부 진입 경로를 단일화하고 요청 흐름을 분리해 관리                                                                    |
-| **검증 환경 분리**        | Dev, Staging, Prod를 분리해 기능 개발, 배포 전 검증, 실서비스 운영 단계를 구분                                                                                   |
-| **선언형 운영**           | Terraform, Bootstrap, Helm, ArgoCD로 인프라와 배포 구성을 저장소 단위로 관리                                                                                     |
-| **확장 대응**             | KEDA, HPA, Karpenter를 조합해 티켓 오픈 시점의 급격한 요청 증가에 대응                                                                                           |
-| **복구 기준 분리**        | 애플리케이션은 GitOps 재적용과 재배포, 데이터는 RDS PITR과 `pg_dump -> S3` 기준으로 복구                                                                         |
-| **상태 확인 일원화**      | Grafana, Policy Reporter, CloudWatch, CloudTrail을 기준으로 상태 확인과 장애 분석을 수행                                                                         |
-| **5계층 심층 방어**       | 엣지(CloudFront + Shield) · LB(ALB + SG) · 메쉬(Istio WAF + Rate Limit + ext_authz) · 내부통신(mTLS + NetworkPolicy) · 앱(JWT + 보안 헤더)의 5계층으로 심층 방어 |
-| **운영 접근 통제**        | AWS IAM Identity Center SSO, IAM Role, IRSA, Kubernetes RBAC 기준으로 접근 권한을 분리                                                                           |
-| **정책 검증과 감사 추적** | Kyverno, Policy Reporter, CloudTrail, EventBridge, Lambda, Discord 경로로 정책 위반과 운영 변경 이력을 추적                                                      |
+| 구분              | 반영 내용                                                                                      |
+| ----------------- | ---------------------------------------------------------------------------------------------- |
+| **선언형 운영**   | 301/302/303 3-레포 분리 (Terraform · Bootstrap · Helm-ArgoCD) — 모든 인프라·배포가 IaC로 재현·감사 가능 |
+| **확장 대응**     | KEDA Cron + HPA + Karpenter 조합 — 티켓 오픈 피크를 **부하테스트 기반으로 선제 대응**          |
+| **복구 기준**     | 앱은 GitOps 재적용, 데이터는 RDS PITR + `pg_dump → S3` 2중 — 시나리오별 복구 훈련 포함         |
+| **관측·감사 통합** | Prometheus·Loki·Tempo → Grafana + CloudTrail → EventBridge → Discord — 상태·변경 이력 일원 추적 |
+
+> 보안 관련 설계 기준(7축 보안 체계·접근 제어·정책 검증)은 [보안 개요](../security/overview)에서 통합 관리합니다.
 
 ---
 

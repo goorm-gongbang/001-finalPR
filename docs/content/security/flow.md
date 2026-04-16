@@ -1,6 +1,6 @@
 # 보안 흐름
 
-Playball 보안 흐름은 외부망부터 애플리케이션까지 5계층 심층 방어를 기준으로 구성합니다. 엣지(CDN), LB(ALB), 메쉬(Istio WAF), 내부통신(mTLS), 애플리케이션(JWT·보안 헤더·난독화) 순서로 요청을 검증하고 차단합니다.
+Playball 보안 흐름은 **프론트부터 운영자까지 7축 보안 체계**를 기준으로 구성합니다. 클라이언트(CSP·X-Bot-Token), Gateway/mTLS(CDN·ALB·Istio WAF), 봇 대응(Fingerprint·AI Defense), 백엔드(JWT·Admission Token·보안 헤더), 데이터(암호화·DB Role·Secrets), 인프라(NetworkPolicy·런타임 감시·Kyverno), 접근 제어(IAM SSO) 7개 축에서 단계별로 요청을 검증하고 차단합니다.
 
 ---
 
@@ -19,15 +19,17 @@ flowchart LR
 
 ---
 
-## 5계층 심층 방어
+## 7축 보안 체계
 
-| 계층 | 주요 구성 | 처리 기준 |
+| 축 | 주요 구성 | 처리 기준 |
 |---|---|---|
-| **Edge** | CloudFront, AWS Shield Standard | 외부 진입점 통합, 정적 캐시 처리, 대규모 트래픽 흡수 |
-| **LB** | ALB, Security Group | 허용된 진입 경로만 유지하고 메쉬 계층으로 전달 |
-| **Mesh** | Istio Gateway, EnvoyFilter + Lua, Rate Limit, ext_authz | 공격 패턴 차단, 과도한 요청 제한, 민감 경로 추가 검증 |
-| **Internal** | Istio mTLS, Redis TLS(in-transit) | 서비스 간 통신 암호화와 상호 인증, ElastiCache Redis는 TLS(required)로 전 환경 강제 |
-| **Application** | JWT, 보안 헤더, 난독화, Admission Token | 사용자 인증 상태와 토큰 유효성 확인, 대기열 우회와 비정상 선점 요청 방지 |
+| **클라이언트** | CSP, X-Bot-Token(Canvas FP+HMAC), 보안 헤더, 소스맵 비활성화, 난독화 | 브라우저 노출 최소화, 프론트에서 방어 토큰 발행 |
+| **Gateway / mTLS** | CloudFront, ALB+SG, Istio Gateway, EnvoyFilter+Lua, Rate Limit, ext_authz | 외부 진입 통합 · 요청 패턴 차단 · 서비스 간 통신 암호화 |
+| **봇 대응** | Fingerprint 추적, bot_fingerprint_headless/multi_ip 메트릭, AI Defense 행동 분석 | 헤드리스·분산 매크로·AI 에이전트 탐지 |
+| **백엔드** | JWT 검증, Admission Token 재검증, 보안 헤더 | 앱 계층 최종 방어 · 대기열 우회 차단 |
+| **데이터** | RDS PITR·저장 암호화·TLS required, Secrets Manager 환경별 격리 | DB/Redis 접속 안전성 · 시크릿 노출 최소화 |
+| **인프라** | NetworkPolicy(default-deny), 런타임 감시, Kyverno + Policy Reporter | 네트워크 격리 · 컨테이너 런타임 감시 · 배포 리소스 정책 |
+| **접근 제어** | IAM Identity Center SSO, 최소 권한 Permission Set, CloudTrail 감사 | 운영자 접근 · 변경 이력 추적 |
 
 ---
 

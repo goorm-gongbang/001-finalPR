@@ -1,5 +1,7 @@
 # 인프라 보안
 
+> **역할**: AWS · Kubernetes 경계 · 코드로 관리되는 플랫폼 보안
+
 외부 요청 방어 체인(클라이언트 → Gateway → 봇 → 백엔드 → 데이터)과 별개로, **AWS 계정·네트워크·클러스터 수준에서 "구성 자체가 안전한가"** 를 보장하는 구조입니다. 모든 구성은 `301-playball-terraform`과 `303-goormgb-k8s-helm` 레포에서 **선언적으로 관리**되어 재현·감사 가능합니다.
 
 ---
@@ -31,12 +33,11 @@
 
 ## 2. 클러스터 네트워크 보안 (Kubernetes Layer)
 
-### Cilium CNI + eBPF
+### CNI 기반 네트워킹
 
-- `303-goormgb-k8s-helm/common-charts/infra/cilium`
-- **eBPF 기반 고성능 네트워킹** — iptables 우회로 지연 감소
-- kube-proxy 대체 (Cilium이 서비스 라우팅 직접 처리)
-- **Hubble**로 네트워크 플로우 실시간 관측 가능 — 어떤 Pod 간 통신이 있었는지 흐름 추적
+- 고성능 네트워킹 CNI로 L3/L4 라우팅과 서비스 디스커버리 처리
+- kube-proxy 대체로 지연 감소
+- 네트워크 플로우 실시간 관측 가능 — 어떤 Pod 간 통신이 있었는지 흐름 추적
 
 ### NetworkPolicy (Default-Deny)
 
@@ -61,11 +62,10 @@
 - 환경별 강도 차등 (Prod만 `requireProbes` 강제, 안정화 후 Deny 모드 전환 예정)
 - 상세 운영은 [클러스터 정책](../infrastructure/cluster-policy) 문서 참조
 
-### Tetragon — eBPF 런타임 위협 탐지
+### 런타임 위협 탐지
 
-- `common-charts/infra/tetragon`
-- **커널 수준에서 프로세스·시스템콜을 직접 감시**하는 eBPF 기반 탐지기
-- TracingPolicy로 특정 행위(쉘 실행, 네트워크 연결, 파일 접근 등) 실시간 탐지
+- **커널 수준에서 프로세스·시스템콜을 감시**하는 런타임 탐지기 도입
+- 정책 기반으로 특정 행위(쉘 실행, 네트워크 연결, 파일 접근 등) 실시간 탐지
 - **컨테이너 탈출·권한 상승 시도·암호화폐 마이닝** 같은 고급 공격을 앱 계층 이전에 조기 발견
 
 ### Kubernetes RBAC
@@ -112,9 +112,9 @@
 | 계층 | 담당 | 관리 레포 |
 |------|-----|---------|
 | **VPC·SG·NACL** | 네트워크 경계 | 301 terraform (`modules/vpc`, `modules/bastion`) |
-| **NetworkPolicy** | Pod 간 트래픽 격리 | 303 helm (`cilium`, `network-policies`) |
+| **NetworkPolicy** | Pod 간 트래픽 격리 | 303 helm (`network-policies`) |
 | **Kyverno** | 배포 리소스 정책 | 303 helm (`kyverno-policies`) |
-| **Tetragon** | 런타임 행위 탐지 | 303 helm (`tetragon`) |
+| **런타임 감시** | 커널 수준 프로세스·시스템콜 탐지 | 303 helm |
 | **RBAC + IRSA** | K8s ↔ AWS 권한 경계 | 303 helm (`rbac`) + 301 terraform (`modules/eks`) |
 | **CloudTrail / 감사** | API 호출·변경 이력 | 301 terraform (`stacks/audit-security`) |
 
@@ -123,6 +123,6 @@
 ## 차별점
 
 1. **코드로 관리 (IaC)**: 모든 보안 설정이 terraform/helm 레포에 선언적으로 있어 **재현·감사·롤백 가능**
-2. **eBPF 2중 체계**: Cilium(네트워크) + Tetragon(런타임 프로세스) 로 커널 수준 가시성 확보 — 대부분 팀이 도입하지 않는 고급 스택
+2. **네트워크·런타임 2중 감시**: NetworkPolicy(트래픽 격리) + 런타임 감시(프로세스·시스템콜) 로 다층 가시성 확보
 3. **Default-Deny 네트워크**: "열어두고 막기"가 아니라 "닫아두고 필요한 것만 열기" 원칙
 4. **감사 로그 은폐 방지**: S3 delete 시도 자체를 Discord 알림화하여 내부자 공격까지 탐지

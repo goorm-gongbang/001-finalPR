@@ -1,5 +1,7 @@
 # 접근 제어
 
+> **역할**: 운영자 SSO · 최소 권한 체계
+
 Playball은 SSO 기반 접근과 워크로드 접근을 분리하고, `AWS IAM Identity Center SSO`, `IAM Role`, `IRSA`, `Kubernetes RBAC`를 함께 사용합니다. AWS Console과 CLI 접근은 SSO 로그인과 Role 전환을 기준으로 처리하고, 클러스터 내부 워크로드는 필요한 AWS 권한만 사용합니다.
 
 ---

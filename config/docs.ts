@@ -71,7 +71,23 @@ export const docsConfig = {
       items: [
         { title: "개요", href: "/infrastructure/overview" },
         { title: "환경 구성", href: "/infrastructure/environment" },
-        { title: "인프라 아키텍처", href: "/infrastructure/architecture" },
+        {
+          title: "인프라 아키텍처",
+          href: "/infrastructure/architecture",
+          children: [
+            { title: "외부 진입 구조", href: "/infrastructure/external-entry" },
+            {
+              title: "내부 구성",
+              href: "/infrastructure/internal-composition",
+            },
+            { title: "계정 경계", href: "/infrastructure/account-boundary" },
+            { title: "K8s 클러스터 구성", href: "/infrastructure/k8s-cluster" },
+            {
+              title: "도메인 · 라우팅",
+              href: "/infrastructure/domain-routing",
+            },
+          ],
+        },
         {
           title: "CI/CD",
           href: "/infrastructure/ci-cd",
@@ -82,7 +98,6 @@ export const docsConfig = {
             },
           ],
         },
-        { title: "트래픽 대응", href: "/infrastructure/traffic" },
         {
           title: "모니터링",
           href: "/infrastructure/monitoring",
@@ -109,6 +124,10 @@ export const docsConfig = {
             },
           ],
         },
+        {
+          title: "트래픽 대응",
+          href: "/infrastructure/traffic",
+        },
         { title: "장애 대응", href: "/infrastructure/incident-response" },
         {
           title: "로그/백업/보관 정책",
@@ -122,11 +141,11 @@ export const docsConfig = {
               title: "policy-reporter",
               href: "/infrastructure/policy-reporter",
             },
-            {
-              title: "운영 보완 및 트러블슈팅",
-              href: "/infrastructure/operational-troubleshooting",
-            },
           ],
+        },
+        {
+          title: "[부록] 운영 보완 및 트러블슈팅",
+          href: "/infrastructure/operational-troubleshooting",
         },
       ],
     },
@@ -151,7 +170,10 @@ export const docsConfig = {
             },
           ],
         },
-        { title: "[부록] 취약점 관리", href: "/security/vulnerability-management" },
+        {
+          title: "[부록] 취약점 관리",
+          href: "/security/vulnerability-management",
+        },
       ],
     },
     {

@@ -1,5 +1,7 @@
 # Gateway / mTLS
 
+> **역할**: 외부 진입 차단 · 서비스 메쉬 보안의 중심
+
 Playball은 외부 요청을 Istio Gateway에서 먼저 제한하고, 서비스 간 통신은 Istio mTLS로 보호합니다. Gateway에는 EnvoyFilter + Lua, 내부 경로 차단, ext_authz, Rate Limit을 적용하고, mesh 내부는 `STRICT` mTLS를 기본으로 유지합니다.
 
 ---
@@ -13,7 +15,7 @@ flowchart LR
     C --> D["내부 경로 차단"]
     D --> E["ext_authz"]
     E --> F["Local / Global Rate Limit"]
-    F --> G["prod-webs 서비스"]
+    F --> G["{env}-webs 서비스"]
     G --> H["mTLS 통신"]
 ```
 
@@ -37,13 +39,18 @@ flowchart LR
 | 항목 | 운영 기준 |
 |---|---|
 | **기본 모드** | 서비스 간 통신은 `STRICT` 기준으로 운영 |
-| **적용 네임스페이스** | `prod-webs`, `monitoring` |
+| **적용 네임스페이스** | `{env}-webs`, `monitoring` |
 | **인증서 관리** | `Istiod`가 Sidecar 인증서를 배포하고 자동 갱신 |
 | **기본 효과** | 서비스 간 상호 인증과 내부 통신 암호화 |
-| **non-mesh 예외** | `messaging`, `data`는 Sidecar가 없는 서비스와 통신하므로 PLAINTEXT 허용 |
-| **메트릭 예외** | `prod-webs` 앱의 관리 포트 `9090`은 Prometheus 스크랩을 위해 예외 허용 |
-| **OTEL 예외** | `monitoring`의 OpenTelemetry Collector는 plain HTTP 수집 허용 |
-| **AI 메트릭 예외** | `prod-ai`의 `ai-defense`, `authz-adapter` 메트릭 포트는 예외 허용 |
+
+### mTLS 예외 허용 — 운영 필요성에 의한 의도된 예외
+
+| 구분 | 대상 | 이유 |
+|---|---|---|
+| **non-mesh 서비스** | `messaging`, `data` | Sidecar 없는 외부·레거시 서비스와 통신 → PLAINTEXT 허용 |
+| **메트릭 스크랩** | `{env}-webs` 앱 관리 포트 `9090` | Prometheus 스크랩 경로 예외 |
+| **OTEL 수집** | `monitoring`의 OpenTelemetry Collector | plain HTTP 수집 허용 |
+| **AI 메트릭** | `{env}-ai`의 `ai-defense`, `authz-adapter` 메트릭 포트 | 메트릭 엔드포인트 예외 |
 
 ---
 
