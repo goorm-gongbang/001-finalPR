@@ -26,7 +26,7 @@
 
   <rect x="60" y="104" width="310" height="30" rx="6" fill="#1976d2"/>
   <text x="215" y="124" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">
-    ① 실시간 런타임 · 결정론 (LLM 없음)
+    ① 실시간 런타임 · 결정론 상태머신
   </text>
   <text x="385" y="123" font-size="11" fill="#546e7a">요청 경로에서 즉시 판단 · 빠르고 예측 가능</text>
 

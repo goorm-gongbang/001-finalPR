@@ -3,9 +3,6 @@
     <marker id="arrG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#616161"/>
     </marker>
-    <marker id="arrR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#d32f2f"/>
-    </marker>
     <marker id="arrOk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#2e7d32"/>
     </marker>
@@ -14,7 +11,7 @@
 
   <!-- ============ Title ============ -->
   <text x="600" y="40" text-anchor="middle" font-size="22" font-weight="700" fill="#212121">Online Plane — 등급 대응 + VQA 관문</text>
-  <text x="600" y="64" text-anchor="middle" font-size="13" fill="#757575">요청 경로에서 결정론 룰로 즉시 판정 · VQA는 좌석 선택 단계 진입 전의 독립 게이트</text>
+  <text x="600" y="64" text-anchor="middle" font-size="13" fill="#757575">요청 경로에서 결정론 룰로 즉시 판정 · VQA는 좌석 선택 전 반드시 거쳐야 하는 관문</text>
 
   <!-- ============ Section 1 — Tier Matrix ============ -->
   <text x="60" y="108" font-size="14" font-weight="700" fill="#263238">① 위험도 등급별 대응 (Tier → Action)</text>
@@ -51,7 +48,7 @@
   <text x="1020" y="246" text-anchor="middle" font-size="14" font-weight="700" fill="#b71c1c">Block</text>
   <text x="1020" y="270" text-anchor="middle" font-size="11" fill="#b71c1c">봇 확신</text>
 
-  <!-- Arrows between tier cards (centered at y=210) -->
+  <!-- Arrows between tier cards -->
   <line x1="308" y1="210" x2="332" y2="210" stroke="#9e9e9e" stroke-width="2" marker-end="url(#arrG)"/>
   <line x1="588" y1="210" x2="612" y2="210" stroke="#9e9e9e" stroke-width="2" marker-end="url(#arrG)"/>
   <line x1="868" y1="210" x2="892" y2="210" stroke="#9e9e9e" stroke-width="2" marker-end="url(#arrG)"/>
@@ -62,56 +59,76 @@
 
   <!-- ============ Separator ============ -->
   <line x1="60" y1="348" x2="1140" y2="348" stroke="#e0e0e0" stroke-dasharray="6 4"/>
-  <rect x="510" y="336" width="180" height="24" rx="12" fill="#ffffff" stroke="#e0e0e0"/>
-  <text x="600" y="353" text-anchor="middle" font-size="11" fill="#6a1b9a" font-weight="700" style="letter-spacing:1px">+ 독립 게이트 (등급과 무관)</text>
+  <rect x="460" y="336" width="280" height="24" rx="12" fill="#ffffff" stroke="#e0e0e0"/>
+  <text x="600" y="353" text-anchor="middle" font-size="11" fill="#6a1b9a" font-weight="700" style="letter-spacing:1px">+ 필수 관문 (등급과 무관 · 반드시 통과)</text>
 
-  <!-- ============ Section 2 — Flow with VQA Gate ============ -->
-  <text x="60" y="394" font-size="14" font-weight="700" fill="#263238">② 플로우 상태 + VQA 관문 (S4·S5 진입 전)</text>
+  <!-- ============ Section 2 — Sequential Gate Flow ============ -->
+  <text x="60" y="394" font-size="14" font-weight="700" fill="#263238">② 좌석 선택 전 VQA 관문 — AI Defense가 HTTP 428로 강제</text>
 
-  <!-- 대기열/진입 box -->
-  <rect x="70" y="430" width="220" height="80" rx="10" fill="#eceff1" stroke="#78909c" stroke-width="1.5"/>
-  <text x="180" y="462" text-anchor="middle" font-size="14" font-weight="700" fill="#37474f">대기열 / 진입</text>
-  <text x="180" y="484" text-anchor="middle" font-size="12" fill="#546e7a">S0 · S1 · S2 · S3</text>
-  <text x="180" y="502" text-anchor="middle" font-size="10" fill="#78909c">(행동 분석 · 대기열 통과)</text>
+  <!-- Step 1: 대기열 -->
+  <rect x="55" y="420" width="200" height="90" rx="10" fill="#eceff1" stroke="#78909c" stroke-width="1.5"/>
+  <text x="155" y="452" text-anchor="middle" font-size="14" font-weight="700" fill="#37474f">대기열 / 진입</text>
+  <text x="155" y="474" text-anchor="middle" font-size="12" fill="#546e7a">S0 · S1 · S2</text>
+  <text x="155" y="498" text-anchor="middle" font-size="10" fill="#78909c">행동 분석 · 대기열 통과</text>
 
-  <!-- Arrow 대기열 → diamond -->
-  <line x1="292" y1="470" x2="332" y2="470" stroke="#616161" stroke-width="2" marker-end="url(#arrG)"/>
+  <!-- Arrow 1 -->
+  <line x1="258" y1="465" x2="308" y2="465" stroke="#616161" stroke-width="2" marker-end="url(#arrG)"/>
 
-  <!-- Diamond VQA -->
-  <polygon points="382,470 432,430 482,470 432,510" fill="#fff3e0" stroke="#fb8c00" stroke-width="2"/>
-  <text x="432" y="464" text-anchor="middle" font-size="12" font-weight="700" fill="#e65100">VQA 통과?</text>
-  <text x="432" y="482" text-anchor="middle" font-size="10" fill="#e65100">(s3_passed)</text>
+  <!-- Step 2: 좌석 선택 요청 -->
+  <rect x="310" y="420" width="200" height="90" rx="10" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+  <text x="410" y="449" text-anchor="middle" font-size="13" font-weight="700" fill="#0d47a1">좌석 선택 요청</text>
+  <text x="410" y="471" text-anchor="middle" font-size="11" fill="#1565c0">FE → AI Defense</text>
+  <text x="410" y="491" text-anchor="middle" font-size="10" fill="#757575">(ext_authz 경유)</text>
 
-  <!-- YES arrow → 좌석 선택 -->
-  <line x1="484" y1="470" x2="524" y2="470" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrOk)"/>
-  <text x="504" y="458" text-anchor="middle" font-size="12" font-weight="700" fill="#2e7d32">YES</text>
+  <!-- Arrow 2 -->
+  <line x1="513" y1="465" x2="563" y2="465" stroke="#616161" stroke-width="2" marker-end="url(#arrG)"/>
 
-  <!-- 좌석 선택 box -->
-  <rect x="524" y="430" width="240" height="80" rx="10" fill="#e8f5e9" stroke="#43a047" stroke-width="2"/>
-  <text x="644" y="462" text-anchor="middle" font-size="14" font-weight="700" fill="#2e7d32">좌석 선택 진행</text>
-  <text x="644" y="484" text-anchor="middle" font-size="12" fill="#2e7d32">S4 (구역) · S5 (좌석)</text>
-  <text x="644" y="502" text-anchor="middle" font-size="10" fill="#558b2f">(구역 선택 · 좌석 확보)</text>
+  <!-- Step 3: VQA 관문 (GATE visual — tall rectangle with lock) -->
+  <rect x="565" y="408" width="200" height="114" rx="4" fill="#fff3e0" stroke="#e65100" stroke-width="2.5"/>
 
-  <!-- Arrow 좌석 선택 → 결제 -->
-  <line x1="766" y1="470" x2="806" y2="470" stroke="#616161" stroke-width="2" marker-end="url(#arrG)"/>
+  <!-- Gate top bar -->
+  <rect x="565" y="408" width="200" height="30" rx="4" fill="#e65100"/>
+  <rect x="565" y="428" width="200" height="10" fill="#e65100"/>
+  <text x="665" y="430" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">🔒 VQA 관문</text>
 
-  <!-- 결제 box -->
-  <rect x="806" y="430" width="190" height="80" rx="10" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
-  <text x="901" y="462" text-anchor="middle" font-size="14" font-weight="700" fill="#1565c0">결제</text>
-  <text x="901" y="484" text-anchor="middle" font-size="12" fill="#1565c0">S6</text>
-  <text x="901" y="502" text-anchor="middle" font-size="10" fill="#1976d2">(Tier 기반 지연만 적용)</text>
+  <!-- Gate content -->
+  <text x="665" y="460" text-anchor="middle" font-size="11" font-weight="700" fill="#bf360c">s3_passed = false?</text>
+  <text x="665" y="480" text-anchor="middle" font-size="11" fill="#e65100">→ HTTP 428 반환</text>
+  <text x="665" y="498" text-anchor="middle" font-size="11" fill="#e65100">→ 보안 퀴즈 강제 노출</text>
+  <text x="665" y="514" text-anchor="middle" font-size="10" fill="#bf360c" font-weight="700">통과해야만 다음 진행</text>
 
-  <!-- NO arrow downward -->
-  <line x1="432" y1="512" x2="432" y2="575" stroke="#d32f2f" stroke-width="2" marker-end="url(#arrR)"/>
-  <text x="444" y="550" font-size="12" font-weight="700" fill="#c62828">NO</text>
+  <!-- Arrow 3 (gate → seat selection) -->
+  <line x1="768" y1="465" x2="818" y2="465" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrOk)"/>
+  <text x="793" y="456" text-anchor="middle" font-size="10" font-weight="700" fill="#2e7d32">통과</text>
 
-  <!-- NO box — VQA 강제 -->
-  <rect x="316" y="575" width="232" height="70" rx="10" fill="#ffebee" stroke="#e53935" stroke-width="2"/>
-  <text x="432" y="603" text-anchor="middle" font-size="14" font-weight="700" fill="#b71c1c">VQA 강제 (HTTP 428)</text>
-  <text x="432" y="625" text-anchor="middle" font-size="11" fill="#b71c1c">등급과 무관하게 보안 퀴즈 요구</text>
+  <!-- Step 4: 좌석 선택 -->
+  <rect x="820" y="420" width="170" height="90" rx="10" fill="#e8f5e9" stroke="#43a047" stroke-width="2"/>
+  <text x="905" y="452" text-anchor="middle" font-size="14" font-weight="700" fill="#2e7d32">좌석 선택</text>
+  <text x="905" y="474" text-anchor="middle" font-size="12" fill="#2e7d32">S4 · S5</text>
+  <text x="905" y="498" text-anchor="middle" font-size="10" fill="#558b2f">구역 선택 · 좌석 확보</text>
 
-  <!-- Note -->
-  <text x="600" y="696" text-anchor="middle" font-size="12" fill="#4a148c" font-weight="600">
-    ※ VQA 관문은 T2 트리거가 아닌 상태 전이 기반 게이트 — 좌석 선택 단계 진입 전 s3_passed=false면 자동 발동
+  <!-- Arrow 4 -->
+  <line x1="993" y1="465" x2="1025" y2="465" stroke="#616161" stroke-width="2" marker-end="url(#arrG)"/>
+
+  <!-- Step 5: 결제 -->
+  <rect x="1027" y="430" width="130" height="70" rx="10" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+  <text x="1092" y="460" text-anchor="middle" font-size="13" font-weight="700" fill="#1565c0">결제</text>
+  <text x="1092" y="480" text-anchor="middle" font-size="11" fill="#1565c0">S6</text>
+  <text x="1092" y="494" text-anchor="middle" font-size="9" fill="#1976d2">Tier 지연만 적용</text>
+
+  <!-- Loop-back arrow from gate bottom → back to gate (retry concept) -->
+  <path d="M 665 524 L 665 570 L 410 570 L 410 514" fill="none" stroke="#e65100" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrG)"/>
+  <text x="538" y="586" text-anchor="middle" font-size="10" fill="#e65100">FE에서 퀴즈 완료 후 재요청 → 관문 재검사</text>
+
+  <!-- Bottom notes -->
+  <rect x="55" y="618" width="1090" height="80" rx="10" fill="#fafafa" stroke="#e0e0e0"/>
+  <text x="600" y="644" text-anchor="middle" font-size="12" fill="#263238" font-weight="700">
+    VQA 관문은 분기(YES/NO)가 아닌 필수 게이트 — 통과하지 않으면 좌석 선택 자체가 불가능
+  </text>
+  <text x="600" y="666" text-anchor="middle" font-size="11" fill="#616161">
+    FE가 좌석 선택을 요청하면 AI Defense가 s3_passed를 확인하고, 미통과 시 HTTP 428을 반환해 FE에 보안 퀴즈를 강제 노출합니다.
+  </text>
+  <text x="600" y="686" text-anchor="middle" font-size="11" fill="#6a1b9a" font-weight="600">
+    ※ 등급(T0~T3)과 무관 — 정상 사용자도 최초 1회는 반드시 통과
   </text>
 </svg>

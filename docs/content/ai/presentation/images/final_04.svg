@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" font-family="'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <rect width="1200" height="675" fill="#f0f2f5"/>
+
+  <!-- Header -->
+  <rect x="0" y="0" width="1200" height="64" fill="#212121"/>
+  <text x="32" y="34" font-size="18" font-weight="700" fill="#ffffff">매크로 티켓팅 시나리오</text>
+  <text x="32" y="56" font-size="12" fill="#bdbdbd">대표 유형과 방어 한계 — 다층으로 깎고, 깎고, 또 깎는다</text>
+  <text x="1168" y="34" text-anchor="end" font-size="11" fill="#757575">4 / 11</text>
+
+  <!-- 문제 정의 -->
+  <rect x="32" y="76" width="1136" height="50" rx="8" fill="#ffebee" stroke="#ef9a9a" stroke-width="1"/>
+  <text x="52" y="98" font-size="12" font-weight="700" fill="#b71c1c">문제 정의</text>
+  <text x="148" y="98" font-size="12" fill="#424242">티켓팅 장애의 대부분은 매크로 트래픽</text>
+  <text x="52" y="118" font-size="11" fill="#616161">사용자: "이선좌" 반복 → 이탈 급증  ·  주최자: CS·환불 폭증</text>
+
+  <!-- 표 헤더 -->
+  <rect x="32" y="138" width="1136" height="38" rx="8" fill="#37474f"/>
+  <rect x="32" y="166" width="1136" height="10" fill="#37474f"/>
+  <text x="92" y="163" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">유형</text>
+  <text x="280" y="163" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">공격 방식</text>
+  <text x="530" y="163" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">자체 방어</text>
+  <text x="880" y="163" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">한계</text>
+
+  <!-- 세로 구분선 -->
+  <line x1="152" y1="138" x2="152" y2="530" stroke="#e0e0e0"/>
+  <line x1="400" y1="138" x2="400" y2="530" stroke="#e0e0e0"/>
+  <line x1="660" y1="138" x2="660" y2="530" stroke="#e0e0e0"/>
+
+  <!-- T0 row -->
+  <rect x="32" y="176" width="1136" height="108" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+
+  <!-- row label -->
+  <text x="92" y="218" text-anchor="middle" font-size="11" font-weight="700" fill="#78909c">단순 봇</text>
+
+  <!-- T0 공격 -->
+  <text x="168" y="212" font-size="13" font-weight="700" fill="#263238">API 직접 호출 반복</text>
+  <text x="168" y="232" font-size="11" fill="#616161">예매 API를 스크립트로</text>
+  <text x="168" y="248" font-size="11" fill="#616161">빠르게 반복 호출</text>
+
+  <!-- T0 방어 -->
+  <text x="416" y="212" font-size="13" font-weight="700" fill="#263238">Rate Limit + IP 차단</text>
+  <text x="416" y="232" font-size="11" fill="#616161">Istio Rate Limit</text>
+  <text x="416" y="248" font-size="11" fill="#616161">Redis IP blacklist</text>
+
+  <!-- T0 한계 -->
+  <rect x="672" y="196" width="480" height="32" rx="6" fill="#fff3e0"/>
+  <text x="682" y="218" font-size="11" fill="#e65100">분산 IP면 개별 IP가 임계치 이하 → 통과</text>
+
+  <!-- T2 row -->
+  <rect x="32" y="284" width="1136" height="118" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+
+  <!-- row label -->
+  <text x="92" y="328" text-anchor="middle" font-size="11" font-weight="700" fill="#78909c">자동화 봇</text>
+
+  <!-- T2 공격 -->
+  <text x="168" y="322" font-size="13" font-weight="700" fill="#263238">헤드리스 브라우저</text>
+  <text x="168" y="342" font-size="11" fill="#616161">브라우저 자동화 도구로</text>
+  <text x="168" y="358" font-size="11" fill="#616161">실제 렌더링 환경 위장</text>
+
+  <!-- T2 방어 -->
+  <text x="416" y="322" font-size="13" font-weight="700" fill="#263238">봇 탐지 토큰 + 핑거프린트</text>
+  <text x="416" y="342" font-size="11" fill="#616161">X-Bot-Token (Canvas FP + HMAC)</text>
+  <text x="416" y="358" font-size="11" fill="#616161">Redis Fingerprint 추적</text>
+
+  <!-- T2 한계 -->
+  <rect x="672" y="306" width="480" height="32" rx="6" fill="#fff3e0"/>
+  <text x="682" y="328" font-size="11" fill="#e65100">① 클라이언트 토큰은 리버싱으로 위조 가능</text>
+  <rect x="672" y="348" width="480" height="36" rx="6" fill="#fff3e0"/>
+  <text x="682" y="364" font-size="11" fill="#e65100">② 같은 OS·브라우저·GPU 환경이면</text>
+  <text x="696" y="380" font-size="11" fill="#e65100">정상 사용자도 같은 지문 → 오탐 위험</text>
+
+  <!-- T3 row -->
+  <rect x="32" y="402" width="1136" height="128" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+
+  <!-- row label -->
+  <text x="92" y="446" text-anchor="middle" font-size="11" font-weight="700" fill="#78909c">고급 봇</text>
+
+  <!-- T3 공격 -->
+  <text x="168" y="436" font-size="13" font-weight="700" fill="#263238">실제 브라우저</text>
+  <text x="168" y="456" font-size="13" font-weight="700" fill="#263238">+ Residential Proxy</text>
+  <text x="168" y="478" font-size="11" fill="#616161">탐지 회피 브라우저 +</text>
+  <text x="168" y="494" font-size="11" fill="#616161">가정용 IP 대여로 분산</text>
+
+  <!-- T3 방어 -->
+  <text x="416" y="436" font-size="13" font-weight="700" fill="#263238">IP 패턴 추적</text>
+  <text x="416" y="456" font-size="13" font-weight="700" fill="#263238">+ AI 행동 분석</text>
+  <text x="416" y="478" font-size="11" fill="#616161">multi_ip 핑거프린트 추적</text>
+  <text x="416" y="494" font-size="11" fill="#616161">AI Defense 행동 분석</text>
+
+  <!-- T3 한계 -->
+  <rect x="672" y="424" width="480" height="32" rx="6" fill="#ffebee"/>
+  <text x="682" y="446" font-size="11" fill="#c62828">① Residential Proxy면 IP 평판 기반 탐지 거의 무력</text>
+  <rect x="672" y="466" width="480" height="36" rx="6" fill="#ffebee"/>
+  <text x="682" y="482" font-size="11" fill="#c62828">② IP 추적 임계치 낮으면 정상 사용자 오탐,</text>
+  <text x="696" y="498" font-size="11" fill="#c62828">높으면 탐지 실패 — 튜닝의 딜레마</text>
+
+  <!-- 화살표: 갈수록 교묘 -->
+  <text x="92" y="548" text-anchor="middle" font-size="10" fill="#9e9e9e">단순</text>
+  <line x1="50" y1="556" x2="134" y2="556" stroke="#bdbdbd" stroke-width="1.5"/>
+  <line x1="92" y1="552" x2="134" y2="556" stroke="#bdbdbd" stroke-width="1.5"/>
+  <line x1="92" y1="560" x2="134" y2="556" stroke="#bdbdbd" stroke-width="1.5"/>
+  <text x="92" y="574" text-anchor="middle" font-size="10" fill="#9e9e9e">교묘</text>
+
+  <!-- 브릿지 -->
+  <rect x="32" y="590" width="1136" height="68" rx="10" fill="#263238"/>
+  <text x="600" y="618" text-anchor="middle" font-size="14" fill="#eceff1">다층으로 깎지만, <tspan font-weight="700" fill="#ef9a9a">공격이 진화하면 방어도 진화해야 한다</tspan></text>
+  <text x="600" y="644" text-anchor="middle" font-size="13" fill="#80deea" font-weight="700">→ 그래서 우리는 AI 매크로를 직접 만들어 검증했습니다</text>
+</svg>

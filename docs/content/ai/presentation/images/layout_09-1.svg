@@ -4,7 +4,7 @@
   <!-- Header -->
   <rect x="0" y="0" width="1200" height="88" fill="#1a237e"/>
   <text x="48" y="46" font-size="24" font-weight="700" fill="#ffffff">AI Defense — Online Plane</text>
-  <text x="48" y="72" font-size="13" fill="#9fa8da">런타임 판정은 결정론 — LLM 없음, 지연 없음.</text>
+  <text x="48" y="72" font-size="13" fill="#9fa8da">런타임 판정은 결정론 상태머신 — 지연 없음.</text>
   <text x="1160" y="50" text-anchor="end" font-size="13" fill="#7986cb">9-1 / 11</text>
 
   <!-- Principle badge -->
