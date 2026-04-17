@@ -8,6 +8,7 @@
 
 | 제목 | 분류 | 환경 |
 |------|-----|------|
+| [ArgoCD·Grafana 접속 복구](./operational-troubleshooting/access-point-recovery) | 접근 경로·복구 | Prod EKS |
 | [Chrome QUIC / HTTP3 — Cloudflare Proxy 전환](./operational-troubleshooting/chrome-quic) | 네트워크 | Dev (On-Prem) |
 | **[Spot 안정성 작업 스토리]** [Staging Spot 다양화 — Karpenter NodePool 분산](./operational-troubleshooting/staging-spot) | 비용·가용성 | Staging EKS |
 | **[Spot 안정성 작업 스토리]** [Thanos·S3 기반 장기 저장 — PVC(EBS)에서 S3로 전환](./operational-troubleshooting/thanos-s3) | 스토리지 아키텍처 | Staging EKS |

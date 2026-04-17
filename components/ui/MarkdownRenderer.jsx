@@ -123,9 +123,21 @@ function ZoomableImage({ src, alt = "" }) {
 
     if (!src) return null;
 
-    const disableZoom =
+    const isGrafanaDashboardImage =
         typeof src === "string" &&
         src.includes("/images/infrastructure/grafana-dashboards/");
+
+    const isRecoveryTestImage =
+        typeof src === "string" &&
+        src.includes("/images/infrastructure/recovery-test/");
+
+    const isArgocdRecoveryImage =
+        typeof src === "string" &&
+        /\/images\/infrastructure\/recovery-test\/0[4-6]_argocd_/.test(src);
+
+    const disableZoom =
+        isGrafanaDashboardImage ||
+        (isRecoveryTestImage && !isArgocdRecoveryImage);
 
     let customWidth = null;
     let cleanSrc = src;
