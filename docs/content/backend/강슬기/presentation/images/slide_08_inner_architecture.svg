@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" font-family="Pretendard, -apple-system, sans-serif">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#fafbfc"/>
+
+  <!-- Title -->
+  <text x="600" y="45" text-anchor="middle" font-size="26" font-weight="800" fill="#1a1f36">PlayBall 백엔드 이너 아키텍처</text>
+  <text x="600" y="70" text-anchor="middle" font-size="13" fill="#5e6478">5 MSA + PostgreSQL + Redis 2대 + Kafka · EDA 전환</text>
+
+  <!-- Client -->
+  <rect x="480" y="90" width="240" height="40" rx="20" fill="#e8eaf6" stroke="#5c6bc0" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="600" y="115" text-anchor="middle" font-size="13" font-weight="600" fill="#283593">Client (Browser / App)</text>
+
+  <!-- Arrow -->
+  <line x1="600" y1="130" x2="600" y2="155" stroke="#90a4ae" stroke-width="2" marker-end="url(#arrow)"/>
+  <defs><marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#90a4ae"/></marker></defs>
+
+  <!-- API Gateway -->
+  <rect x="300" y="155" width="600" height="55" rx="10" fill="#78909c" filter="url(#shadow)"/>
+  <text x="600" y="178" text-anchor="middle" font-size="15" font-weight="700" fill="white">API-Gateway :8085</text>
+  <text x="600" y="198" text-anchor="middle" font-size="11" fill="#e0e0e0">JWT 검증 · 봇 UA 차단 · Rate Limiting · CORS · X-User-Id 주입</text>
+
+  <!-- Service Layer -->
+  <rect x="40" y="235" width="1120" height="130" rx="12" fill="white" stroke="#e0e0e0" stroke-width="1" filter="url(#shadow)"/>
+  <text x="60" y="255" font-size="11" font-weight="700" fill="#5e6478">SERVICE LAYER</text>
+
+  <!-- Auth-Guard -->
+  <rect x="60" y="268" width="230" height="82" rx="8" fill="#42a5f5"/>
+  <text x="175" y="292" text-anchor="middle" font-size="14" font-weight="700" fill="white">Auth-Guard :8080</text>
+  <text x="175" y="310" text-anchor="middle" font-size="10" fill="#e3f2fd">Kakao OAuth · RSA JWT</text>
+  <text x="175" y="324" text-anchor="middle" font-size="10" fill="#e3f2fd">RTR · 유저 차단/해제</text>
+  <text x="175" y="338" text-anchor="middle" font-size="10" fill="#e3f2fd">Internal API Key</text>
+
+  <!-- Queue -->
+  <rect x="310" y="268" width="230" height="82" rx="8" fill="#ff9800"/>
+  <text x="425" y="292" text-anchor="middle" font-size="14" font-weight="700" fill="white">Queue :8081</text>
+  <text x="425" y="310" text-anchor="middle" font-size="10" fill="#fff3e0">Redis ZSET 대기열</text>
+  <text x="425" y="324" text-anchor="middle" font-size="10" fill="#fff3e0">Admission Token (RSA)</text>
+  <text x="425" y="338" text-anchor="middle" font-size="10" fill="#fff3e0">Lazy 판정 · Pre-Queue</text>
+
+  <!-- Seat -->
+  <rect x="560" y="268" width="230" height="82" rx="8" fill="#66bb6a"/>
+  <text x="675" y="292" text-anchor="middle" font-size="14" font-weight="700" fill="white">Seat :8082</text>
+  <text x="675" y="310" text-anchor="middle" font-size="10" fill="#e8f5e9">추천/배정 알고리즘</text>
+  <text x="675" y="324" text-anchor="middle" font-size="10" fill="#e8f5e9">Redisson 분산 락</text>
+  <text x="675" y="338" text-anchor="middle" font-size="10" fill="#e8f5e9">Hold 5분 TTL</text>
+
+  <!-- Order-Core -->
+  <rect x="810" y="268" width="230" height="82" rx="8" fill="#ab47bc"/>
+  <text x="925" y="292" text-anchor="middle" font-size="14" font-weight="700" fill="white">Order-Core :8083</text>
+  <text x="925" y="310" text-anchor="middle" font-size="10" fill="#f3e5f5">주문 생성 · 결제</text>
+  <text x="925" y="324" text-anchor="middle" font-size="10" fill="#f3e5f5">마이페이지</text>
+  <text x="925" y="338" text-anchor="middle" font-size="10" fill="#f3e5f5">Max 8매/주문</text>
+
+  <!-- common-core -->
+  <rect x="380" y="375" width="440" height="30" rx="6" fill="#f5f5f5" stroke="#bdbdbd" stroke-width="1"/>
+  <text x="600" y="395" text-anchor="middle" font-size="11" font-weight="600" fill="#616161">common-core (공유 라이브러리: 도메인 엔티티 · Kafka 설정 · 암호화 · 예외)</text>
+
+  <!-- Data Layer -->
+  <rect x="40" y="425" width="1120" height="175" rx="12" fill="white" stroke="#e0e0e0" stroke-width="1" filter="url(#shadow)"/>
+  <text x="60" y="445" font-size="11" font-weight="700" fill="#5e6478">DATA LAYER</text>
+
+  <!-- PostgreSQL -->
+  <rect x="60" y="458" width="250" height="125" rx="8" fill="#1565c0"/>
+  <text x="185" y="482" text-anchor="middle" font-size="14" font-weight="700" fill="white">PostgreSQL :5432</text>
+  <text x="185" y="500" text-anchor="middle" font-size="10" fill="#bbdefb">단일 인스턴스 · 테이블 소유권 분리</text>
+  <text x="185" y="518" text-anchor="middle" font-size="10" fill="#bbdefb">max_connections: 270</text>
+  <text x="185" y="536" text-anchor="middle" font-size="10" fill="#bbdefb">AES-256-GCM 필드 암호화</text>
+  <text x="185" y="554" text-anchor="middle" font-size="10" fill="#90caf9">Auth: users · Seat: match_seats</text>
+  <text x="185" y="570" text-anchor="middle" font-size="10" fill="#90caf9">Order: orders, payments</text>
+
+  <!-- Redis Common -->
+  <rect x="330" y="458" width="200" height="125" rx="8" fill="#ef5350"/>
+  <text x="430" y="482" text-anchor="middle" font-size="14" font-weight="700" fill="white">공용 Redis :6379</text>
+  <text x="430" y="502" text-anchor="middle" font-size="10" fill="#ffcdd2">토큰 블랙리스트</text>
+  <text x="430" y="518" text-anchor="middle" font-size="10" fill="#ffcdd2">Redisson 분산 락</text>
+  <text x="430" y="534" text-anchor="middle" font-size="10" fill="#ffcdd2">Caffeine 원본 Redis 캐시</text>
+  <text x="430" y="550" text-anchor="middle" font-size="10" fill="#ffcdd2">user-by-id · auth-me</text>
+  <text x="430" y="566" text-anchor="middle" font-size="10" fill="#ffcdd2">seat-groups-response</text>
+
+  <!-- Redis Queue -->
+  <rect x="550" y="458" width="200" height="125" rx="8" fill="#ff7043"/>
+  <text x="650" y="482" text-anchor="middle" font-size="14" font-weight="700" fill="white">Queue Redis :6380</text>
+  <text x="650" y="502" text-anchor="middle" font-size="10" fill="#ffccbc">대기열 ZSET</text>
+  <text x="650" y="518" text-anchor="middle" font-size="10" fill="#ffccbc">Ready Token</text>
+  <text x="650" y="534" text-anchor="middle" font-size="10" fill="#ffccbc">PreQueue 마커</text>
+  <text x="650" y="554" text-anchor="middle" font-size="9" fill="#ffab91">물리 분리: 대기열 폭주가</text>
+  <text x="650" y="568" text-anchor="middle" font-size="9" fill="#ffab91">인증/락에 영향 주지 않도록</text>
+
+  <!-- Kafka -->
+  <rect x="770" y="458" width="370" height="125" rx="8" fill="#26a69a"/>
+  <text x="955" y="482" text-anchor="middle" font-size="14" font-weight="700" fill="white">Kafka :9092 (EDA)</text>
+  <text x="955" y="505" text-anchor="middle" font-size="10" fill="#b2dfdb">payment-completed: Order→Seat (BLOCKED→SOLD)</text>
+  <text x="955" y="521" text-anchor="middle" font-size="10" fill="#b2dfdb">order-cancelled: Order→Seat (SOLD→AVAILABLE)</text>
+  <text x="955" y="537" text-anchor="middle" font-size="10" fill="#b2dfdb">bank-transfer-expired: Order→Seat (만료 복원)</text>
+  <text x="955" y="553" text-anchor="middle" font-size="10" fill="#b2dfdb">user-blocked: Auth→Order (UNDER_REVIEW)</text>
+  <text x="955" y="573" text-anchor="middle" font-size="10" font-weight="600" fill="#e0f2f1">@TransactionalEventListener(AFTER_COMMIT)</text>
+
+  <!-- Caching Layer -->
+  <rect x="40" y="620" width="1120" height="80" rx="12" fill="#fff8e1" stroke="#ffd54f" stroke-width="1" filter="url(#shadow)"/>
+  <text x="60" y="640" font-size="11" font-weight="700" fill="#f57f17">CACHING LAYER (DB 쿼리 감소 50~60%)</text>
+
+  <!-- Caffeine boxes -->
+  <rect x="60" y="650" width="180" height="38" rx="6" fill="#fff3e0" stroke="#ffb74d" stroke-width="1"/>
+  <text x="150" y="666" text-anchor="middle" font-size="10" font-weight="600" fill="#e65100">Caffeine (로컬 캐시)</text>
+  <text x="150" y="681" text-anchor="middle" font-size="9" fill="#bf360c">Match · Section · Block (10m~1h)</text>
+
+  <rect x="260" y="650" width="180" height="38" rx="6" fill="#fce4ec" stroke="#ef9a9a" stroke-width="1"/>
+  <text x="350" y="666" text-anchor="middle" font-size="10" font-weight="600" fill="#c62828">Redis (분산 캐시)</text>
+  <text x="350" y="681" text-anchor="middle" font-size="9" fill="#b71c1c">User · auth-me · seat-groups</text>
+
+  <rect x="460" y="650" width="180" height="38" rx="6" fill="#e8f5e9" stroke="#81c784" stroke-width="1"/>
+  <text x="550" y="666" text-anchor="middle" font-size="10" font-weight="600" fill="#1b5e20">Redisson RLock</text>
+  <text x="550" y="681" text-anchor="middle" font-size="9" fill="#2e7d32">블럭 락(Watch Dog) · 좌석 락(5s)</text>
+
+  <rect x="660" y="650" width="180" height="38" rx="6" fill="#e3f2fd" stroke="#64b5f6" stroke-width="1"/>
+  <text x="750" y="666" text-anchor="middle" font-size="10" font-weight="600" fill="#0d47a1">OSIV OFF</text>
+  <text x="750" y="681" text-anchor="middle" font-size="9" fill="#1565c0">커넥션 회전율 2배 (Queue)</text>
+
+  <rect x="860" y="650" width="280" height="38" rx="6" fill="#f3e5f5" stroke="#ba68c8" stroke-width="1"/>
+  <text x="1000" y="666" text-anchor="middle" font-size="10" font-weight="600" fill="#6a1b9a">Resilience4j @Retry + Lua Script</text>
+  <text x="1000" y="681" text-anchor="middle" font-size="9" fill="#7b1fa2">Thread.sleep 제거 · 3 RTT → 1 RTT</text>
+
+  <!-- Footer -->
+  <text x="600" y="730" text-anchor="middle" font-size="12" font-weight="600" fill="#1a1f36">추후 계획: Payment 서비스 분리 (:8084) → DB 스키마 분리 (auth_db / seat_db / order_db / payment_db)</text>
+  <text x="600" y="750" text-anchor="middle" font-size="11" fill="#5e6478">현재: 단일 DB + 논리적 테이블 소유권 분리 → EDA(Kafka)로 서비스 경계 선 확보 완료</text>
+
+  <!-- Version -->
+  <text x="1170" y="790" text-anchor="end" font-size="9" fill="#bdbdbd">v1.13.0-staging · 2026-04-17</text>
+</svg>
