@@ -129,58 +129,55 @@
   <!-- ② 방어 측 KPI                             -->
   <!-- ======================================== -->
   <text x="32" y="474" font-size="11" font-weight="700" fill="#263238">② 방어 측 KPI
-    <tspan font-size="9" font-weight="400" fill="#757575"> (기준: trace_id · 수치 확정 후 기입)</tspan>
+    <tspan font-size="9" font-weight="400" fill="#757575"> (기준: trace_id · n=30)</tspan>
   </text>
 
   <!-- 방어 Hero row -->
   <rect x="32" y="480" width="370" height="62" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
   <rect x="32" y="480" width="370" height="4" rx="8" fill="#1565c0"/>
   <text x="217" y="500" text-anchor="middle" font-size="10" font-weight="700" fill="#0d47a1">방어 저지율 (핵심)</text>
-  <text x="217" y="524" text-anchor="middle" font-size="22" font-weight="700" fill="#bdbdbd">--%</text>
-  <text x="217" y="538" text-anchor="middle" font-size="9" fill="#757575">1 − 공격 성공률</text>
+  <text x="217" y="524" text-anchor="middle" font-size="22" font-weight="700" fill="#0d47a1">33.3%</text>
+  <text x="217" y="538" text-anchor="middle" font-size="9" fill="#757575">10/30 Hold 실패 (= 1 − 66.7%)</text>
 
   <rect x="414" y="480" width="370" height="62" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
   <rect x="414" y="480" width="370" height="4" rx="8" fill="#1976d2"/>
   <text x="599" y="500" text-anchor="middle" font-size="10" font-weight="700" fill="#0d47a1">좌석 확보 차단/저지 비율</text>
-  <text x="599" y="524" text-anchor="middle" font-size="22" font-weight="700" fill="#bdbdbd">--%</text>
-  <text x="599" y="538" text-anchor="middle" font-size="9" fill="#757575">Hold 도달 실패 비율</text>
+  <text x="599" y="524" text-anchor="middle" font-size="22" font-weight="700" fill="#0d47a1">33.3%</text>
+  <text x="599" y="538" text-anchor="middle" font-size="9" fill="#757575">BLOCKED 5 + ABORT 5 = 10/30</text>
 
   <rect x="796" y="480" width="372" height="62" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
   <rect x="796" y="480" width="372" height="4" rx="8" fill="#00838f"/>
   <text x="982" y="500" text-anchor="middle" font-size="10" font-weight="700" fill="#006064">Post-Review Suspicious 비율</text>
-  <text x="982" y="524" text-anchor="middle" font-size="22" font-weight="700" fill="#bdbdbd">--%</text>
-  <text x="982" y="538" text-anchor="middle" font-size="9" fill="#757575">Suspicious / Candidate</text>
+  <text x="982" y="524" text-anchor="middle" font-size="22" font-weight="700" fill="#006064">31.6%</text>
+  <text x="982" y="538" text-anchor="middle" font-size="9" fill="#757575">6 / 19 Candidate</text>
 
   <!-- 방어 Tier 분포 + Action 분포 row -->
   <rect x="32" y="548" width="568" height="76" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
   <rect x="32" y="548" width="568" height="4" rx="8" fill="#1565c0"/>
   <text x="316" y="568" text-anchor="middle" font-size="10" font-weight="700" fill="#0d47a1">Runtime Tier 분포 (latest_tier)</text>
 
-  <!-- Tier bar -->
-  <rect x="48" y="580" width="142" height="18" fill="#c8e6c9"/>
-  <rect x="190" y="580" width="142" height="18" fill="#fff59d"/>
-  <rect x="332" y="580" width="142" height="18" fill="#ffcc80"/>
-  <rect x="474" y="580" width="110" height="18" fill="#ef9a9a"/>
-  <text x="119" y="594" text-anchor="middle" font-size="10" font-weight="700" fill="#1b5e20">T0 --%</text>
-  <text x="261" y="594" text-anchor="middle" font-size="10" font-weight="700" fill="#9e7d0a">T1 --%</text>
-  <text x="403" y="594" text-anchor="middle" font-size="10" font-weight="700" fill="#bf360c">T2 --%</text>
-  <text x="529" y="594" text-anchor="middle" font-size="10" font-weight="700" fill="#b71c1c">T3 --%</text>
+  <!-- Tier bar (비율 반영: T0 36.7%, T1 56.7%, T2 6.7%, T3 0%) -->
+  <rect x="48" y="580" width="196" height="18" fill="#c8e6c9"/>
+  <rect x="244" y="580" width="302" height="18" fill="#fff59d"/>
+  <rect x="546" y="580" width="36" height="18" fill="#ffcc80"/>
+  <text x="146" y="594" text-anchor="middle" font-size="10" font-weight="700" fill="#1b5e20">T0 36.7%</text>
+  <text x="395" y="594" text-anchor="middle" font-size="10" font-weight="700" fill="#9e7d0a">T1 56.7%</text>
+  <text x="564" y="594" text-anchor="middle" font-size="9" font-weight="700" fill="#bf360c">T2</text>
 
-  <text x="48" y="615" font-size="9" fill="#546e7a">trace 수: T0 --  ·  T1 --  ·  T2 --  ·  T3 --  (합계 --)</text>
+  <text x="48" y="615" font-size="9" fill="#546e7a">trace 수: T0 11  ·  T1 17  ·  T2 2  ·  T3 0  (합계 30)</text>
 
   <!-- Action 분포 -->
   <rect x="608" y="548" width="560" height="76" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
   <rect x="608" y="548" width="560" height="4" rx="8" fill="#6a1b9a"/>
   <text x="888" y="568" text-anchor="middle" font-size="10" font-weight="700" fill="#4a148c">Runtime Action 분포 (latest_action)</text>
 
-  <rect x="624" y="580" width="186" height="18" fill="#c8e6c9"/>
-  <rect x="810" y="580" width="186" height="18" fill="#ffcc80"/>
-  <rect x="996" y="580" width="156" height="18" fill="#ef9a9a"/>
-  <text x="717" y="594" text-anchor="middle" font-size="10" font-weight="700" fill="#1b5e20">NONE --%</text>
-  <text x="903" y="594" text-anchor="middle" font-size="10" font-weight="700" fill="#bf360c">THROTTLE --%</text>
-  <text x="1074" y="594" text-anchor="middle" font-size="10" font-weight="700" fill="#b71c1c">BLOCK --%</text>
+  <!-- Action bar (비율: NONE 36.7%, THROTTLE 63.3%, BLOCK 0%) -->
+  <rect x="624" y="580" width="194" height="18" fill="#c8e6c9"/>
+  <rect x="818" y="580" width="334" height="18" fill="#ffcc80"/>
+  <text x="721" y="594" text-anchor="middle" font-size="10" font-weight="700" fill="#1b5e20">NONE 36.7%</text>
+  <text x="985" y="594" text-anchor="middle" font-size="10" font-weight="700" fill="#bf360c">THROTTLE 63.3%</text>
 
-  <text x="624" y="615" font-size="9" fill="#546e7a">trace 수: NONE --  ·  THROTTLE --  ·  BLOCK --  (합계 --)</text>
+  <text x="624" y="615" font-size="9" fill="#546e7a">trace 수: NONE 11  ·  THROTTLE 19  ·  BLOCK 0  (합계 30) — 즉시 차단 없음, 마찰 유도 중심</text>
 
   <!-- Post-Review + 방어 개입 단계 row -->
   <rect x="32" y="630" width="568" height="98" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
@@ -188,27 +185,27 @@
   <text x="316" y="650" text-anchor="middle" font-size="10" font-weight="700" fill="#006064">Post-Review 실행 결과</text>
 
   <text x="52" y="672" font-size="10" fill="#546e7a">Candidate 총합 (window)</text>
-  <text x="580" y="672" text-anchor="end" font-size="11" font-weight="700" fill="#006064">--</text>
+  <text x="580" y="672" text-anchor="end" font-size="11" font-weight="700" fill="#006064">19</text>
   <text x="52" y="690" font-size="10" fill="#546e7a">Suspicious 총합 (window)</text>
-  <text x="580" y="690" text-anchor="end" font-size="11" font-weight="700" fill="#006064">--</text>
-  <text x="52" y="708" font-size="10" fill="#546e7a">Reviewed session 수 (row)</text>
-  <text x="580" y="708" text-anchor="end" font-size="11" font-weight="700" fill="#006064">--</text>
-  <text x="52" y="722" font-size="9" fill="#757575">※ window 단위 집계 vs row 단위 실행 결과 구분</text>
+  <text x="580" y="690" text-anchor="end" font-size="11" font-weight="700" fill="#006064">6 (31.6%)</text>
+  <text x="52" y="708" font-size="10" fill="#546e7a">Reviewed / Suspicious session (row)</text>
+  <text x="580" y="708" text-anchor="end" font-size="11" font-weight="700" fill="#006064">6 / 6 (전원 SUSPICIOUS)</text>
+  <text x="52" y="722" font-size="9" fill="#757575">※ Reviewed 6건 전원이 SUSPICIOUS 판정</text>
 
   <rect x="608" y="630" width="560" height="98" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
   <rect x="608" y="630" width="560" height="4" rx="8" fill="#5d4037"/>
   <text x="888" y="650" text-anchor="middle" font-size="10" font-weight="700" fill="#3e2723">방어 개입 단계 분포</text>
 
   <text x="624" y="670" font-size="9" fill="#546e7a">대기열 구간 개입</text>
-  <text x="1148" y="670" text-anchor="end" font-size="10" font-weight="700" fill="#3e2723">-- (--%)</text>
+  <text x="1148" y="670" text-anchor="end" font-size="10" font-weight="700" fill="#3e2723">6 (20.0%)</text>
   <text x="624" y="684" font-size="9" fill="#546e7a">Challenge 구간 개입</text>
-  <text x="1148" y="684" text-anchor="end" font-size="10" font-weight="700" fill="#3e2723">-- (--%)</text>
+  <text x="1148" y="684" text-anchor="end" font-size="10" font-weight="700" fill="#3e2723">5 (16.7%)</text>
   <text x="624" y="698" font-size="9" fill="#546e7a">구역/좌석 선택 구간 개입</text>
-  <text x="1148" y="698" text-anchor="end" font-size="10" font-weight="700" fill="#3e2723">-- (--%)</text>
-  <text x="624" y="712" font-size="9" fill="#546e7a">직접 차단 종료</text>
-  <text x="1148" y="712" text-anchor="end" font-size="10" font-weight="700" fill="#3e2723">-- (--%)</text>
-  <text x="624" y="726" font-size="9" fill="#546e7a">내부 실패/중단 종료  ·  최종 성공 종료</text>
-  <text x="1148" y="726" text-anchor="end" font-size="10" font-weight="700" fill="#3e2723">-- / --</text>
+  <text x="1148" y="698" text-anchor="end" font-size="10" font-weight="700" fill="#3e2723">0 (0.0%)</text>
+  <text x="624" y="712" font-size="9" fill="#546e7a">직접 차단 (BLOCKED) · 내부 실패 (ABORT)</text>
+  <text x="1148" y="712" text-anchor="end" font-size="10" font-weight="700" fill="#3e2723">5 + 5</text>
+  <text x="624" y="726" font-size="9" fill="#546e7a">최종 성공 종료 (DONE)</text>
+  <text x="1148" y="726" text-anchor="end" font-size="10" font-weight="700" fill="#2e7d32">20 (66.7%)</text>
 
   <!-- ======================================== -->
   <!-- ③ 수렴 표                                 -->
