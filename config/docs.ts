@@ -64,6 +64,16 @@ export const docsConfig = {
             },
           ],
         },
+        {
+          title: "트러블 슈팅",
+          href: "/development/trouble",
+          children: [
+            {
+              title: "프론트엔드",
+              href: "/development/trouble/front",
+            }
+          ],
+        },
       ],
     },
     {
