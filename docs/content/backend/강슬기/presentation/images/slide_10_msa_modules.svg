@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" font-family="Pretendard, -apple-system, sans-serif">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrow" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7" fill="#9aa0a6"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="600" y="52" text-anchor="middle" font-size="28" font-weight="800" fill="#1f2328">백엔드 이너 &#8212; MSA 모듈 구조</text>
+  <text x="600" y="78" text-anchor="middle" font-size="13" fill="#5f6368">5개 서비스 · 부하 특성에 따른 경계 분리 · 서비스 간 직접 REST 호출 없음</text>
+
+  <!-- Client -->
+  <rect x="500" y="104" width="200" height="38" rx="19" fill="#ffffff" stroke="#00C292" stroke-width="1.6"/>
+  <text x="600" y="128" text-anchor="middle" font-size="13" font-weight="700" fill="#00664D">Client (Browser / App)</text>
+
+  <line x1="600" y1="142" x2="600" y2="162" stroke="#9aa0a6" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- API-Gateway (infrastructure tone) -->
+  <rect x="200" y="166" width="800" height="60" rx="10" fill="#2d3338" filter="url(#shadow)"/>
+  <text x="600" y="191" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">API-Gateway :8085</text>
+  <text x="600" y="212" text-anchor="middle" font-size="11" fill="#cfd3d6">클라이언트 단일 진입점 · JWT 검증 · 경로 기반 라우팅 · X-User-Id 주입</text>
+
+  <!-- Routing arrows -->
+  <line x1="290" y1="226" x2="175" y2="270" stroke="#9aa0a6" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <text x="205" y="248" font-size="10" fill="#5f6368">/auth/**</text>
+  <line x1="470" y1="226" x2="425" y2="270" stroke="#9aa0a6" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <text x="430" y="248" font-size="10" fill="#5f6368">/queue/**</text>
+  <line x1="720" y1="226" x2="675" y2="270" stroke="#9aa0a6" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <text x="680" y="248" font-size="10" fill="#5f6368">/seat/**</text>
+  <line x1="910" y1="226" x2="925" y2="270" stroke="#9aa0a6" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <text x="935" y="248" font-size="10" fill="#5f6368">/order/**</text>
+
+  <!-- Service card: Auth-Guard (primary 700) -->
+  <rect x="60" y="274" width="230" height="170" rx="12" fill="#ffffff" stroke="#e4e6ea" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="60" y="274" width="230" height="44" rx="12" fill="#008F6B"/>
+  <rect x="60" y="300" width="230" height="18" fill="#008F6B"/>
+  <text x="175" y="303" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">Auth-Guard :8080</text>
+  <text x="175" y="342" text-anchor="middle" font-size="11" font-weight="600" fill="#00664D">인증 / 인가 도메인</text>
+  <text x="78" y="368" font-size="10.5" fill="#3c4043">· Kakao OAuth 로그인</text>
+  <text x="78" y="388" font-size="10.5" fill="#3c4043">· RSA256 Access/Refresh (RTR)</text>
+  <text x="78" y="408" font-size="10.5" fill="#3c4043">· Redis 블랙리스트 로그아웃</text>
+  <text x="78" y="428" font-size="10.5" fill="#3c4043">· 악성 유저 차단·탈퇴 관리</text>
+
+  <!-- Service card: Queue (primary 500) -->
+  <rect x="310" y="274" width="230" height="170" rx="12" fill="#ffffff" stroke="#e4e6ea" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="310" y="274" width="230" height="44" rx="12" fill="#00C292"/>
+  <rect x="310" y="300" width="230" height="18" fill="#00C292"/>
+  <text x="425" y="303" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">Queue :8081</text>
+  <text x="425" y="342" text-anchor="middle" font-size="11" font-weight="600" fill="#00664D">대기열 도메인</text>
+  <text x="328" y="368" font-size="10.5" fill="#3c4043">· Redis ZSET FIFO 순번 관리</text>
+  <text x="328" y="388" font-size="10.5" fill="#3c4043">· 스케줄러 일괄 승격 (1초)</text>
+  <text x="328" y="408" font-size="10.5" fill="#3c4043">· Admission Token (JWT 30s)</text>
+  <text x="328" y="428" font-size="10.5" fill="#3c4043">· 트래픽 버퍼로 뒤단 유입 제어</text>
+
+  <!-- Service card: Seat (primary 400) -->
+  <rect x="560" y="274" width="230" height="170" rx="12" fill="#ffffff" stroke="#e4e6ea" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="560" y="274" width="230" height="44" rx="12" fill="#00D6A1"/>
+  <rect x="560" y="300" width="230" height="18" fill="#00D6A1"/>
+  <text x="675" y="303" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">Seat :8082</text>
+  <text x="675" y="342" text-anchor="middle" font-size="11" font-weight="600" fill="#00664D">좌석 도메인</text>
+  <text x="578" y="368" font-size="10.5" fill="#3c4043">· 직접 선택 / 추천 2-flow</text>
+  <text x="578" y="388" font-size="10.5" fill="#3c4043">· Redisson 분산 락 (RLock)</text>
+  <text x="578" y="408" font-size="10.5" fill="#3c4043">· 조건부 UPDATE 경합 제어</text>
+  <text x="578" y="428" font-size="10.5" fill="#3c4043">· Hold 5분 TTL</text>
+
+  <!-- Service card: Order-Core (primary 600) -->
+  <rect x="810" y="274" width="230" height="170" rx="12" fill="#ffffff" stroke="#e4e6ea" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="810" y="274" width="230" height="44" rx="12" fill="#00AD82"/>
+  <rect x="810" y="300" width="230" height="18" fill="#00AD82"/>
+  <text x="925" y="303" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">Order-Core :8083</text>
+  <text x="925" y="342" text-anchor="middle" font-size="11" font-weight="600" fill="#00664D">주문·결제·이메일 통합</text>
+  <text x="828" y="368" font-size="10.5" fill="#3c4043">· 주문서 생성 / 마이페이지</text>
+  <text x="828" y="388" font-size="10.5" fill="#3c4043">· 결제 (무통장/토스/카카오)</text>
+  <text x="828" y="408" font-size="10.5" fill="#3c4043">· 티켓 이메일 발송 일원화</text>
+  <text x="828" y="428" font-size="10.5" fill="#3c4043">· 목업 기반, 저부하 트랜잭션</text>
+
+  <!-- common-core -->
+  <rect x="60" y="460" width="980" height="36" rx="8" fill="#f5f6f8" stroke="#e4e6ea" stroke-width="1"/>
+  <text x="550" y="483" text-anchor="middle" font-size="12" font-weight="600" fill="#5f6368">common-core (공유 라이브러리: 도메인 엔티티 · Kafka 이벤트 스키마 · 암호화 · 전역 예외)</text>
+
+  <!-- 모듈 분리 원칙 섹션 -->
+  <rect x="40" y="520" width="1120" height="232" rx="12" fill="#ffffff" stroke="#e4e6ea" stroke-width="1" filter="url(#shadow)"/>
+  <text x="60" y="546" font-size="13" font-weight="700" fill="#1f2328">모듈 분리 원칙 &#8212; 부하 특성에 따른 경계</text>
+
+  <!-- Principle 1 -->
+  <rect x="60" y="562" width="350" height="172" rx="10" fill="#E4FEF8" stroke="#8FFCE1" stroke-width="1"/>
+  <rect x="60" y="562" width="350" height="34" rx="10" fill="#00C292"/>
+  <rect x="60" y="585" width="350" height="11" fill="#00C292"/>
+  <text x="235" y="585" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">Queue 독립 분리</text>
+  <text x="78" y="618" font-size="11" font-weight="700" fill="#00664D">피크 시 수만 명이 몰리는 대기 트래픽</text>
+  <text x="78" y="638" font-size="11" font-weight="700" fill="#00664D">버퍼 역할</text>
+  <line x1="78" y1="654" x2="392" y2="654" stroke="#8FFCE1" stroke-width="1"/>
+  <text x="78" y="676" font-size="10.5" fill="#3c4043">· 대기열의 폭발적 증가 특성을</text>
+  <text x="78" y="694" font-size="10.5" fill="#3c4043">  먼저 격리해야 뒤단 안정</text>
+  <text x="78" y="715" font-size="10.5" fill="#3c4043">· seat / order 로의 유입 속도를</text>
+  <text x="78" y="727" font-size="10.5" fill="#3c4043">  Admission Token 으로 제어</text>
+
+  <!-- Principle 2 -->
+  <rect x="425" y="562" width="350" height="172" rx="10" fill="#E4FEF8" stroke="#8FFCE1" stroke-width="1"/>
+  <rect x="425" y="562" width="350" height="34" rx="10" fill="#00AD82"/>
+  <rect x="425" y="585" width="350" height="11" fill="#00AD82"/>
+  <text x="600" y="585" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">Seat 독립 분리</text>
+  <text x="443" y="618" font-size="11" font-weight="700" fill="#00664D">좌석 선점 시 경합(race) 집중</text>
+  <text x="443" y="638" font-size="11" font-weight="700" fill="#00664D">핫스팟 격리</text>
+  <line x1="443" y1="654" x2="757" y2="654" stroke="#8FFCE1" stroke-width="1"/>
+  <text x="443" y="676" font-size="10.5" fill="#3c4043">· 분산 락·재시도 로직이</text>
+  <text x="443" y="694" font-size="10.5" fill="#3c4043">  몰리는 지점을 별도 서비스로</text>
+  <text x="443" y="715" font-size="10.5" fill="#3c4043">· 스케일링·튜닝 전략을</text>
+  <text x="443" y="727" font-size="10.5" fill="#3c4043">  다른 도메인과 독립 수행</text>
+
+  <!-- Principle 3 -->
+  <rect x="790" y="562" width="350" height="172" rx="10" fill="#E4FEF8" stroke="#8FFCE1" stroke-width="1"/>
+  <rect x="790" y="562" width="350" height="34" rx="10" fill="#008F6B"/>
+  <rect x="790" y="585" width="350" height="11" fill="#008F6B"/>
+  <text x="965" y="585" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">Order-Core 통합</text>
+  <text x="808" y="618" font-size="11" font-weight="700" fill="#00664D">주문·결제·이메일 목업 기반</text>
+  <text x="808" y="638" font-size="11" font-weight="700" fill="#00664D">저부하 → 분리보다 통합</text>
+  <line x1="808" y1="654" x2="1122" y2="654" stroke="#8FFCE1" stroke-width="1"/>
+  <text x="808" y="676" font-size="10.5" fill="#3c4043">· 동일 트랜잭션 경계</text>
+  <text x="808" y="694" font-size="10.5" fill="#3c4043">  (주문 → 결제 → 이메일)</text>
+  <text x="808" y="715" font-size="10.5" fill="#3c4043">· 분리 이익보다 네트워크·</text>
+  <text x="808" y="727" font-size="10.5" fill="#3c4043">  운영 통신 비용이 커 하나로</text>
+
+  <!-- Version -->
+  <text x="1170" y="790" text-anchor="end" font-size="9" fill="#9aa0a6">v1.14.0-staging · 2026-04-17</text>
+</svg>

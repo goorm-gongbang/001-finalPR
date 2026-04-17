@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 820" font-family="Pretendard, -apple-system, sans-serif">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.08"/>
+    </filter>
+    <marker id="seqarrow" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7" fill="#3c4043"/>
+    </marker>
+    <marker id="seqarrow-async" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7" fill="#00C292"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="820" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="600" y="48" text-anchor="middle" font-size="26" font-weight="800" fill="#1f2328">Kafka EDA 시퀀스 &#8212; 결제 확정 Fan-Out</text>
+  <text x="600" y="74" text-anchor="middle" font-size="13" fill="#5f6368">하나의 이벤트 발행으로 Seat · Queue · Order-Core(Email) 가 동시에 반응하는 Fan-Out 구조</text>
+
+  <!-- Lifelines -->
+  <!-- Client -->
+  <rect x="60" y="96" width="130" height="40" rx="8" fill="#ffffff" stroke="#00C292" stroke-width="1.4"/>
+  <text x="125" y="121" text-anchor="middle" font-size="12" font-weight="700" fill="#00664D">Client</text>
+  <line x1="125" y1="136" x2="125" y2="710" stroke="#cfd3d6" stroke-width="1" stroke-dasharray="4,4"/>
+
+  <!-- Order-Core -->
+  <rect x="225" y="96" width="140" height="40" rx="8" fill="#00AD82"/>
+  <text x="295" y="121" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Order-Core</text>
+  <line x1="295" y1="136" x2="295" y2="710" stroke="#cfd3d6" stroke-width="1" stroke-dasharray="4,4"/>
+
+  <!-- Kafka -->
+  <rect x="400" y="96" width="140" height="40" rx="8" fill="#00C292"/>
+  <text x="470" y="121" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Kafka Broker</text>
+  <line x1="470" y1="136" x2="470" y2="710" stroke="#cfd3d6" stroke-width="1" stroke-dasharray="4,4"/>
+
+  <!-- Seat -->
+  <rect x="575" y="96" width="130" height="40" rx="8" fill="#00D6A1"/>
+  <text x="640" y="121" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Seat</text>
+  <line x1="640" y1="136" x2="640" y2="710" stroke="#cfd3d6" stroke-width="1" stroke-dasharray="4,4"/>
+
+  <!-- Queue -->
+  <rect x="740" y="96" width="130" height="40" rx="8" fill="#008F6B"/>
+  <text x="805" y="121" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Queue</text>
+  <line x1="805" y1="136" x2="805" y2="710" stroke="#cfd3d6" stroke-width="1" stroke-dasharray="4,4"/>
+
+  <!-- Email consumer -->
+  <rect x="910" y="96" width="175" height="40" rx="8" fill="#00664D"/>
+  <text x="997" y="121" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Email (Order-Core)</text>
+  <line x1="997" y1="136" x2="997" y2="710" stroke="#cfd3d6" stroke-width="1" stroke-dasharray="4,4"/>
+
+  <!-- DB -->
+  <rect x="1100" y="96" width="80" height="40" rx="8" fill="#ffffff" stroke="#5f6368" stroke-width="1.4"/>
+  <text x="1140" y="121" text-anchor="middle" font-size="12" font-weight="700" fill="#3c4043">DB</text>
+  <line x1="1140" y1="136" x2="1140" y2="710" stroke="#cfd3d6" stroke-width="1" stroke-dasharray="4,4"/>
+
+  <!-- Messages -->
+  <!-- 1. Client → Order-Core -->
+  <line x1="125" y1="172" x2="293" y2="172" stroke="#3c4043" stroke-width="1.6" marker-end="url(#seqarrow)"/>
+  <text x="209" y="166" text-anchor="middle" font-size="10.5" fill="#3c4043">1. POST /order/{id}/payment</text>
+
+  <!-- 2. Order-Core TX (activation bar) -->
+  <rect x="283" y="184" width="24" height="120" rx="3" fill="#8FFCE1" opacity="0.6"/>
+  <text x="295" y="200" text-anchor="middle" font-size="10" font-weight="700" fill="#00664D">TX</text>
+
+  <line x1="307" y1="214" x2="1138" y2="214" stroke="#3c4043" stroke-width="1.4" marker-end="url(#seqarrow)"/>
+  <text x="722" y="208" text-anchor="middle" font-size="10.5" fill="#3c4043">2. Payment.COMPLETED 저장 · Order.CONFIRMED 저장</text>
+
+  <!-- 3. Internal Spring Event -->
+  <line x1="307" y1="244" x2="307" y2="266" stroke="#00C292" stroke-width="1.4" stroke-dasharray="3,2"/>
+  <text x="315" y="258" font-size="10" fill="#00664D">ApplicationEventPublisher.publishEvent(PaymentCompletedEvent)</text>
+
+  <!-- 4. Commit → TX end -->
+  <line x1="1138" y1="286" x2="309" y2="286" stroke="#3c4043" stroke-width="1.2" marker-end="url(#seqarrow)" stroke-dasharray="2,2"/>
+  <text x="722" y="280" text-anchor="middle" font-size="10" fill="#3c4043">3. DB COMMIT 완료</text>
+
+  <!-- 5. AFTER_COMMIT → Kafka -->
+  <line x1="307" y1="330" x2="468" y2="330" stroke="#00C292" stroke-width="2" marker-end="url(#seqarrow-async)"/>
+  <text x="387" y="324" text-anchor="middle" font-size="10.5" font-weight="700" fill="#00664D">4. AFTER_COMMIT → send(payment-completed)</text>
+  <text x="387" y="346" text-anchor="middle" font-size="9.5" fill="#00664D">key=orderId · acks=all</text>
+
+  <!-- 6. Order-Core → Client (200 OK) -->
+  <line x1="293" y1="374" x2="127" y2="374" stroke="#3c4043" stroke-width="1.6" marker-end="url(#seqarrow)"/>
+  <text x="209" y="368" text-anchor="middle" font-size="10.5" fill="#3c4043">5. 200 OK · 결제 완료 응답</text>
+
+  <!-- Fan-Out banner -->
+  <rect x="40" y="394" width="1120" height="26" rx="6" fill="#00C292"/>
+  <text x="600" y="412" text-anchor="middle" font-size="11.5" font-weight="700" fill="#ffffff">▼ Fan-Out &#8212; 세 컨슈머가 독립 그룹으로 동일 메시지를 병렬 소비</text>
+
+  <!-- 6a. Seat consume -->
+  <line x1="472" y1="442" x2="638" y2="442" stroke="#00C292" stroke-width="2" marker-end="url(#seqarrow-async)"/>
+  <text x="555" y="436" text-anchor="middle" font-size="10.5" font-weight="700" fill="#00664D">6a. consume (seat-service 그룹)</text>
+
+  <rect x="628" y="452" width="24" height="60" rx="3" fill="#8FFCE1" opacity="0.7"/>
+  <line x1="640" y1="468" x2="1138" y2="468" stroke="#3c4043" stroke-width="1.4" marker-end="url(#seqarrow)"/>
+  <text x="890" y="462" text-anchor="middle" font-size="10" fill="#3c4043">UPDATE match_seat SET status=SOLD WHERE status=BLOCKED (멱등)</text>
+
+  <!-- 6b. Queue consume -->
+  <line x1="472" y1="540" x2="803" y2="540" stroke="#00C292" stroke-width="2" marker-end="url(#seqarrow-async)"/>
+  <text x="637" y="534" text-anchor="middle" font-size="10.5" font-weight="700" fill="#00664D">6b. consume (queue-service 그룹)</text>
+
+  <rect x="793" y="550" width="24" height="44" rx="3" fill="#8FFCE1" opacity="0.7"/>
+  <text x="805" y="568" text-anchor="middle" font-size="9.5" fill="#00664D">READY 슬롯</text>
+  <text x="805" y="582" text-anchor="middle" font-size="9.5" fill="#00664D">즉시 회수</text>
+
+  <!-- 6c. Email consume -->
+  <line x1="472" y1="622" x2="995" y2="622" stroke="#00C292" stroke-width="2" marker-end="url(#seqarrow-async)"/>
+  <text x="733" y="616" text-anchor="middle" font-size="10.5" font-weight="700" fill="#00664D">6c. consume (email-notification 그룹)</text>
+
+  <rect x="985" y="632" width="24" height="44" rx="3" fill="#8FFCE1" opacity="0.7"/>
+  <text x="997" y="650" text-anchor="middle" font-size="9.5" fill="#00664D">티켓 메일 발송</text>
+  <text x="997" y="664" text-anchor="middle" font-size="9.5" fill="#00664D">(비동기)</text>
+
+  <!-- Key points -->
+  <rect x="40" y="720" width="1120" height="86" rx="12" fill="#E4FEF8" stroke="#8FFCE1" stroke-width="1"/>
+  <text x="60" y="744" font-size="12" font-weight="700" fill="#00664D">핵심 포인트</text>
+  <text x="60" y="768" font-size="11" fill="#3c4043">· 결제 API 응답(5번)은 이벤트 발행 직후 즉시 반환 &#8212; 좌석 전환/메일/대기열 회수 지연이 API 응답 시간에 포함되지 않음</text>
+  <text x="60" y="788" font-size="11" fill="#3c4043">· AFTER_COMMIT 이 보장하는 "DB 커밋 성공 후 발행" 덕분에, 소비 측은 항상 최신 DB 상태를 기준으로 멱등 처리만 수행하면 됨</text>
+</svg>

@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" font-family="Pretendard, -apple-system, sans-serif">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrow-pub" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7" fill="#00C292"/>
+    </marker>
+    <marker id="arrow-sub" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7" fill="#008F6B"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="800" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="600" y="50" text-anchor="middle" font-size="28" font-weight="800" fill="#1f2328">Kafka EDA 토폴로지 &#8212; 서비스 간 비동기 통신</text>
+  <text x="600" y="76" text-anchor="middle" font-size="13" fill="#5f6368">MSA 서비스 간 직접 REST 호출 제거 · 5개 토픽 기반 이벤트 브로드캐스트</text>
+
+  <!-- 컬럼 라벨 -->
+  <text x="110" y="116" font-size="11" font-weight="700" fill="#008F6B" letter-spacing="1.5">PRODUCERS</text>
+  <text x="600" y="116" text-anchor="middle" font-size="11" font-weight="700" fill="#00664D" letter-spacing="1.5">KAFKA BROKER &#8212; partitions=3 · acks=all</text>
+  <text x="1090" y="116" text-anchor="end" font-size="11" font-weight="700" fill="#008F6B" letter-spacing="1.5">CONSUMERS</text>
+
+  <!-- Producer: Order-Core -->
+  <rect x="40" y="134" width="180" height="88" rx="10" fill="#ffffff" stroke="#e4e6ea" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="40" y="134" width="6" height="88" rx="3" fill="#00AD82"/>
+  <text x="130" y="162" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2328">Order-Core</text>
+  <text x="130" y="184" text-anchor="middle" font-size="10.5" fill="#3c4043">결제 확정 · 주문 취소</text>
+  <text x="130" y="199" text-anchor="middle" font-size="10.5" fill="#3c4043">무통장 만료</text>
+  <text x="130" y="214" text-anchor="middle" font-size="9.5" fill="#9aa0a6">producer</text>
+
+  <!-- Producer: Seat -->
+  <rect x="40" y="236" width="180" height="70" rx="10" fill="#ffffff" stroke="#e4e6ea" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="40" y="236" width="6" height="70" rx="3" fill="#00D6A1"/>
+  <text x="130" y="262" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2328">Seat</text>
+  <text x="130" y="282" text-anchor="middle" font-size="10.5" fill="#3c4043">좌석 Hold 성공</text>
+  <text x="130" y="299" text-anchor="middle" font-size="9.5" fill="#9aa0a6">producer</text>
+
+  <!-- Producer: Auth-Guard -->
+  <rect x="40" y="320" width="180" height="70" rx="10" fill="#ffffff" stroke="#e4e6ea" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="40" y="320" width="6" height="70" rx="3" fill="#008F6B"/>
+  <text x="130" y="346" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2328">Auth-Guard</text>
+  <text x="130" y="366" text-anchor="middle" font-size="10.5" fill="#3c4043">유저 차단</text>
+  <text x="130" y="383" text-anchor="middle" font-size="9.5" fill="#9aa0a6">producer</text>
+
+  <!-- Kafka broker area -->
+  <rect x="300" y="134" width="600" height="350" rx="14" fill="#E4FEF8" stroke="#00C292" stroke-width="1.4"/>
+
+  <!-- 토픽 5종 -->
+  <rect x="330" y="158" width="540" height="52" rx="8" fill="#ffffff" stroke="#CAFEF1" stroke-width="1"/>
+  <rect x="330" y="158" width="4" height="52" rx="2" fill="#00C292"/>
+  <text x="348" y="180" font-size="13" font-weight="700" fill="#00664D">payment-completed</text>
+  <text x="348" y="200" font-size="10.5" fill="#3c4043">결제 확정 → 좌석 SOLD 전환 · 티켓 메일 · 대기열 슬롯 회수</text>
+  <text x="855" y="180" text-anchor="end" font-size="10" font-weight="600" fill="#008F6B">P=3 · DLT</text>
+
+  <rect x="330" y="220" width="540" height="52" rx="8" fill="#ffffff" stroke="#CAFEF1" stroke-width="1"/>
+  <rect x="330" y="220" width="4" height="52" rx="2" fill="#00C292"/>
+  <text x="348" y="242" font-size="13" font-weight="700" fill="#00664D">order-cancelled</text>
+  <text x="348" y="262" font-size="10.5" fill="#3c4043">주문 취소 → 좌석 AVAILABLE 복원 · 취소 메일</text>
+  <text x="855" y="242" text-anchor="end" font-size="10" font-weight="600" fill="#008F6B">P=3 · DLT</text>
+
+  <rect x="330" y="282" width="540" height="52" rx="8" fill="#ffffff" stroke="#CAFEF1" stroke-width="1"/>
+  <rect x="330" y="282" width="4" height="52" rx="2" fill="#00C292"/>
+  <text x="348" y="304" font-size="13" font-weight="700" fill="#00664D">bank-transfer-expired</text>
+  <text x="348" y="324" font-size="10.5" fill="#3c4043">무통장 입금 기한 만료 → 좌석 복원</text>
+  <text x="855" y="304" text-anchor="end" font-size="10" font-weight="600" fill="#008F6B">P=3 · DLT</text>
+
+  <rect x="330" y="344" width="540" height="52" rx="8" fill="#ffffff" stroke="#CAFEF1" stroke-width="1"/>
+  <rect x="330" y="344" width="4" height="52" rx="2" fill="#00C292"/>
+  <text x="348" y="366" font-size="13" font-weight="700" fill="#00664D">seat-hold-completed</text>
+  <text x="348" y="386" font-size="10.5" fill="#3c4043">Hold 확정 → 대기열 READY 슬롯 즉시 회수 · 다음 유저 승격</text>
+  <text x="855" y="366" text-anchor="end" font-size="10" font-weight="600" fill="#008F6B">P=3 · DLT</text>
+
+  <rect x="330" y="406" width="540" height="52" rx="8" fill="#ffffff" stroke="#CAFEF1" stroke-width="1"/>
+  <rect x="330" y="406" width="4" height="52" rx="2" fill="#00C292"/>
+  <text x="348" y="428" font-size="13" font-weight="700" fill="#00664D">user-blocked</text>
+  <text x="348" y="448" font-size="10.5" fill="#3c4043">유저 차단 → 활성 주문 UNDER_REVIEW 전환</text>
+  <text x="855" y="428" text-anchor="end" font-size="10" font-weight="600" fill="#008F6B">P=3 · DLT</text>
+
+  <!-- Consumers -->
+  <rect x="980" y="134" width="180" height="70" rx="10" fill="#ffffff" stroke="#e4e6ea" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="1154" y="134" width="6" height="70" rx="3" fill="#00D6A1"/>
+  <text x="1070" y="160" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2328">Seat</text>
+  <text x="1070" y="180" text-anchor="middle" font-size="10" fill="#3c4043">seat-service 그룹</text>
+  <text x="1070" y="196" text-anchor="middle" font-size="9.5" fill="#9aa0a6">consumer</text>
+
+  <rect x="980" y="220" width="180" height="70" rx="10" fill="#ffffff" stroke="#e4e6ea" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="1154" y="220" width="6" height="70" rx="3" fill="#00C292"/>
+  <text x="1070" y="246" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2328">Queue</text>
+  <text x="1070" y="266" text-anchor="middle" font-size="10" fill="#3c4043">queue-service 그룹</text>
+  <text x="1070" y="282" text-anchor="middle" font-size="9.5" fill="#9aa0a6">consumer</text>
+
+  <rect x="980" y="306" width="180" height="88" rx="10" fill="#ffffff" stroke="#e4e6ea" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="1154" y="306" width="6" height="88" rx="3" fill="#00AD82"/>
+  <text x="1070" y="332" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2328">Order-Core</text>
+  <text x="1070" y="352" text-anchor="middle" font-size="10" fill="#3c4043">order-core 그룹</text>
+  <text x="1070" y="366" text-anchor="middle" font-size="10" fill="#3c4043">email-notification</text>
+  <text x="1070" y="384" text-anchor="middle" font-size="9.5" fill="#9aa0a6">consumer</text>
+
+  <!-- Producer → topic edges -->
+  <line x1="220" y1="184" x2="328" y2="184" stroke="#00C292" stroke-width="1.8" marker-end="url(#arrow-pub)"/>
+  <line x1="220" y1="246" x2="328" y2="246" stroke="#00C292" stroke-width="1.8" marker-end="url(#arrow-pub)"/>
+  <line x1="220" y1="190" x2="328" y2="308" stroke="#00C292" stroke-width="1.4" stroke-dasharray="3,3" marker-end="url(#arrow-pub)"/>
+  <line x1="220" y1="275" x2="328" y2="370" stroke="#00D6A1" stroke-width="1.8" marker-end="url(#arrow-pub)"/>
+  <line x1="220" y1="361" x2="328" y2="432" stroke="#008F6B" stroke-width="1.8" marker-end="url(#arrow-pub)"/>
+
+  <!-- Topic → consumer edges -->
+  <line x1="872" y1="184" x2="978" y2="168" stroke="#008F6B" stroke-width="1.8" marker-end="url(#arrow-sub)"/>
+  <line x1="872" y1="246" x2="978" y2="184" stroke="#008F6B" stroke-width="1.8" marker-end="url(#arrow-sub)"/>
+  <line x1="872" y1="308" x2="978" y2="190" stroke="#008F6B" stroke-width="1.4" stroke-dasharray="3,3" marker-end="url(#arrow-sub)"/>
+
+  <line x1="872" y1="190" x2="978" y2="250" stroke="#008F6B" stroke-width="1.8" marker-end="url(#arrow-sub)"/>
+  <line x1="872" y1="370" x2="978" y2="260" stroke="#008F6B" stroke-width="1.8" marker-end="url(#arrow-sub)"/>
+
+  <line x1="872" y1="184" x2="978" y2="336" stroke="#008F6B" stroke-width="1.8" marker-end="url(#arrow-sub)"/>
+  <line x1="872" y1="246" x2="978" y2="350" stroke="#008F6B" stroke-width="1.4" stroke-dasharray="3,3" marker-end="url(#arrow-sub)"/>
+  <line x1="872" y1="432" x2="978" y2="366" stroke="#008F6B" stroke-width="1.8" marker-end="url(#arrow-sub)"/>
+
+  <!-- 정합성 보장 패턴 -->
+  <rect x="40" y="510" width="1120" height="230" rx="12" fill="#ffffff" stroke="#e4e6ea" stroke-width="1" filter="url(#shadow)"/>
+  <text x="60" y="536" font-size="13" font-weight="700" fill="#1f2328">정합성 보장 패턴 &#8212; 메시지 손실·중복·순서 엣지 케이스 방어</text>
+
+  <!-- Pattern 1 -->
+  <rect x="60" y="552" width="260" height="170" rx="10" fill="#E4FEF8" stroke="#8FFCE1" stroke-width="1"/>
+  <rect x="60" y="552" width="260" height="34" rx="10" fill="#00C292"/>
+  <rect x="60" y="575" width="260" height="11" fill="#00C292"/>
+  <text x="78" y="575" font-size="10" font-weight="700" fill="#E4FEF8">01</text>
+  <text x="195" y="575" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Transactional Outbox 유사</text>
+  <text x="78" y="610" font-size="10.5" fill="#3c4043">ApplicationEventPublisher</text>
+  <text x="78" y="628" font-size="10.5" fill="#3c4043">→ @TxEventListener(AFTER_COMMIT)</text>
+  <text x="78" y="646" font-size="10.5" fill="#3c4043">→ KafkaTemplate.send()</text>
+  <text x="78" y="676" font-size="10.5" font-weight="700" fill="#00664D">DB 커밋 성공 후에만 발행</text>
+  <text x="78" y="696" font-size="10.5" fill="#3c4043">롤백 시 메시지 유실 원천 차단</text>
+  <text x="78" y="714" font-size="10.5" fill="#3c4043">(이벤트/DB 상태 불일치 방지)</text>
+
+  <!-- Pattern 2 -->
+  <rect x="335" y="552" width="260" height="170" rx="10" fill="#E4FEF8" stroke="#8FFCE1" stroke-width="1"/>
+  <rect x="335" y="552" width="260" height="34" rx="10" fill="#00AD82"/>
+  <rect x="335" y="575" width="260" height="11" fill="#00AD82"/>
+  <text x="353" y="575" font-size="10" font-weight="700" fill="#E4FEF8">02</text>
+  <text x="470" y="575" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">순서 보장</text>
+  <text x="353" y="610" font-size="10.5" fill="#3c4043">key = String.valueOf(orderId)</text>
+  <text x="353" y="630" font-size="10.5" fill="#3c4043">→ 같은 주문은 동일 파티션</text>
+  <text x="353" y="648" font-size="10.5" fill="#3c4043">→ 파티션 내 순서 보장</text>
+  <text x="353" y="676" font-size="10.5" font-weight="700" fill="#00664D">결제 → 취소 역전 차단</text>
+  <text x="353" y="696" font-size="10.5" fill="#3c4043">좌석 상태 꼬임 방지</text>
+  <text x="353" y="714" font-size="10.5" fill="#3c4043">(핵심 자원 이벤트 직렬화)</text>
+
+  <!-- Pattern 3 -->
+  <rect x="610" y="552" width="260" height="170" rx="10" fill="#E4FEF8" stroke="#8FFCE1" stroke-width="1"/>
+  <rect x="610" y="552" width="260" height="34" rx="10" fill="#008F6B"/>
+  <rect x="610" y="575" width="260" height="11" fill="#008F6B"/>
+  <text x="628" y="575" font-size="10" font-weight="700" fill="#E4FEF8">03</text>
+  <text x="745" y="575" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">내구성 (acks=all + DLT)</text>
+  <text x="628" y="610" font-size="10.5" fill="#3c4043">acks=all · ISR 복제 대기</text>
+  <text x="628" y="630" font-size="10.5" fill="#3c4043">재시도 1초 × 3회</text>
+  <text x="628" y="648" font-size="10.5" fill="#3c4043">→ {topic}.DLT 격리</text>
+  <text x="628" y="676" font-size="10.5" font-weight="700" fill="#00664D">장애에도 메시지 손실 없이</text>
+  <text x="628" y="696" font-size="10.5" fill="#3c4043">DLT 로 수동 대응 가능</text>
+  <text x="628" y="714" font-size="10.5" fill="#3c4043">(Kafka UI 로 Lag 모니터)</text>
+
+  <!-- Pattern 4 -->
+  <rect x="885" y="552" width="255" height="170" rx="10" fill="#E4FEF8" stroke="#8FFCE1" stroke-width="1"/>
+  <rect x="885" y="552" width="255" height="34" rx="10" fill="#00664D"/>
+  <rect x="885" y="575" width="255" height="11" fill="#00664D"/>
+  <text x="903" y="575" font-size="10" font-weight="700" fill="#E4FEF8">04</text>
+  <text x="1015" y="575" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">멱등 소비</text>
+  <text x="903" y="610" font-size="10.5" fill="#3c4043">Seat: 조건부 UPDATE</text>
+  <text x="903" y="628" font-size="10.5" fill="#3c4043">WHERE sale_status = ?</text>
+  <text x="903" y="648" font-size="10.5" fill="#3c4043">Queue: Redis Lua 스크립트</text>
+  <text x="903" y="676" font-size="10.5" font-weight="700" fill="#00664D">DLT 재발행·중복 소비에도</text>
+  <text x="903" y="696" font-size="10.5" fill="#3c4043">동일 결과 보장</text>
+  <text x="903" y="714" font-size="10.5" fill="#3c4043">(at-least-once 안전)</text>
+
+  <!-- Version -->
+  <text x="1170" y="790" text-anchor="end" font-size="9" fill="#9aa0a6">v1.14.0-staging · 2026-04-17</text>
+</svg>
