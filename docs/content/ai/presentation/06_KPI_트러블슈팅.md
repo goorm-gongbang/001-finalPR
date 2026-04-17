@@ -182,19 +182,18 @@
 **수식**: `Tier Ratio_x = #(latest_tier = x) / #(unique trace_id) × 100`  (x ∈ {T0, T1, T2, T3})
 
 | Tier | trace 수 | 비율 |
-|------|---------|------|
-| T0 | -- | --% |
-| T1 | -- | --% |
-| T2 | -- | --% |
-| T3 | -- | --% |
-| **합계** | **--** | **100%** |
+|------|---------:|-----:|
+| T0 | 11 | 36.7% |
+| T1 | 17 | 56.7% |
+| T2 | 2 | 6.7% |
+| T3 | 0 | 0.0% |
+| **합계** | **30** | **100%** |
 
 **해석**
-- **T0**: 실질 개입 없는 정상/저위험 구간
-- **T1**: 경미한 위험 또는 초기 개입 구간
-- **T2**: 명확한 이상행동으로 인식된 중간 이상 구간
-- **T3**: 최상위 위험 구간
-- 방어 시스템이 공격 세션을 어느 정도 강도로 분류했는지 보여준다.
+- **T0 (36.7%)**: 실질 개입 없는 정상/저위험 구간
+- **T1 (56.7%)**: 경미한 위험 또는 초기 개입 구간 — 탐지의 주 분포
+- **T2 (6.7%)**: 명확한 이상행동으로 인식된 중간 이상 구간 — 2건만 상승
+- **T3 (0.0%)**: 최상위 위험 구간 — 이번 실행에서 없음
 
 ### B.2 Runtime Action 분포
 
@@ -203,17 +202,17 @@
 **수식**: `Action Ratio_a = #(latest_action = a) / #(unique trace_id) × 100`  (a ∈ {NONE, THROTTLE, BLOCK})
 
 | Action | trace 수 | 비율 |
-|--------|---------|------|
-| NONE | -- | --% |
-| THROTTLE | -- | --% |
-| BLOCK | -- | --% |
-| **합계** | **--** | **100%** |
+|--------|---------:|-----:|
+| NONE | 11 | 36.7% |
+| THROTTLE | 19 | 63.3% |
+| BLOCK | 0 | 0.0% |
+| **합계** | **30** | **100%** |
 
 **해석**
-- **NONE**: 실시간 개입 없음
-- **THROTTLE**: 지연/마찰 유도
-- **BLOCK**: 직접 차단
-- 방어가 공격 세션에 대해 실제로 어떤 방식으로 개입했는지.
+- **NONE (36.7%)**: 실시간 개입 없음
+- **THROTTLE (63.3%)**: 지연/마찰 유도 — 이번 방어의 주된 실시간 대응 방식
+- **BLOCK (0.0%)**: Runtime 단계에서의 즉시 차단 없음
+- 즉시 차단보다 마찰 유도 중심의 보수적 정책이 동작했음을 보여준다.
 
 ### B.3 Post-Review Candidate · Suspicious 수
 
@@ -225,15 +224,15 @@
 - `Suspicious Rate = Total Suspicious Count / Total Candidate Count × 100`
 
 | 지표 | 값 |
-|------|---|
-| Candidate 총합 | -- |
-| Suspicious 총합 | -- |
-| **Suspicious 비율** | **--%** |
+|------|---:|
+| Candidate 총합 (window 집계) | 19 |
+| Suspicious 총합 (window 집계) | 6 |
+| **Suspicious 비율** | **31.6%** |
 
 **해석**
-- **candidate_count**: Post-Review 검토 대상으로 올라온 세션 수
-- **suspicious_count**: 그중 사후판단이 이상 세션으로 분류한 수
-- 실시간 방어 이후, 사후판단이 얼마나 많은 세션을 후속 검토 대상으로 삼았는지 보여준다.
+- **candidate_count**: Post-Review 검토 대상으로 올라온 세션 수 (window 집계 19)
+- **suspicious_count**: 그중 사후판단이 이상 세션으로 분류한 수 (6건, 31.6%)
+- Runtime에서 THROTTLE을 받은 세션 중 일부를 후속 LLM 검토에서 재평가했음을 보여준다.
 
 ### B.4 Reviewed Session 수
 
@@ -244,62 +243,70 @@ Post-Review가 실제로 review를 수행해 저장한 세션 수.
 - `Suspicious Session Count = #(review_result = 'SUSPICIOUS')`
 
 | 지표 | 값 |
-|------|---|
-| Reviewed session 수 | -- |
-| Suspicious session 수 | -- |
+|------|---:|
+| Reviewed session 수 (row 기준) | 6 |
+| Suspicious session 수 (row 기준) | 6 |
 
 **해석**
-- `candidate_count`는 윈도우 단위 집계, `reviewed session 수`는 실제 review row 기준.
-- Post-Review가 실제로 몇 개 세션을 처리했는지를 보여주는 실행 결과 지표.
+- `candidate_count`는 윈도우 단위 집계(19), `reviewed session`은 실제 review row 기준(6).
+- Reviewed 6건 전원이 SUSPICIOUS 판정 — Post-Review가 검토 수행한 세션은 모두 이상으로 분류.
 
 ### B.5 방어 저지율
 
 공격 세션 중 최종적으로 공격 성공(Hold 도달) 하지 못한 비율.
 
+> **출처**: 공격 KPI §6.2 A.1 Hold 도달률 기반 역산
+
 **수식**: `Defense Interception Rate = 1 − Attack Success Rate = (Total − Successful) / Total × 100`
 
 | 지표 | 값 |
-|------|---|
-| 총 공격 세션 수 | -- |
-| 공격 성공 세션 수 | -- |
-| **방어 저지율** | **--%** |
+|------|---:|
+| 총 공격 세션 수 | 30 |
+| 공격 성공 세션 수 (DONE) | 20 |
+| **방어 저지율** | **33.3%** (10/30) |
 
-**해석**: 방어 저지율은 공격자가 최종 목표(Hold/좌석 확보)에 도달하지 못한 비율로, 방어 성과를 가장 직관적으로 보여주는 핵심 지표.
+**해석**: Hold 도달 실패 10세션(BLOCKED 5 + ABORT 5) = 방어 저지율 33.3%.
 
 ### B.6 방어 개입 단계 분포
 
 공격 퍼널을 방어 관점으로 재해석 — 공격이 어느 단계에서 방어에 의해 꺾였는지.
 
-| 개입 단계 | 세션 수 | 비율 |
-|---------|-------|------|
-| 대기열 구간 개입 | -- | --% |
-| Challenge 구간 개입 | -- | --% |
-| 구역/좌석 선택 구간 개입 | -- | --% |
-| 직접 차단 종료 | -- | --% |
-| 내부 실패/중단 종료 | -- | --% |
-| 최종 성공 종료 | -- | --% |
+> **출처**: 공격 KPI §6.4 구조적 관찰, §6.2 A.2/A.4 기반
 
-**해석**: 방어가 어느 단계에서 가장 강하게 작동했는지.
+| 개입 단계 | 세션 수 | 비율 |
+|---------|-------:|-----:|
+| 대기열 구간 개입 | 6 | 20.0% |
+| Challenge 구간 개입 | 5 | 16.7% |
+| 구역/좌석 선택 구간 개입 | 0 | 0.0% |
+| 직접 차단 종료 (BLOCKED) | 5 | 16.7% |
+| 내부 실패/중단 종료 (ABORT) | 5 | 16.7% |
+| 최종 성공 종료 (DONE) | 20 | 66.7% |
+
+> 상단 3행은 단계 기준, 하단 3행은 TERMINAL 결과 기준 (중복 계산 포함).
+
+**해석**: 방어 개입은 대기열·VQA 앞단에 집중. 구역/좌석 선택 이후 차단 0 — 앞단 필터링 구조.
 
 ### B.7 좌석 확보 차단/저지 비율
 
 좌석 확보 성공 관점에서, 최종적으로 좌석 확보를 막아낸 비율.
 
+> **출처**: 공격 KPI §6.2 A.1 기반 역산
+
 **수식**: `Seat Acquisition Prevention Rate = 1 − Seat Acquisition Success Rate`
 
 | 지표 | 값 |
-|------|---|
-| 좌석 확보 성공 세션 수 | -- |
-| 총 공격 세션 수 | -- |
-| **좌석 확보 차단/저지 비율** | **--%** |
+|------|---:|
+| 총 공격 세션 수 | 30 |
+| 좌석 확보 성공 세션 수 | 20 |
+| **좌석 확보 차단/저지 비율** | **33.3%** (10/30) |
 
-**해석**: 공격자의 실질 목표였던 좌석 확보를 방어가 얼마나 억제했는지.
+**해석**: 공격자의 실질 목표였던 좌석 확보를 방어가 33.3% 억제.
 
 ### 방어 KPI 목록 정리
 
-**방어 로그 기반** (`trace_id` 기준): B.1 Runtime Tier 분포 · B.2 Runtime Action 분포 · B.3 Post-Review Candidate/Suspicious · B.4 Reviewed Session
+**방어 로그 기반** (`trace_id` 기준, 총 30): B.1 Runtime Tier 분포 · B.2 Runtime Action 분포 · B.3 Post-Review Candidate/Suspicious · B.4 Reviewed Session
 
-**공격 KPI에서 재해석**: B.5 방어 저지율 · B.6 방어 개입 단계 분포 · B.7 좌석 확보 차단/저지 비율
+**공격 KPI에서 재사용** (§6.2 A.1·A.2·A.4 기반): B.5 방어 저지율 · B.6 방어 개입 단계 분포 · B.7 좌석 확보 차단/저지 비율
 
 ---
 
@@ -501,7 +508,199 @@ Post-Review가 실제로 review를 수행해 저장한 세션 수.
 
 ## 방어 측
 
-*(추후 추가 예정 — 방어팀 KPI 및 정책 개선 방향 확보 후 업데이트)*
+### 실행 요약
+
+| 항목 | 값 |
+|------|---|
+| 총 trace 수 (`trace_id` 기준) | 30 |
+| 주 대응 방식 | THROTTLE (63.3%) — 즉시 차단보다 마찰 유도 중심 |
+| 주 탐지 등급 | T1 (56.7%) — T2 상승 2건(6.7%), T3 없음 |
+| Post-Review Suspicious 비율 | 31.6% (Candidate 19 중 6) |
+| 방어 저지율 | 33.3% (공격 KPI 재사용) |
+
+### 주목할 관찰
+
+- **Runtime BLOCK 0%**: 즉시 차단 없이 THROTTLE 마찰 유도만으로 대응. False Positive 최소화를 위한 보수적 설계가 의도대로 동작.
+- **T1 집중**: 탐지 등급이 T1에 몰리고 T2로 상승한 세션은 극히 일부. 현재 임계값 설정에서 대부분의 공격 세션이 "경미한 위험"으로 처리됨.
+- **Post-Review 활성**: Candidate 19건 중 6건(31.6%)을 Suspicious로 판정. Runtime 개입 이후 LLM 사후검토가 추가로 의심 세션을 식별하는 2단계 탐지 구조가 작동함.
+
+### 추후 개선 방향
+
+| 방향 | 내용 |
+|------|------|
+| **Tier 임계값 재조정** | T1 집중 현상 → T2/T3 판정 조건 강화로 고위험 세션 분류 정확도 향상 |
+| **BLOCK 조건 도입 검토** | THROTTLE 중심 정책에서 특정 조건(T2 이상 + 복합 신호) 시 BLOCK으로 전환하는 정책 추가 |
+| **Post-Review 피드백 루프** | Suspicious 판정 결과를 오프라인 최적화기에 반영 → 다음 실행의 Runtime 임계값 자동 갱신 |
+| **더 큰 규모 실행** | 이번은 30 trace — 원래 설계 기준(100명 이상) 실행 시 Tier 분포 변화 관찰 |
+
+---
+
+## 방어 설계 트러블슈팅
+
+> 이 섹션은 방어 시스템 설계 과정에서 "처음 떠오른 방식이 왜 안 됐는가"와 "최종적으로 어떤 선택을 했는가"를 기록한다.
+
+---
+
+### 1. 기존 CAPTCHA의 한계와 VQA 재설계
+
+**문제**
+
+초기에는 일반 CAPTCHA나 단순 challenge로도 봇을 어느 정도 걸러낼 수 있다고 볼 수 있었다. 그러나 이번 시스템의 전제는 단순 스크립트가 아니라 브라우저를 직접 조작하고 시각 정보를 해석할 수 있는 고지능 자동화까지 방어하는 것이었다.
+
+**왜 단순 대안이 안 됐는가**
+
+| 기각 이유 | 구체적 문제 |
+|------|------|
+| OCR형·단일 클릭형 CAPTCHA | 멀티모달 모델·OCR 결합 자동화 환경에서 방어력이 빠르게 약해짐. "정답 제출"만 요구하는 challenge는 원칙적으로 풀 수 있다 |
+| 추가 evidence 부재 | 이미 마우스 telemetry 기반 riskScore 계산 구조를 채택한 상황에서, 단순 정답 검증 장치는 판단에 쓸 수 있는 추가 행동 데이터를 거의 주지 못함 |
+
+**선택**
+
+challenge를 단순 정답 검증이 아닌, **시간 제한 + 복합 행동 + telemetry 수집**이 동시에 이루어지는 VQA 인터랙션으로 재설계했다.
+
+| 설계 기준 | 이유 |
+|------|------|
+| 시간 제한 | 레이턴시 자체를 공격 표면으로 활용 — 고지능 모델도 시간 내 수행이 보장되지 않는다 |
+| 복합 행동 (클릭·드래그·홀드·타이밍) | 자동화 난도를 단일 행동보다 구조적으로 높임 |
+| challenge 중 telemetry 수집 | challenge 과정 자체가 AI Runtime 판단의 추가 evidence source가 됨 |
+| 서비스 컨셉 연결 (야구 Catch Ball) | UX 자연스러움과 보안 요구 동시 충족 |
+
+**결과**
+
+VQA는 UI 요소가 아니라 실시간 방어 파이프라인 안에서 **보안 검증 + 행동 telemetry 수집 + 마찰 비용 부과**를 결합한 보안 장치로 자리 잡았다. 정상 사용자에게는 회복 경로를 제공하고, 자동화에는 추가 수행 비용을 부과하는 고가치 관문이 되었다.
+
+**남은 한계**
+
+구조 전체가 프론트 telemetry 품질에 의존한다. telemetry 누락, 브라우저 이벤트 수집 실패, 저사양·모바일 환경에서의 입력 왜곡은 오탐 또는 challenge 실패 가능성을 남긴다.
+
+---
+
+### 2. Telemetry ingest와 evaluate 경로 분리
+
+**문제**
+
+VQA와 행동 기반 방어를 설계하면서 프론트 telemetry(마우스 raw event/요약)를 AI Runtime에 전달해야 했다. 처음에는 보호 API 앞단에서 호출되는 `/ai/evaluate`에 telemetry를 함께 실어 보내는 방식을 떠올렸다.
+
+**왜 단순 대안이 안 됐는가**
+
+| 기각 이유 | 구체적 문제 |
+|------|------|
+| business API 계약 | backend critical API의 DTO·헤더를 AI 연동을 위해 변경하면 안 됨 |
+| ext_authz 경로 책임 | `/ai/evaluate`는 "지금 이 요청을 허용할지"를 빠르게 판단하는 판정 경로. telemetry 수신은 ingest 성격으로 책임이 다름 |
+| body coupling | Adapter가 원요청 body + raw telemetry를 동시에 처리하면 buffering·정규화 부담이 ext_authz 경로에 생기고 기존 인증/인가 구조와 충돌 |
+
+**선택**
+
+AI 연동을 목적 기준으로 3종류로 분리했다.
+
+| 경로 | 호출 주체 | 특성 |
+|------|------|------|
+| `POST /ai/precheck/queue-enter` | 프론트 | 동기 — queue enter 직전 선행 검사 |
+| `POST /ai/telemetry/ingest` | 프론트 | 비동기 — stage 전환 시점·보호 API 직전 preflight flush |
+| `POST /ai/evaluate` | Adapter (ext_authz 내부) | 동기 — body로 telemetry를 받지 않고 runtime state에서 최신 telemetry 조회 |
+
+한 줄 요약: **telemetry는 FE → AI direct ingest, evaluate는 Adapter → AI 내부 판정, business API는 그대로.**
+
+**결과**
+
+- business API DTO 수정 없음
+- ext_authz 경로를 판정 전용으로 단순화
+- 프론트는 보호 API 직전 preflight flush만 수행
+- evaluate 호출 시점엔 runtime state에 최신 telemetry가 이미 반영된 상태
+
+**남은 한계**
+
+ingest와 evaluate가 정확히 같은 타이밍에 일어나지 않는다. "직전 flush까지의 telemetry가 반영되어 있다"는 보장이 preflight flush 성공에 달려 있어, flush 누락 시 최신성이 깨질 수 있다. preflight flush가 선택 사항이 아닌 필수 설계 요소인 이유가 여기에 있다.
+
+---
+
+### 3. ext_authz 기반 공통 enforcement 계층 도입
+
+**문제**
+
+AI 판단을 critical API(queue enter, seat entry, block 조회, seat hold)에만 선택적으로 적용해야 했다. 방어 로직을 어디에 삽입할 것인가가 문제였다.
+
+**왜 단순 대안이 안 됐는가**
+
+| 대안 | 문제 |
+|------|------|
+| 각 backend API 내부에서 직접 AI 호출 | 비즈니스 서비스 전반에 AI 의존이 침투. API별 중복 코드, 정책 변경 시 전체 수정 필요, 응답 규격 통일 어려움 |
+| FE가 보호 API 전에 `/ai/evaluate` 직접 호출 | 신뢰 경계 붕괴 — 허용/차단 결정은 서버 인프라 레벨에서 강제되어야 한다. FE가 먼저 물어보고 따르는 구조는 우회 가능성을 열어둠 |
+
+**선택**
+
+Envoy ext_authz + Authz Adapter + AI Runtime 3계층 구조.
+
+| 레이어 | 역할 |
+|------|------|
+| **Envoy ext_authz** | critical API 요청 공통 가로채기 |
+| **Adapter** | 원요청 → AI가 이해할 수 있는 최소 DTO 정규화 |
+| **AI Runtime `/ai/evaluate`** | session state · policy snapshot · telemetry summary 기반 action 결정 |
+| **Envoy/Adapter 응답 처리** | NONE → 200 allow / THROTTLE → header 기반 마찰 / REQUIRE_S3 → 428 challenge / BLOCK → 403 |
+
+**결과**
+
+- critical API에만 선택적으로 방어 적용
+- business API body/header 계약 유지
+- 방어 로직이 서비스 코드에 침투하지 않고 인프라 계층에서 강제
+- 정책 변경 시 Adapter/AI contract만 조정하면 전체 흐름 유지
+- allow / throttle / challenge / block 흐름을 단일 enforcement 계층에서 일관 처리
+
+> ext_authz + Adapter 구조는 연동 편의가 아니라, **방어를 서비스 코드에서 분리하고 인프라 enforcement layer에 올리기 위한 구조적 선택**이었다.
+
+**남은 한계**
+
+Envoy-Adapter-AI Runtime 3계층 계약이 어긋나면 장애 원인 추적이 복잡해진다. `failure_mode_allow` 설정 시 AI 장애 = 방어 공백이 발생하므로, 연동 성공률·timeout·fail-open 비율을 별도로 관측해야 한다.
+
+---
+
+### 4. 실행·보관·분석·권위 저장소 분리
+
+**문제**
+
+AI Defense는 성격이 다른 네 가지 데이터 요구사항을 동시에 가진다.
+
+| 요구사항 | 성격 |
+|------|------|
+| request path에서 빠르게 읽어야 하는 session/policy 상태 | 속도 우선 |
+| 원본을 잃지 않는 audit 장기 보관 | 내구성 우선 |
+| 운영 지표와 사후 분석 쿼리 | 집계·탐색 우선 |
+| 정책·결과를 권위 있게 저장하는 control-plane | 일관성·권위 우선 |
+
+**왜 단일 저장소가 안 됐는가**
+
+| 단일 저장소 | 불가 이유 |
+|------|------|
+| **Redis** | request latency는 최저. 그러나 audit 장기 보관·정책 이력·분석 쿼리에 부적합 |
+| **PostgreSQL** | authoritative storage로는 적합. 그러나 request path에서 session state를 빠르게 serving하기엔 부담 |
+| **S3** | 원본 보관엔 최적. 그러나 query/운영 분석에 불편하고 runtime authority 불가 |
+| **ClickHouse** | 대규모 event 분석에 강함. 그러나 runtime authority·최종 권위 저장소로는 부적합 |
+
+하나로 통합하면 단순해 보이지만, 실제로는 각 저장소의 책임 충돌이 발생한다.
+
+**선택**
+
+역할 기준으로 4개를 분리했다.
+
+| 저장소 | 역할 | 근거 |
+|------|------|------|
+| **Redis** | 실행용 — runtime state, policy projection, dedup, block 상태 | request path 최저 latency 보장 |
+| **S3** | 보관용 — canonical JSONL audit log | ETL 실패·warehouse 재구축 시 replay/backfill source |
+| **ClickHouse** | 분석용 — defense_audit_events, session rollups, post_review_candidates | 운영 지표·drill-down·post-review 후보 선별 |
+| **PostgreSQL** | 권위용 — Backoffice 결과, 정책 버전, rollout state, optimization run | authoritative result store + policy control-plane DB |
+
+**결과**
+
+- runtime request path는 Redis만 읽고 즉시 판단
+- 원본 증거는 S3에 분리 보관 (audit 재구축 가능)
+- 분석·후보 선별은 ClickHouse에서 수행 (runtime 영향 없음)
+- 최종 결과·정책 권위는 PostgreSQL에 일원화
+
+> 하나의 DB에 모든 책임을 몰아넣지 않고, **실행·보관·분석·권위**를 역할 기준으로 분리했다. 단순해 보이는 통합이 오히려 책임 충돌을 만들기 때문이다.
+
+**남은 한계**
+
+저장소가 분리되면 복구 경로도 분리된다. Redis projection 장애 → PostgreSQL resync, ClickHouse 적재 장애 → S3 replay 경로가 각각 필요하다. 운영자는 각 저장소의 source-of-truth 우선순위를 명확히 이해하고 있어야 한다.
 
 ---
 

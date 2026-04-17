@@ -272,6 +272,10 @@ export const docsConfig = {
           title: "실패 모델 · 복구",
           href: "/ai/reference/defense/13-failure-recovery",
         },
+        {
+          title: "KPI 평가",
+          href: "/ai/reference/defense/kpi-evaluation",
+        },
       ],
     },
     {
