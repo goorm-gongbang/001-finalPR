@@ -144,12 +144,6 @@ export const docsConfig = {
         {
           title: "클러스터 정책",
           href: "/infrastructure/cluster-policy",
-          children: [
-            {
-              title: "policy-reporter",
-              href: "/infrastructure/policy-reporter",
-            },
-          ],
         },
         {
           title: "[부록] 운영 보완 및 트러블슈팅",

@@ -4,33 +4,7 @@
 
 Playball EKS 클러스터는 **목적별 Namespace 분리**와 **NodePool 전용 배치**로 워크로드 간 영향을 격리합니다.
 
-```mermaid
-flowchart TB
-    subgraph NODES["Karpenter NodePools"]
-        NP_APPS["apps<br/>NodePool"]
-        NP_MON["monitoring<br/>NodePool"]
-        NP_LT["loadtest<br/>NodePool"]
-    end
-
-    subgraph CLUSTER["EKS Cluster"]
-        NS_ISTIO["istio-system<br/>Gateway · istiod · RateLimit"]
-        NS_MON["monitoring<br/>Prometheus · Grafana · Loki · Tempo"]
-        NS_SEC["security<br/>Kyverno · Policy Reporter · 런타임 감시"]
-        NS_AI["ai<br/>AI Defense · authz-adapter"]
-        NS_APPS["apps<br/>Auth · Queue · Seat · Order · Gateway · Front"]
-        NS_DATA["data<br/>ClickHouse · CloudBeaver · RedisInsight"]
-        NS_ARGO["argocd<br/>Server · Root App · Controller"]
-    end
-
-    NP_APPS -.-> NS_APPS
-    NP_APPS -.-> NS_ISTIO
-    NP_APPS -.-> NS_AI
-    NP_APPS -.-> NS_ARGO
-    NP_APPS -.-> NS_SEC
-    NP_MON -.-> NS_MON
-    NP_MON -.-> NS_DATA
-    NP_LT -.-> LT["(k6 부하테스트 Pod)"]
-```
+![K8s 클러스터 구성](/images/infrastructure/architecture/01_cluster.svg)
 
 ---
 

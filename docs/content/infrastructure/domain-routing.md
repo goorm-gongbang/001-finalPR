@@ -4,17 +4,7 @@
 
 Playball은 **Route53 공인 도메인 → ACM TLS 인증서 → CloudFront 배포 → ALB → Istio Gateway → VirtualService → K8s Service → Pod** 순서로 도메인을 매핑합니다. 각 단계는 **주소 해석과 경로 매칭**만 수행합니다.
 
-```mermaid
-flowchart LR
-    USER["사용자<br/>api.playball.one"] --> R53["Route53<br/>Public Hosted Zone"]
-    R53 --> CF["CloudFront<br/>Distribution"]
-    ACM["ACM<br/>TLS 인증서"] -. 적용 .-> CF
-    CF --> ALB["ALB<br/>(Target Group)"]
-    ALB --> GW["Istio IngressGateway<br/>(Gateway CR)"]
-    GW --> VS["VirtualService<br/>(경로·헤더 라우팅)"]
-    VS --> SVC["K8s Service"]
-    SVC --> POD["Pod"]
-```
+![도메인 라우팅](/images/infrastructure/domain-routing/01_domain-routing.svg)
 
 ---
 

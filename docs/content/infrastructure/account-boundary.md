@@ -4,35 +4,7 @@
 
 Playball은 **AWS Organizations로 3개 계정을 분리**해 장애·권한·과금 경계를 계정 단위로 끊고, **IAM Identity Center로 단일 로그인 후 환경별 Permission Set을 선택**하는 구조로 운영합니다.
 
-```mermaid
-flowchart TB
-    ORG["AWS Organizations<br/>Root"]
-
-    subgraph MGMT["techupgrgbcn<br/>(Management, 497012402578)"]
-        SSO["IAM Identity Center<br/>Permission Sets · Groups"]
-        ECR["ECR<br/>환경별 이미지"]
-        AUDIT["audit-logs S3<br/>CloudTrail · EventBridge"]
-    end
-
-    subgraph STG["admin-kj<br/>(Staging, 406223549139)"]
-        STG_EKS["EKS + RDS + Redis"]
-    end
-
-    subgraph PROD["ca-prod<br/>(Prod, 990521646433)"]
-        PROD_EKS["EKS + RDS + Redis"]
-    end
-
-    ORG --> MGMT
-    ORG --> STG
-    ORG --> PROD
-
-    SSO -. Permission Set 할당 .-> STG
-    SSO -. Permission Set 할당 .-> PROD
-    ECR -. image pull .-> STG
-    ECR -. image pull .-> PROD
-    STG -. CloudTrail .-> AUDIT
-    PROD -. CloudTrail .-> AUDIT
-```
+![계정 경계](/images/infrastructure/architecture/01_account-boundary.svg)
 
 ---
 

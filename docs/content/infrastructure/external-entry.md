@@ -4,19 +4,7 @@
 
 외부 사용자와 부하 테스트 트래픽은 **CloudFront(+ AWS Shield) → ALB(+ Security Group) → Istio IngressGateway → EnvoyFilter(Rate Limit · ext_authz) → Backend Services → RDS · ElastiCache** 체인을 통과하며, 각 단계에서 **검증·제한·차단**이 순차 적용됩니다.
 
-```mermaid
-flowchart LR
-    USER["사용자"] --> CF["CloudFront<br/>+ AWS Shield<br/>(DDoS 완화 · 엣지 캐싱)"]
-    LOAD["부하 테스트"] --> CF
-    CF --> WAF["AWS WAF<br/>(OWASP · Rate-based)"]
-    WAF --> ALB["ALB<br/>+ Security Group<br/>(CloudFront Prefix List만 허용)"]
-    ALB --> GW["Istio IngressGateway<br/>(mTLS · Host 검증)"]
-    GW --> RL["EnvoyFilter<br/>Rate Limit<br/>(IP·토큰 단위)"]
-    RL --> AUTHZ["ext_authz<br/>(AI 방어 Guard · 위험 점수)"]
-    AUTHZ --> API["Backend Services"]
-    API --> RDS[("RDS<br/>PostgreSQL")]
-    API --> REDIS[("ElastiCache<br/>Redis")]
-```
+![외부 진입 구조](/images/infrastructure/architecture/01_infra-arc.svg?w=50%)
 
 ---
 

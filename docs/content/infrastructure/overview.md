@@ -8,23 +8,7 @@ Playball의 클라우드 인프라는 **티켓팅 서비스 특성에 맞춰 설
 
 사용자 요청부터 배포·관측까지의 전체 흐름입니다. 이후 각 섹션은 이 뼈대의 **설계 근거**와 **세부 기술**을 설명합니다.
 
-```mermaid
-flowchart LR
-    CLIENT(["사용자 요청"]) --> CF["CloudFront"] --> EKS["EKS<br/>(Istio + App)"] --> DATA["RDS<br/>ElastiCache"]
-    ARGO["ArgoCD<br/>(Helm GitOps)"] -.배포.-> EKS
-    EKS -.관측.-> OBS["Grafana · Policy Reporter<br/>CloudTrail · CloudWatch"]
-
-    classDef edgeBox fill:#fff8e1,stroke:#d6b656,color:#5a4a1a
-    classDef runBox fill:#e6f4ea,stroke:#82b366,color:#2d5a34
-    classDef dataBox fill:#ece3f1,stroke:#9673a6,color:#4a2e5f
-    classDef opsBox fill:#e7f0fb,stroke:#6c8ebf,color:#223b63
-    classDef obsBox fill:#fbeaea,stroke:#b85450,color:#6b2a26
-    class CF edgeBox
-    class EKS runBox
-    class DATA dataBox
-    class ARGO opsBox
-    class OBS obsBox
-```
+![운영 흐름](/images/infrastructure/overview/01_overview.svg)
 
 ---
 

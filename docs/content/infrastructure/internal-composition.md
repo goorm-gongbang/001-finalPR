@@ -4,28 +4,7 @@
 
 **`301 Terraform` → `302 Bootstrap` → `303 Helm/Values GitOps`** 의 3-레포 분리 + **ArgoCD Root App → Infra Apps / Application Apps** 의 App-of-Apps 패턴으로 클러스터 내부 리소스를 관리합니다.
 
-```mermaid
-flowchart LR
-    TF["301 Terraform"] -->|setup| CLUSTER
-    REPO["303 Helm/Values<br/>Git 레포"] -. sync .-> CLUSTER
-
-    subgraph CLUSTER["EKS / kubeadm 클러스터"]
-        ARGO["ArgoCD<br/>Root App"]
-        ARGO --> INFRA_APPS["Infra Apps"]
-        ARGO --> APP_APPS["Application Apps"]
-
-        INFRA_APPS --> ISTIO["Istio"]
-        INFRA_APPS --> ESO["External Secrets Operator"]
-        INFRA_APPS --> KARP["Karpenter/KEDA"]
-        INFRA_APPS --> POLICY["Kyverno + Policy Reporter"]
-        INFRA_APPS --> OBS["Grafana 스택<br/>Prometheus · Loki · Tempo"]
-
-        APP_APPS --> SVC["백엔드 / 프론트엔드"]
-    end
-
-    BOOT["302 Bootstrap"] -->|초기 설치| ARGO
-    OBS --> THANOS["Thanos (S3)"]
-```
+![내부 구성](/images/infrastructure/architecture/02_infra-arc.svg?w=85%)
 
 ---
 
