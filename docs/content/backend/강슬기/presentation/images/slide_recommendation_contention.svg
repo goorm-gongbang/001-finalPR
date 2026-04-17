@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" font-family="Pretendard, -apple-system, sans-serif">
+
+  <!-- Dark outer frame -->
+  <rect width="1440" height="900" fill="#1e1e1e"/>
+
+  <!-- White content area -->
+  <rect x="60" y="60" width="1320" height="780" rx="4" fill="#ffffff"/>
+
+  <!-- Category label -->
+  <text x="100" y="110" font-size="14" fill="#999999">핵심 기능 - 추천 알고리즘</text>
+
+  <!-- Page title (green accent) -->
+  <text x="100" y="155" font-size="36" font-weight="800" fill="#2bb573">추천 경합 해소 — 실측 비교</text>
+
+  <!-- ===== LEFT CARD: 추천 OFF ===== -->
+  <rect x="100" y="190" width="560" height="340" rx="12" fill="#fafafa" stroke="#e8e8e8" stroke-width="1"/>
+
+  <!-- Card header -->
+  <text x="130" y="220" font-size="12" font-weight="700" fill="#dc2626" letter-spacing="1.5">추천 OFF</text>
+  <text x="130" y="252" font-size="24" font-weight="700" fill="#1a1a1a">포도알 직접 선택</text>
+
+  <!-- Bullet points -->
+  <text x="130" y="290" font-size="14" fill="#555555">· 1,000명이 같은 좌석맵을 보고 클릭</text>
+  <text x="130" y="314" font-size="14" fill="#555555">· 인기 좌석에 트래픽 집중 → 경합(409) 폭발</text>
+  <text x="130" y="338" font-size="14" fill="#555555">· 선점 실패 시 다른 블럭으로 재시도 (최대 5회)</text>
+
+  <!-- Metric boxes -->
+  <rect x="130" y="365" width="150" height="68" rx="8" fill="#fff5f5" stroke="#fecaca" stroke-width="1"/>
+  <text x="205" y="390" text-anchor="middle" font-size="11" fill="#999999">이선좌(409)</text>
+  <text x="205" y="420" text-anchor="middle" font-size="26" font-weight="800" fill="#dc2626">114건</text>
+
+  <rect x="300" y="365" width="150" height="68" rx="8" fill="#fff5f5" stroke="#fecaca" stroke-width="1"/>
+  <text x="375" y="390" text-anchor="middle" font-size="11" fill="#999999">성공률</text>
+  <text x="375" y="420" text-anchor="middle" font-size="26" font-weight="800" fill="#dc2626">83.6%</text>
+
+  <rect x="470" y="365" width="150" height="68" rx="8" fill="#fff5f5" stroke="#fecaca" stroke-width="1"/>
+  <text x="545" y="390" text-anchor="middle" font-size="11" fill="#999999">VU당 시도</text>
+  <text x="545" y="420" text-anchor="middle" font-size="26" font-weight="800" fill="#dc2626">1.87회</text>
+
+  <!-- Problem note -->
+  <rect x="130" y="450" width="490" height="60" rx="6" fill="#fef3c7" stroke="#fde68a" stroke-width="1"/>
+  <text x="150" y="475" font-size="12" font-weight="600" fill="#92400e">문제</text>
+  <text x="150" y="495" font-size="12" fill="#78716c">먼저 클릭한 사람이 먹는 구조 → 네트워크 빠른 사람 유리 → 불공정</text>
+
+  <!-- ===== Arrow between cards ===== -->
+  <text x="695" y="370" text-anchor="middle" font-size="28" fill="#2bb573">→</text>
+
+  <!-- ===== RIGHT CARD: 추천 ON ===== -->
+  <rect x="730" y="190" width="560" height="340" rx="12" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+
+  <!-- Card header -->
+  <text x="760" y="220" font-size="12" font-weight="700" fill="#2bb573" letter-spacing="1.5">추천 ON</text>
+  <text x="760" y="252" font-size="24" font-weight="700" fill="#1a1a1a">서버 자동 배정</text>
+
+  <!-- Bullet points -->
+  <text x="760" y="290" font-size="14" fill="#555555">· 블럭 단위 분산 락 → 1명씩 순차 진입</text>
+  <text x="760" y="314" font-size="14" fill="#555555">· 서버가 빈 연석을 계산 → 자동 배정</text>
+  <text x="760" y="338" font-size="14" fill="#555555">· 두 유저가 같은 좌석을 받을 수 없는 구조</text>
+
+  <!-- Metric boxes -->
+  <rect x="760" y="365" width="150" height="68" rx="8" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="835" y="390" text-anchor="middle" font-size="11" fill="#999999">이선좌(409)</text>
+  <text x="835" y="420" text-anchor="middle" font-size="26" font-weight="800" fill="#059669">0건</text>
+
+  <rect x="930" y="365" width="150" height="68" rx="8" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="1005" y="390" text-anchor="middle" font-size="11" fill="#999999">성공률</text>
+  <text x="1005" y="420" text-anchor="middle" font-size="26" font-weight="800" fill="#059669">~100%</text>
+
+  <rect x="1100" y="365" width="150" height="68" rx="8" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="1175" y="390" text-anchor="middle" font-size="11" fill="#999999">VU당 시도</text>
+  <text x="1175" y="420" text-anchor="middle" font-size="26" font-weight="800" fill="#059669">1회</text>
+
+  <!-- Solution note -->
+  <rect x="760" y="450" width="490" height="60" rx="6" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="780" y="475" font-size="12" font-weight="600" fill="#065f46">해결</text>
+  <text x="780" y="495" font-size="12" fill="#374151">서버가 최적 연석을 공정하게 배분 → 재시도 불필요 → 즉시 확정</text>
+
+  <!-- ===== BOTTOM: 핵심 차별점 (green accent bar) ===== -->
+  <rect x="100" y="570" width="1190" height="80" rx="10" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+
+  <text x="130" y="598" font-size="12" font-weight="700" fill="#2bb573" letter-spacing="1.5">핵심 차별점</text>
+
+  <text x="130" y="630" font-size="14" fill="#555555">포도알: 좌석맵 핫스팟 집중</text>
+  <text x="395" y="630" font-size="20" fill="#2bb573">→</text>
+  <text x="430" y="630" font-size="18" font-weight="700" fill="#1a1a1a">블럭 단위 분산 추천으로 경합을 구조적으로 제거</text>
+
+  <!-- ===== BOTTOM TABLE ===== -->
+  <text x="100" y="695" font-size="12" font-weight="700" fill="#999999" letter-spacing="1.5">실측 비교 (k6 부하테스트 · 1,001 VU)</text>
+
+  <!-- Table header -->
+  <rect x="100" y="710" width="1190" height="32" rx="4" fill="#f5f5f5"/>
+  <text x="300" y="731" text-anchor="middle" font-size="12" font-weight="600" fill="#666666">지표</text>
+  <text x="580" y="731" text-anchor="middle" font-size="12" font-weight="600" fill="#dc2626">추천 OFF</text>
+  <text x="810" y="731" text-anchor="middle" font-size="12" font-weight="600" fill="#059669">추천 ON</text>
+  <text x="1060" y="731" text-anchor="middle" font-size="12" font-weight="600" fill="#1a1a1a">효과</text>
+
+  <!-- Row 1 -->
+  <line x1="100" y1="747" x2="1290" y2="747" stroke="#eeeeee" stroke-width="1"/>
+  <text x="300" y="770" text-anchor="middle" font-size="13" fill="#333333">이선좌(409) 경합</text>
+  <text x="580" y="770" text-anchor="middle" font-size="14" font-weight="700" fill="#dc2626">114건</text>
+  <text x="810" y="770" text-anchor="middle" font-size="14" font-weight="700" fill="#059669">0건</text>
+  <rect x="960" y="757" width="200" height="22" rx="11" fill="#2bb573"/>
+  <text x="1060" y="773" text-anchor="middle" font-size="12" font-weight="700" fill="white">경합 완전 제거</text>
+
+  <!-- Row 2 -->
+  <line x1="100" y1="785" x2="1290" y2="785" stroke="#eeeeee" stroke-width="1"/>
+  <text x="300" y="808" text-anchor="middle" font-size="13" fill="#333333">Hold 성공률</text>
+  <text x="580" y="808" text-anchor="middle" font-size="14" font-weight="700" fill="#dc2626">83.6%</text>
+  <text x="810" y="808" text-anchor="middle" font-size="14" font-weight="700" fill="#059669">~100%</text>
+  <rect x="960" y="795" width="200" height="22" rx="11" fill="#2bb573"/>
+  <text x="1060" y="811" text-anchor="middle" font-size="12" font-weight="700" fill="white">+16.4%p 향상</text>
+
+</svg>
