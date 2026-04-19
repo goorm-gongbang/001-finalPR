@@ -77,3 +77,17 @@ application-secret.yaml
 .env
 .env.local
 .env.*.local
+
+### AI presentation — local working files, not for push ###
+docs/content/ai/presentation/images/_source_attack.png
+docs/content/ai/presentation/images/_source_defense.png
+docs/content/ai/presentation/images/appendix_attack_architecture.png
+docs/content/ai/presentation/images/appendix_attack_architecture.svg
+docs/content/ai/presentation/images/appendix_defense_architecture.png
+docs/content/ai/presentation/images/appendix_defense_architecture.svg
+docs/content/ai/presentation/images/final_09-1_scored.png
+docs/content/ai/presentation/images/final_09-1_scored.svg
+docs/content/ai/presentation/images/final_tier_scoring.png
+docs/content/ai/presentation/images/final_tier_scoring.svg
+docs/content/ai/presentation/발표_대본.md
+docs/content/ai/presentation/발표_대본_초안_장지현.txt
