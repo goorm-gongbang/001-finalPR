@@ -114,6 +114,10 @@ export const docsConfig = {
               title: "배포 복구 검증",
               href: "/infrastructure/deployment-recovery",
             },
+            {
+              title: "TeamCity 연동 및 파이프라인",
+              href: "/infrastructure/teamcity",
+            },
           ],
         },
         {

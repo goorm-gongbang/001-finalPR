@@ -42,11 +42,10 @@ Playball 배포는 수동 서버 반영이 아니라 `이미지 빌드`, `환경
 - Terraform으로 EKS, RDS, Redis, 네트워크, 인증서를 준비합니다.
 - Bootstrap으로 ESO, Karpenter, ArgoCD, Root App을 설치합니다.
 
-### 2. 애플리케이션 반영
+### 2. 애플리케이션 반영 (CI/CD)
 
-- 개발 코드가 병합되면 TeamCity가 컨테이너 이미지를 빌드해 `ECR`에 푸시합니다.
-- TeamCity가 환경별 Helm values의 이미지 태그를 갱신합니다.
-- 갱신된 values가 `argocd-sync/*` 브랜치에 반영되면 ArgoCD가 자동 배포합니다.
+- **CI (지속적 통합) 및 배포 준비**: 소스 코드가 병합되면 TeamCity가 이미지 빌드 및 ECR 푸시를 수행하고, 환경별 Helm values의 이미지 태그를 갱신하여 `argocd-sync/*` 브랜치에 푸시까지 일괄 수행합니다. (자세한 파이프라인 과정은 [TeamCity 연동 및 파이프라인](./teamcity) 문서 참조)
+- **CD (지속적 배포)**: 갱신된 values가 `argocd-sync/*` 브랜치에 반영되면 ArgoCD가 이를 감지하고 클러스터에 자동으로 동기화(배포)합니다.
 
 ### 3. 운영 검증
 
