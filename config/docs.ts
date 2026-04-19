@@ -284,6 +284,10 @@ export const docsConfig = {
           title: "KPI 평가",
           href: "/ai/reference/defense/kpi-evaluation",
         },
+        {
+          title: "트러블슈팅",
+          href: "/ai/reference/defense/troubleshooting",
+        },
       ],
     },
     {

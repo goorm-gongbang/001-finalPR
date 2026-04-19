@@ -172,4 +172,5 @@ Post-Review가 실제로 review를 수행해 저장한 세션 수.
 - [09-kpi-evaluation (공격)](../attack/09-kpi-evaluation.md) — 방어 저지율·개입 단계 분포 원본 수치
 - [10-post-review](10-post-review.md) — Post-Review Copilot 구조
 - [05-tier-action](05-tier-action.md) — Tier · Action 정의
+- [트러블슈팅](troubleshooting.md) — 방어 설계 트레이드오프와 한계 정리
 - [06_KPI_트러블슈팅.md](../../presentation/06_KPI_트러블슈팅.md) — 공격/방어 통합 KPI 상세 및 트러블슈팅
