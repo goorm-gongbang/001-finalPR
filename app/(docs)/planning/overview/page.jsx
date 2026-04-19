@@ -117,6 +117,19 @@ export default function Page() {
         <tbody>
           <tr>
             <td>
+              <strong>프론트엔드</strong>
+            </td>
+            <td>
+              사용자의 선호 조건을 기반으로 추천 블록을 직관적으로 제시하고, 
+              좌석 Hold·결제·대기열 흐름을 끊김 없이 연결하는 티켓팅 인터페이스 구현.
+            </td>
+            <td>
+              Next.js, TypeScript, Zustand, Tailwind CSS, SVG 기반 좌석맵,
+               Auth/Queue/Order API 연동
+            </td>
+          </tr>
+          <tr>
+            <td>
               <strong>백엔드</strong>
             </td>
             <td>
