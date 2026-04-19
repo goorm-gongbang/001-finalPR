@@ -27,13 +27,30 @@
 
 ## 2. TeamCity 인프라 구조
 
-서버와 에이전트, 그리고 외부 접속을 위한 리버스 프록시를 하나의 VM 인스턴스에서 Docker Compose로 실행 및 관리했습니다.
+TeamCity 서버와 에이전트, 그리고 외부 접속을 위한 리버스 프록시를 하나의 클라우드 VM 인스턴스에서 Docker Compose로 실행 및 관리합니다.
+
+### 2.1. 호스팅 및 인스턴스 사양
+
+- **클라우드 제공자**: GCP Compute Engine
+- **인스턴스 타입**: e2-standard-4
+- **시스템 사양**: 4 vCPU, 16 GiB Memory
+- **운영 체제 (OS)**: Debian-12-bookworm-v20260114
+- **스토리지 (Volume)**: 50GB
+- **VPC 방화벽 규칙**: 
+  - allow-http-https: 0.0.0.0/0 tcp:80,443
+  - allow-teamcity: 0.0.0.0/0 tcp:22
+  - default-allow-ssh 0.0.0.0/0 tcp:22
+  - default-allow-rdp 0.0.0.0/0 tcp:3389
+  - default-allow-icmp 0.0.0.0/0 icmp
+  - default-allow-internal [IP_ADDRESS] tcp:0-65535, udp:0-65535, icmp
+
+### 2.2. 내부 컴포넌트 구성
 
 - **Teamcity Server**: 전체 시스템을 관리하는 컨트롤 타워로, 프로젝트 관리, 빌드 큐 운영, UI, 에이전트 배정 등의 역할을 수행
 - **Teamcity Agent**: 서버로부터 전달받은 작업을 수행하는 노드로 주로 빌드 스크립트 실행
-  - 초반에는 에이전트를 2대만 사용했으나, 동시에 여러 이미지 빌드시 걸리는 시간 때문에 추후에 3대로 늘리며 VM 인스턴스도 업그레이드 함
-- **Caddy**: 리버스 프록시 서버로, SSL 인증서를 자동 관리하며 `teamcity-gb.duckdns.org`도메인과 연결
-- **DuckDNS**: IP가 아닌 도메인으로 접속하기 위해 사용
+  - 초반에는 에이전트를 2대만 사용했으나, 동시에 여러 이미지 빌드 시 소요되는 병목을 줄이기 위해 추후 3대로 늘리며 VM 인스턴스 사양도 업그레이드함
+- **Caddy**: 리버스 프록시 서버로, SSL 인증서를 자동 관리하며 `teamcity-gb.duckdns.org` 도메인과 맵핑
+- **DuckDNS**: IP가 아닌 도메인 기반의 안정적인 접속을 제공하기 위해 사용
 
 ---
 
@@ -44,11 +61,11 @@
 ### 3.1. 모노레포 트리거 및 CI 전략
 
 - **서비스별 빌드 분리**: `Auth-Guard`, `Order-Core`등 각 서비스마다 독립적인 Build Configuration(빌드 구성) 생성
-- **지능형 트리거(VCS Trigger Rules)**: 
+- **지능형 트리거(VCS Trigger Rules)**:
   - 본인의 서비스 폴더 (`+:Service-Name/**`)의 변경이 있을때만 빌드가 시작
   - 공통 모듈(`+:common-core/**`)이나 루트 설정이 바뀌면 모든 서비스의 빌드가 시작
   - 배포 환경별로 맞는 브랜치에(`dev`,`staging`,`prod`) 들어오는 커밋만 감지하도록 설정
-  ![trigger](/images/infrastructure/teamcity/02_teamcity.png)
+    ![trigger](/images/infrastructure/teamcity/02_teamcity.png)
 
 ### 3.2. 도커 빌드 및 이미지 태깅
 
@@ -66,4 +83,3 @@
   ![helm](/images/infrastructure/teamcity/04_teamcity.png?w=60%)
 
 ---
-
