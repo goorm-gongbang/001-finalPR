@@ -176,7 +176,7 @@ export const docsConfig = {
         { title: "클라이언트 보안", href: "/security/client-security" },
         { title: "서비스 인증 및 인가", href: "/security/Auth" },
         { title: "시큐어 코딩", href: "/security/Secure-Coding" },
-        { title: "법적 고려사항", href: "/security/Security- LegalConsideration" },
+        { title: "법적 고려사항", href: "/security/Security-LegalConsideration" },
         { title: "Gateway / mTLS", href: "/security/gateway-mtls" },
         { title: "봇 대응 체계", href: "/security/bot-defense" },
         { title: "백엔드 방어 체계", href: "/security/backend-defense" },
