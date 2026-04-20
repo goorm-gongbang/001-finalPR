@@ -62,6 +62,10 @@ export const docsConfig = {
               title: "Before/After 시각화",
               href: "/development/load-test/comparison",
             },
+            {
+              title: "추천 ON/OFF 실측 비교",
+              href: "/development/load-test/recommendation-on-off",
+            },
           ],
         },
         {
