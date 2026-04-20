@@ -174,11 +174,15 @@ export const docsConfig = {
       items: [
         { title: "개요", href: "/security/overview" },
         { title: "클라이언트 보안", href: "/security/client-security" },
+        { title: "서비스 인증 및 인가", href: "/security/Auth" },
+        { title: "시큐어 코딩", href: "/security/Secure Coding" },
+        { title: "법적 고려사항", href: "/security/Security- Legal Consideration" },
         { title: "Gateway / mTLS", href: "/security/gateway-mtls" },
         { title: "봇 대응 체계", href: "/security/bot-defense" },
         { title: "백엔드 방어 체계", href: "/security/backend-defense" },
         { title: "데이터 보안", href: "/security/data-security" },
         { title: "인프라 보안", href: "/security/infrastructure-security" },
+        { title: "침투 테스트 종합 보고서 ", href: "/security/Penetration Testing" },        
         {
           title: "접근 제어",
           href: "/security/access-control",
