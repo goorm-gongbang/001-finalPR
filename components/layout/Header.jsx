@@ -100,7 +100,7 @@ export function Header() {
 
                 <div className="flex items-center justify-end sm:w-[300px] shrink-0">
                     <a
-                        href="https://playball.one"
+                        href="https://dev.playball.one"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex whitespace-nowrap h-10 items-center justify-center rounded-lg bg-primary px-5 py-2 text-[14px] font-semibold text-white shadow hover:bg-primary/90 transition-colors"
