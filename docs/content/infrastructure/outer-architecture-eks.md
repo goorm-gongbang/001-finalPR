@@ -65,7 +65,7 @@ Backend Pod (Pod CIDR)
 | 항목 | 값 |
 |------|-----|
 | 클러스터 이름 | `goormgb-staging` / `goormgb-prod` |
-| 버전 | 1.30 |
+| 버전 | 1.35 |
 | 엔드포인트 | Private + Public (팀 IP whitelist) |
 | Pod CIDR (VPC CNI) | **VPC CIDR에서 직접 할당** (10.0.11.x / 10.0.12.x 노드 ENI에 Secondary IP) |
 | Service CIDR | `172.20.0.0/16` (EKS 기본) |
