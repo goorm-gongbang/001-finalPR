@@ -11,7 +11,7 @@
 | 항목 | 값 |
 |------|-----|
 | 대상 환경 | staging (AWS) |
-| DB | PostgreSQL (db.t4g.small, `max_connections = 270`) |
+| DB | PostgreSQL (db.t4g.medium, `max_connections = 250`) — RDS 공식 `LEAST(DBInstanceClassMemory/9531392, 5000)` 기준 |
 | Redis | ElastiCache Redis 7 (공용 + Queue 전용) |
 | 테스트 도구 | k6 |
 | 목표 VU | 5,000 VU |
@@ -77,7 +77,7 @@ hikari.maximum-pool-size: 20    # DB 커넥션 20개 ← 여기!
 
 | 항목 | 현재 | 5000 VU 요구치 | Gap |
 |------|------|--------------|------|
-| DB `max_connections` | **270** | 500~1000 | 부족 |
+| DB `max_connections` | **250** | 500~1000 | 부족 |
 | 현재 커버한 캐싱 | Match existsById 1건 | N/A | 나머지 쿼리가 커넥션 소진 중 |
 
 ### 2.2 Top 7 핫 쿼리
@@ -263,7 +263,7 @@ Redis (분산 캐시)의 장점:
 | Tomcat `max-threads` | 200 | **400** | Seat, Queue | 캐시 적용 후 스레드 점유 시간 감소 → 더 많은 동시 처리 가능 |
 | HikariCP `maximum-pool-size` | 20 | **30** | Seat, Queue | DB 의존 쿼리 감소 → 적은 커넥션으로 충분하지만 여유 확보 |
 | HikariCP `minimum-idle` | 20 | **5** | Seat, Queue | 유연한 커넥션 관리 (필요 시만 생성) |
-| 총 DB 커넥션 | ~80 | **≤250** | 전체 | `max_connections=270` 한계 내 |
+| 총 DB 커넥션 | ~80 | **≤250** | 전체 | `max_connections=250` 한계 내 |
 
 ### 6.3 예상 효과
 

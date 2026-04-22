@@ -99,7 +99,7 @@ spec: maximumSize=1000,expireAfterWrite=10m,recordStats`}</code></pre>
                     <tr><td>Tomcat max-threads</td><td>200</td><td><strong>400</strong></td><td>스레드 점유 시간 감소 → 동시 처리 증가</td></tr>
                     <tr><td>HikariCP max-pool-size</td><td>20</td><td><strong>30</strong></td><td>DB 의존 쿼리 감소로 여유 확보</td></tr>
                     <tr><td>HikariCP min-idle</td><td>20</td><td><strong>5</strong></td><td>유연한 커넥션 관리</td></tr>
-                    <tr><td>총 DB 커넥션</td><td>~80</td><td><strong>≤250</strong></td><td><code>max_connections=270</code> 한계 내</td></tr>
+                    <tr><td>총 DB 커넥션</td><td>~80</td><td><strong>≤250</strong></td><td><code>max_connections=250</code> 한계 내</td></tr>
                 </tbody>
             </table>
             <ul>

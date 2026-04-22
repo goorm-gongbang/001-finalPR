@@ -1,7 +1,6 @@
 export const docsConfig = {
   mainNav: [
     { title: "프로젝트 소개", href: "/planning/overview" },
-    { title: "Sandbox", href: "/sandbox" },
   ],
   sidebarNav: [
     {
@@ -305,14 +304,3 @@ export const docsConfig = {
   ],
 };
 
-export const sandboxConfig = {
-  sidebarNav: [
-    {
-      title: "시뮬레이션",
-      items: [
-        { title: "대규모 트래픽 대응", href: "/sandbox/traffic" },
-        { title: "AI 공격/방어 대응", href: "/sandbox/ai-defense" },
-      ],
-    },
-  ],
-};

@@ -63,15 +63,15 @@ export default function Page() {
             <h3>1.3 왜 Pool Size를 무작정 늘릴 수 없는가?</h3>
             <p><strong>DB 서버 자체의 한계</strong>때문입니다.</p>
             <ul>
-                <li>PostgreSQL <code>max_connections = 270</code> (db.t4g.small 기본값)</li>
-                <li>전체 서비스 Pool 합계가 270 이내여야 함</li>
+                <li>PostgreSQL <code>max_connections = 250</code> (db.t4g.medium, RDS 공식 <code>LEAST(DBInstanceClassMemory/9531392, 5000)</code> 기준 기본값 ~450에서 앱 풀에 맞춰 제한)</li>
+                <li>전체 서비스 Pool 합계가 250 이내여야 함</li>
                 <li>넘으면 DB에서 "too many connections" 에러</li>
             </ul>
 
             <h3>1.4 Pool Size 계산 공식</h3>
             <pre><code>{`합계 = (Seat 30) + (Queue 30) + (Auth-Guard 20) + (Order-Core 20)
      + (Batch / Admin 20) + (여유 50)
-     ≤ 270 (max_connections)`}</code></pre>
+     ≤ 250 (max_connections)`}</code></pre>
 
             <h3>1.5 <code>hikaricp_connections_pending</code> — 병목의 증거</h3>
             <p>

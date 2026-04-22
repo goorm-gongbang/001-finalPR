@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { docsConfig, sandboxConfig } from "@/config/docs";
+import { docsConfig } from "@/config/docs";
 import { cn } from "@/lib/utils";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Search } from "lucide-react";
@@ -98,7 +98,15 @@ export function Header() {
                     </div>
                 </div>
 
-                <div className="flex items-center justify-end sm:w-[300px] shrink-0">
+                <div className="flex items-center justify-end sm:w-[300px] shrink-0 gap-3">
+                    <a
+                        href="https://drive.google.com/file/d/1yhna5Mj6f9pr9YdyPkUz5F_0JUpbm1tX/view?usp=drive_link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex whitespace-nowrap h-10 items-center justify-center rounded-lg border border-primary px-5 py-2 text-[14px] font-semibold text-primary hover:bg-primary/5 transition-colors"
+                    >
+                        발표 장표
+                    </a>
                     <a
                         href="https://dev.playball.one"
                         target="_blank"

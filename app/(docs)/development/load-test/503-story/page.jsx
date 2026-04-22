@@ -69,7 +69,7 @@ export default function Page() {
             </p>
 
             <h3>왜 이런 일이 일어나는가</h3>
-            <pre><code>{`1. DB max_connections: 270 (db.t4g.small 한도)
+            <pre><code>{`1. DB max_connections: 250 (db.t4g.medium, RDS 공식 LEAST(DBInstanceClassMemory/9531392, 5000) 기준)
 2. 동시 요청: 3,000 VU → Tomcat 스레드 수백 개가 커넥션 요청
 3. 각 요청이 짧은 쿼리를 여러 번 날림
    ├─ Match 조회 (booking-options 저장 시 1번)
@@ -171,7 +171,7 @@ export default function Page() {
                 <tbody>
                     <tr><td>DB CPU</td><td><strong>10%</strong></td><td>사양 문제 아님 입증</td></tr>
                     <tr><td>DB Memory</td><td><strong>25%</strong></td><td>사양 문제 아님 입증</td></tr>
-                    <tr><td>DB max_connections</td><td><strong>270</strong></td><td>실제 한계선 (db.t4g.small)</td></tr>
+                    <tr><td>DB max_connections</td><td><strong>250</strong></td><td>실제 한계선 (db.t4g.medium)</td></tr>
                     <tr><td>Tomcat 스레드 peak</td><td><strong>735</strong></td><td>자원 고갈의 외형적 증거</td></tr>
                     <tr><td>Seat P99 (AS-IS)</td><td><strong>6,887ms</strong></td><td>개선 전</td></tr>
                     <tr><td>Seat P99 (1차 PoC)</td><td><strong>2,000ms</strong></td><td>하나만 캐싱해도 75% 감소</td></tr>
@@ -212,7 +212,7 @@ export default function Page() {
             <h3>Q4. "5000 VU는 가능?"</h3>
             <p><strong>A. 현 인프라로는 불가능</strong> — 정직하게 한계 인정.</p>
             <ul>
-                <li><code>db.t4g.small</code> max_connections 270 절대 한계</li>
+                <li><code>db.t4g.medium</code> max_connections 250 절대 한계</li>
                 <li>5000 VU는 <code>db.m6g.large</code> (max ~900) 이상 필요</li>
                 <li><strong>"현 인프라로 1000 VU P95 &lt; 1s 목표 달성"이 본 개선의 현실적 스코프</strong></li>
                 <li>폴더 20 결과(좌석 Hold 성공률 83.6%)에서 확인: 1000 VU가 우리 인프라의 정직한 상한</li>

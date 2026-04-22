@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { docsConfig, sandboxConfig } from "@/config/docs";
+import { docsConfig } from "@/config/docs";
 import { getDocContent } from "@/lib/docs";
 
 export async function GET() {
@@ -38,7 +38,6 @@ export async function GET() {
     };
 
     await processConfig(docsConfig, "docs");
-    await processConfig(sandboxConfig, "sandbox");
 
     return NextResponse.json(searchDocs);
 }

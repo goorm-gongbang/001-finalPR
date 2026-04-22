@@ -30,7 +30,7 @@ export default function Page() {
 
             <h3>1-2. DB — "MSA인데 DB는 하나"</h3>
             <p>
-                물리적으로는 <strong>단일 PostgreSQL 인스턴스 (db.t4g.small)</strong>를 공유합니다.
+                물리적으로는 <strong>단일 PostgreSQL 인스턴스 (db.t4g.medium)</strong>를 공유합니다.
                 각 서비스가 자신의 테이블만 쓰기하고 타 서비스 테이블은 읽기만 하는 <strong>논리적 소유권 규칙</strong>만
                 정했을 뿐, 물리적 스키마는 분리되어 있지 않습니다.
             </p>
@@ -44,7 +44,7 @@ export default function Page() {
                 </tbody>
             </table>
             <p>
-                <strong>한계</strong>: 모든 서비스가 같은 DB 커넥션 한도(max_connections=270)를 공유하기 때문에,
+                <strong>한계</strong>: 모든 서비스가 같은 DB 커넥션 한도(max_connections=250)를 공유하기 때문에,
                 어느 한 서비스의 쿼리 폭주가 다른 서비스 전체의 응답 지연으로 전이됩니다
                 (<a href="/development/load-test/503-story">503 트러블슈팅 참고</a>).
             </p>
@@ -309,7 +309,7 @@ Order-Core: UserBlockedEventConsumer
             <h3>스키마 분리로 얻는 것</h3>
             <ul>
                 <li><strong>장애 격리</strong>: Seat DB가 I/O 폭주해도 Auth/Order는 영향 없음</li>
-                <li><strong>커넥션 풀 독립</strong>: 현재 max_connections=270을 전 서비스가 공유 → 스키마 분리 시 각자 할당</li>
+                <li><strong>커넥션 풀 독립</strong>: 현재 max_connections=250을 전 서비스가 공유 → 스키마 분리 시 각자 할당</li>
                 <li><strong>스키마 진화 자유도</strong>: 한 서비스의 테이블 구조 변경이 다른 서비스 빌드에 영향 주지 않음</li>
                 <li><strong>백업/복구 경계 명확화</strong>: 민감 DB(payment)만 별도 백업 정책 적용 가능</li>
             </ul>

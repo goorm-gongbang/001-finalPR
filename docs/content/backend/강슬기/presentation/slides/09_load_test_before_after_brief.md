@@ -19,13 +19,13 @@
 
 ### ① Before — 최적화 전 상태 (2026-04-14)
 
-**환경**: AWS staging, `db.t4g.small`, `max_connections=270`, 1,001 VU
+**환경**: AWS staging, `db.t4g.medium`, `max_connections=250`, 1,001 VU
 
 | 지표 | 값 | 비고 |
 |------|-----|------|
 | **Queue Flow P99** | **6,887ms** | 응답까지 약 7초 |
 | **503 에러** | **58건** | Queue 40건 + Seat 18건 |
-| **DB 커넥션 peak** | **270** (한계) | max_connections 도달 |
+| **DB 커넥션 peak** | **250** (한계) | max_connections 도달 |
 | RDS CPU | **10%** | 사양 문제 아님 |
 | RDS 메모리 | **25%** | 사양 문제 아님 |
 | Tomcat 스레드 peak | **735** | 자원 고갈의 외형적 증거 |

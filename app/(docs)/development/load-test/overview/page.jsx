@@ -20,7 +20,7 @@ export default function Page() {
                 </thead>
                 <tbody>
                     <tr><td><strong>환경</strong></td><td>staging (AWS)</td><td><code>api.staging.playball.one</code></td></tr>
-                    <tr><td><strong>DB 인스턴스</strong></td><td><code>db.t4g.small</code> (PostgreSQL 16)</td><td><strong><code>max_connections = 270</code></strong> — 실제 한계선</td></tr>
+                    <tr><td><strong>DB 인스턴스</strong></td><td><code>db.t4g.medium</code> (PostgreSQL 16)</td><td><strong><code>max_connections = 250</code></strong> — RDS 공식 <code>LEAST(DBInstanceClassMemory/9531392, 5000)</code> 기준, 기본값 ~450에서 앱 풀 합산에 맞춰 제한</td></tr>
                     <tr><td><strong>Redis (공용)</strong></td><td>ElastiCache Redis 7</td><td>인증·분산락·캐시</td></tr>
                     <tr><td><strong>Redis (Queue)</strong></td><td>ElastiCache Redis 7 (별도)</td><td>대기열 ZSET 전용</td></tr>
                     <tr><td><strong>Kafka</strong></td><td>Apache Kafka 3.7.1</td><td>이벤트 메시징</td></tr>
@@ -160,7 +160,7 @@ export default function Page() {
                     <tr><td><code>hikaricp_connections_idle</code></td><td>유휴 커넥션 수</td></tr>
                     <tr><td><code>hikaricp_connections_pending</code></td><td><strong>커넥션 획득을 기다리는 스레드 수 (핵심 지표)</strong></td></tr>
                     <tr><td><code>hikaricp_connections_max</code></td><td>풀 최대 크기</td></tr>
-                    <tr><td><code>postgres_max_connections</code></td><td>DB 서버 측 최대 연결 수 (270)</td></tr>
+                    <tr><td><code>postgres_max_connections</code></td><td>DB 서버 측 최대 연결 수 (250)</td></tr>
                     <tr><td><code>rds_cpu_utilization</code></td><td>RDS CPU 사용률</td></tr>
                 </tbody>
             </table>
